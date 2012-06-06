@@ -1,5 +1,7 @@
 from five import grok
 from plone.directives import dexterity, form
+from plone.indexer import indexer
+from plone.uuid.interfaces import IUUID
 
 from zope import schema
 from zope.schema.interfaces import IContextSourceBinder
@@ -45,6 +47,19 @@ class IMemberService(form.Schema):
         required=False,
         default=0,
     )
+
+
+@indexer(IMemberService)
+def userid(obj):
+    return obj.Creator()
+grok.global_adapter(userid, name="userid")
+
+
+@indexer(IMemberService)
+def serviceuid(obj):
+    uuid = IUUID(obj.related_service.to_object)
+    return uuid
+grok.global_adapter(serviceuid, name="serviceuid")
 
 
 class MemberService(dexterity.Item):

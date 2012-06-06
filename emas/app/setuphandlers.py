@@ -67,12 +67,27 @@ def setupPortalContent(portal):
             if status['review_state'] != 'published':
                 wf.doActionFor(folder, 'publish')
                 folder.reindexObject()
-        
+
+
+def setupCatalogIndexes(portal):
+    new_indexes = {
+        'userid': 'FieldIndex',
+        'serviceuid': 'FieldIndex',
+    }
+
+    catalog = getToolByName(portal, 'portal_catalog')
+    current_indexes = catalog.indexes()
+    for name, type in new_indexes.items():
+        if name not in current_indexes:
+            catalog.addIndex(name, type)
+            catalog.reindexIndex(name, {})
+
 
 def install(context):
     if context.readDataFile('emas.app-marker.txt') is None:
         return
     site = context.getSite()
     setupPortalContent(site)
+    setupCatalogIndexes(site)
 
 
