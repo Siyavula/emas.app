@@ -24,23 +24,7 @@ class Product(dexterity.Item):
     grok.implements(IProduct)
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('emas.app.product')
-
-    def updateWidgets(self):
-        self.fields['IBasic.description'].widgetFactory = WysiwygFieldWidget
-        super(AddForm, self).updateWidgets()
-
-
-class EditForm(dexterity.EditForm):
-    grok.context(IProduct)
-
-    def updateWidgets(self):
-        self.fields['IBasic.description'].widgetFactory = WysiwygFieldWidget
-        super(EditForm, self).updateWidgets()
-
-
 class View(dexterity.DisplayForm):
     grok.context(IProduct)
     grok.require('zope2.View')
-    grok.name('view')
+    #grok.name('view')
