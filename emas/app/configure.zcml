@@ -38,4 +38,10 @@
         handler=".eventhandlers.orderItemAdded"
         />
 
+    <subscriber
+        for="emas.app.orderitem.IOrderItem
+             zope.lifecycleevent.IObjectModifiedEvent"
+        handler=".eventhandlers.orderItemUpdated"
+        />
+
 </configure>

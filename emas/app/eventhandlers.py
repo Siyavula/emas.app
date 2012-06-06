@@ -14,6 +14,16 @@ def orderAdded(order, event):
 def orderItemAdded(item, event):
     """ Calculate the total and set the price at purchase time.
     """
+    _setOrderItemPriceAndTotal(item)
+
+
+def orderItemUpdated(item, event):
+    """ Calculate the total and set the price after an update.
+    """
+    _setOrderItemPriceAndTotal(item)
+
+
+def _setOrderItemPriceAndTotal(item):
     price = item.price or item.related_item.to_object.price
     item.price = price
     item.total = item.quantity * item.price
