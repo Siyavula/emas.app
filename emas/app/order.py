@@ -34,7 +34,7 @@ class IOrder(form.Schema):
     """
     Container for orderable items like products and services
     """
-    date_ordered = schema.Datetime(
+    date_ordered = schema.Date(
         title=_(u"Date ordered"),
         required=False,
     )
