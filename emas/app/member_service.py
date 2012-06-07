@@ -1,3 +1,5 @@
+from datetime import datetime, date
+import DateTime
 from five import grok
 from plone.directives import dexterity, form
 from plone.indexer import indexer
@@ -19,6 +21,8 @@ from plone.formwidget.contenttree import ObjPathSourceBinder
 from emas.app import MessageFactory as _
 
 
+NULLDATE = date(1970, 01, 01)
+
 class IMemberService(form.Schema):
     """
     An object that describes the services or products a member bought.
@@ -39,6 +43,7 @@ class IMemberService(form.Schema):
     expiry_date = schema.Date(
         title=_(u"Expiry date"),
         required=False,
+        default=NULLDATE
     )
 
     credits = schema.Int(
