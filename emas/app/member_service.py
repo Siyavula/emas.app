@@ -22,6 +22,8 @@ from emas.app import MessageFactory as _
 
 
 NULLDATE = date(1970, 01, 01)
+SUBSCRIPTION = 'subscription'
+CREDITS = 'credits'
 
 class IMemberService(form.Schema):
     """
@@ -70,6 +72,25 @@ grok.global_adapter(serviceuid, name="serviceuid")
 class MemberService(dexterity.Item):
     grok.implements(IMemberService)
     
+    def service_type(self):
+        if self.expiry_date != NULLDATE:
+            return SUBSCRIPTION
+        return CREDITS
+
+    def is_enabled(self):
+        """ 
+            check expiry date, if it is greater than now, enabled = True
+            check credits, if is greater than 0, enabled = True
+        """
+        enabled = False
+        st = self.service_type()
+        if st == SUBSCRIPTION:
+            now = date.today()
+            enabled = now <= self.expiry_date 
+        else:
+            enabled = self.credits > 0
+        return enabled
+
 
 class SampleView(grok.View):
     grok.context(IMemberService)
