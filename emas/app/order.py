@@ -41,7 +41,7 @@ class IOrder(form.Schema):
 
     shipping_address = schema.Text(
         title=_(u"Shipping address"),
-        required=True,
+        required=False,
     )
 
     shipping_method = schema.Choice(
