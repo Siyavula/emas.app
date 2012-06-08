@@ -32,14 +32,14 @@ class IMemberService(form.Schema):
 
     userid = schema.TextLine(
         title=_(u"User id"),
-        required=False,
+        required=True,
     )
 
     related_service = RelationChoice(
         title=_(u'label_related_service', default=u'Related Service'),
         source=ObjPathSourceBinder(
           object_provides='emas.app.product.IProduct'),
-        required=False,
+        required=True,
     )
 
     expiry_date = schema.Date(
