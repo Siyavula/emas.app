@@ -83,11 +83,122 @@ def setupCatalogIndexes(portal):
             catalog.reindexIndex(name, {})
 
 
+def setupProductsAndServices(portal):
+
+    items = {
+        'maths-grade10-practice'   : {
+            'title': 'Maths Grade 10 Practice',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade10',
+            'subject': u'maths'},
+
+        'maths-grade11-practice'   : {
+            'title': 'Maths Grade 11 Practice',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade11',
+            'subject': u'maths'},
+
+        'maths-grade12-practice'   : {
+            'title': 'Maths Grade 12 Practice',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade12',
+            'subject': u'maths'},
+
+        'science-grade10-practice' : {
+            'title': 'Science Grade 10 Practice',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade10',
+            'subject': u'science'},
+
+        'science-grade11-practice' : {
+            'title': 'Science Grade 11 Practice',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade11',
+            'subject': u'science'},
+
+        'science-grade12-practice' : {
+            'title': 'Science Grade 12 Practice',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade12',
+            'subject': u'science'},
+
+        'maths-grade10-questions'  : {
+            'title': 'Maths Grade 10 Questions',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade10',
+            'subject': u'maths'},
+
+        'maths-grade11-questions'  : {
+            'title': 'Maths Grade 11 Questions',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade11',
+            'subject': u'maths'},
+
+        'maths-grade12-questions'  : {
+            'title': 'Maths Grade 12 Questions',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade12',
+            'subject': u'maths'},
+
+        'science-grade10-questions': {
+            'title': 'Science Grade 10 Questions',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade10',
+            'subject': u'science'},
+
+        'science-grade11-questions': {
+            'title': 'Science Grade 11 Questions',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade11',
+            'subject': u'science'},
+
+        'science-grade12-questions': {
+            'title': 'Science Grade 12 Questions',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade12',
+            'subject': u'science'},
+  
+    }
+
+    wf = getToolByName(portal, 'portal_workflow')
+    products_and_services = portal._getOb('products_and_services')
+    ids = products_and_services.objectIds()
+    for key, values in items.items():
+        # if it's there, move along.
+        if key in ids: continue
+
+        products_and_services.invokeFactory(type_name=values['type'],
+            id=key,
+            **values
+        ) 
+        
+        item = products_and_services._getOb(key)
+        item.subject = values['subject']
+        wf = getToolByName(portal, 'portal_workflow')
+        status = wf.getStatusOf('simple_publication_workflow', item)
+        if status['review_state'] != 'published':
+            wf.doActionFor(item, 'publish')
+            item.reindexObject()
+
+
 def install(context):
     if context.readDataFile('emas.app-marker.txt') is None:
         return
     site = context.getSite()
     setupPortalContent(site)
     setupCatalogIndexes(site)
+    setupProductsAndServices(site)
 
 
