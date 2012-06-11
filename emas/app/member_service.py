@@ -18,6 +18,7 @@ from plone.app.textfield import RichText
 from z3c.relationfield.schema import RelationList, RelationChoice
 from plone.formwidget.contenttree import ObjPathSourceBinder
 
+from emas.app.service import vocab_service_types
 from emas.app import MessageFactory as _
 
 
@@ -54,6 +55,13 @@ class IMemberService(form.Schema):
         required=False,
         default=0,
     )
+
+    service_type = schema.Choice(
+        title=_(u"Service type"),
+        vocabulary=vocab_service_types,
+        required=True,
+    )
+
 
 
 @indexer(IMemberService)

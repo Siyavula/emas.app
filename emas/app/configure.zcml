@@ -44,4 +44,10 @@
         handler=".eventhandlers.orderItemUpdated"
         />
 
+    <subscriber
+        for="emas.app.order.IOrder
+             Products.CMFCore.interfaces.IActionSucceededEvent"
+        handler=".eventhandlers.onOrderPaid"
+        />
+
 </configure>

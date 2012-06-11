@@ -91,6 +91,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade10',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'maths'},
 
         'maths-grade11-practice'   : {
@@ -98,6 +100,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade11',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'maths'},
 
         'maths-grade12-practice'   : {
@@ -105,6 +109,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade12',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'maths'},
 
         'science-grade10-practice' : {
@@ -112,6 +118,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade10',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'science'},
 
         'science-grade11-practice' : {
@@ -119,6 +127,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade11',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'science'},
 
         'science-grade12-practice' : {
@@ -126,6 +136,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade12',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'science'},
 
         'maths-grade10-questions'  : {
@@ -133,6 +145,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade10',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'maths'},
 
         'maths-grade11-questions'  : {
@@ -140,6 +154,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade11',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'maths'},
 
         'maths-grade12-questions'  : {
@@ -147,6 +163,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade12',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'maths'},
 
         'science-grade10-questions': {
@@ -154,6 +172,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade10',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'science'},
 
         'science-grade11-questions': {
@@ -161,6 +181,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade11',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'science'},
 
         'science-grade12-questions': {
@@ -168,6 +190,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade12',
+            'service_type': 'credit',
+            'amount_of_credits': 10,
             'subject': u'science'},
   
     }

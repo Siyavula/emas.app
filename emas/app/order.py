@@ -83,6 +83,9 @@ class Order(dexterity.Container):
         vat = self.vat(subtotal)
         return subtotal + vat
 
+    def order_items(self):
+        return self.getFolderContents(full_objects=True)
+
 
 class SampleView(grok.View):
     grok.context(IOrder)

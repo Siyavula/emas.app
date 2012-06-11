@@ -41,7 +41,7 @@ class IService(IProduct):
     service_type = schema.Choice(
         title=_(u"Service type"),
         vocabulary=vocab_service_types,
-        required=False,
+        required=True,
     )
 
     subscription_period = schema.Int(
