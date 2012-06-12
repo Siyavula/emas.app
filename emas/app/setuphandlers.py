@@ -22,7 +22,7 @@ def setupPortalContent(portal):
         {'id': 'orders',
         'type': 'Folder',
         'title': 'Orders',
-        'allowed_types': ['emas.app.order'],
+        'allowed_types': ['Folder'],
         'exclude_from_nav':True,
         'publish': False, 
         },
