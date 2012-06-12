@@ -6,8 +6,12 @@ import transaction
 from Testing import makerequest
 from AccessControl.SecurityManagement import newSecurityManager
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.permissions import ModifyPortalContent
 from Products.ATContentTypes.content.folder import ATFolder
+from Products.ATContentTypes.lib.constraintypes import ENABLED
+from Products.ATContentTypes.permission import ModifyConstrainTypes
+from Products.ATContentTypes.permission import ModifyViewTemplate
+from Products.CMFCore.permissions import ModifyPortalContent, AddPortalContent
+from Products.CMFCore.permissions import DeleteObjects
 
 from zope.app.component.hooks import setSite
 
@@ -34,8 +38,11 @@ newSecurityManager(None, user.__of__(app.acl_users))
 members = portal.portal_membership.listMembers()
 created = skipped = 0
 print 'Preparing to update %s folders for members.' %len(members)
+folders = {'orders': 'emas.app.folder',
+           'memberservices': 'emas.app.memberservice'}
+
 for member in members:
-    for name in ['orders', 'memberservices']:
+    for name, types in folders.items():
         print "Initialising %s for %s." %(name, member.getId())
         folder = portal._getOb(name)
         memberid = member.getId()
@@ -45,8 +52,16 @@ for member in members:
             memberfolder = ATFolder(memberid)
             folder._setObject(memberid, memberfolder)
             memberfolder.reindexObject()
+
             memberfolder.manage_permission(
                 ModifyPortalContent, roles=[], acquire=0)
+            memberfolder.setConstrainTypesMode(ENABLED)
+            memberfolder.setLocallyAllowedTypes([types,])
+            memberfolder.setImmediatelyAddableTypes([types,])
+            # Nobody is allowed to modify the constraints or tweak the
+            # display here
+            memberfolder.manage_permission(ModifyConstrainTypes, roles=[])
+            memberfolder.manage_permission(ModifyViewTemplate, roles=[])
         else:
             skipped +=1
 
