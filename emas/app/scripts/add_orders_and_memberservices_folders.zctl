@@ -48,7 +48,6 @@ for member in members:
         memberid = member.getId()
         if not memberid in folder.objectIds():
             created +=1
-            memberid = member.getId()
             memberfolder = ATFolder(memberid)
             folder._setObject(memberid, memberfolder)
             memberfolder.reindexObject()
