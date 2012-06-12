@@ -50,4 +50,10 @@
         handler=".eventhandlers.onOrderPaid"
         />
 
+    <subscriber
+        for="Products.PluggableAuthService.interfaces.authservice.IPropertiedUser
+            Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent"
+        handler=".eventhandlers.onMemberJoined"
+        />
+
 </configure>

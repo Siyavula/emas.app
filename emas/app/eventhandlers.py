@@ -5,6 +5,11 @@ from z3c.relationfield.relation import create_relation
 
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import ModifyPortalContent
+from Products.ATContentTypes.permission import ModifyConstrainTypes
+from Products.ATContentTypes.permission import ModifyViewTemplate
+from Products.ATContentTypes.content.folder import ATFolder
+from Products.ATContentTypes.lib.constraintypes import ENABLED
 
 
 def orderAdded(order, event):
@@ -81,6 +86,32 @@ def onOrderPaid(order, event):
                 if service.service_type == 'credit':
                     ms.credits = service.amount_of_credits
                 elif service.service_type == 'subscription':
-                    expiry_date = now + datetime.timedelta(service.subscription_period)
+                    expiry_date = now + datetime.timedelta(
+                                            service.subscription_period)
                     ms.expiry_date = expiry_date
+
+
+def onMemberJoined(obj, event):
+    portal = obj.restrictedTraverse('@@plone_portal_state').portal()
+    memberid = obj.getId()
+    
+    # we create a order and memberservices folder per user and disable all 
+    # other object creation, edit, etc. on the orders or memberservices folders.
+    folders = {'orders': 'emas.app.folder',
+               'memberservices': 'emas.app.memberservice'}
+    for name, types in folders.items():
+        folder = portal._getOb(name)
+        if not memberid in folder.objectIds():
+            memberfolder = ATFolder(memberid)
+            folder._setObject(memberid, memberfolder)
+            memberfolder.reindexObject()
+
+            memberfolder.setConstrainTypesMode(ENABLED)
+            memberfolder.setLocallyAllowedTypes([types,])
+            memberfolder.setImmediatelyAddableTypes([types,])
+
+            memberfolder.manage_permission(
+                ModifyPortalContent, roles=[], acquire=0)
+            memberfolder.manage_permission(ModifyConstrainTypes, roles=[])
+            memberfolder.manage_permission(ModifyViewTemplate, roles=[])
 
