@@ -18,27 +18,29 @@ log = logging.getLogger('emas.app-setuphandlers')
 DEFAULT_TYPES = ['Folder', 'Document']
 
 def setupPortalContent(portal):
+    """
+        We don't specify workflows for the emas.app containers, since there
+        default workflow state is sufficient.
+    """
+
     folders = [
         {'id': 'orders',
-        'type': 'Folder',
+        'type': 'emas.app.orderfolder',
         'title': 'Orders',
-        'allowed_types': ['Folder'],
         'exclude_from_nav':True,
-        'publish': False, 
         },
         {'id': 'products_and_services',
         'type': 'Folder',
         'title': 'Products and Services',
         'allowed_types': ['emas.app.product', 'emas.app.service'],
         'exclude_from_nav':True,
+        'workflowid': 'simple_publication_workflow',
         'publish': True,
         },
         {'id': 'memberservices',
-        'type': 'Folder',
+        'type': 'emas.app.memberservicefolder',
         'title': 'Member Services',
-        'allowed_types': ['emas.app.memberservice'],
         'exclude_from_nav':True,
-        'publish': False,
         },
     ]
 
@@ -52,10 +54,6 @@ def setupPortalContent(portal):
 
         folder = portal._getOb(folder_dict['id'])
 
-        #folder.setLayout(folder_dict['layout'])
-        folder.setConstrainTypesMode(ENABLED)
-        folder.setLocallyAllowedTypes(folder_dict['allowed_types'])
-        folder.setImmediatelyAddableTypes(folder_dict['allowed_types'])
         # Nobody is allowed to modify the constraints or tweak the
         # display here
         folder.manage_permission(ModifyConstrainTypes, roles=[])
@@ -63,7 +61,8 @@ def setupPortalContent(portal):
         
         if folder_dict.get('publish', False):
             wf = getToolByName(portal, 'portal_workflow')
-            status = wf.getStatusOf('simple_publication_workflow', folder)
+            wfid = folder_dict['workflowid']
+            status = wf.getStatusOf(wfid, folder)
             if status['review_state'] != 'published':
                 wf.doActionFor(folder, 'publish')
                 folder.reindexObject()
