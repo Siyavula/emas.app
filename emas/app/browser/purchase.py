@@ -11,7 +11,9 @@ SELECTION_CONFIRMATION = 'selection_confirmation'
 grok.templatedir('templates')
 
 class Purchase(grok.View):
-    """Render a document as a message
+    """
+        A 2 stage form that captures the services and products a user wants
+        to buy.
     """
     
     grok.context(Interface)
