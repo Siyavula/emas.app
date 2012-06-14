@@ -1,0 +1,127 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emas.theme">
+<body>
+
+    <metal:core fill-slot="main">
+    <h1 class="documentFirstHeading">Place Order</h1>
+
+    <div id="content-core">
+
+        <div id="selectitems"
+            tal:define="
+            mode view/mode | string:service_selection;
+            portal context/plone_portal_state/portal;
+            services python:portal.restrictedTraverse('products_and_services');
+            root_path python:'/'.join(portal.getPhysicalPath());
+
+            items_dict python: {
+                'maths-grade10-practice'   : '%s/products_and_services/maths-grade10-practice' %root_path,
+                'maths-grade11-practice'   : '%s/products_and_services/maths-grade11-practice' %root_path,
+                'maths-grade12-practice'   : '%s/products_and_services/maths-grade12-practice' %root_path,
+                'science-grade10-practice' : '%s/products_and_services/science-grade10-practice' %root_path,
+                'science-grade11-practice' : '%s/products_and_services/science-grade11-practice' %root_path,
+                'science-grade12-practice' : '%s/products_and_services/science-grade12-practice' %root_path,
+                'maths-grade10-questions'  : '%s/products_and_services/maths-grade10-questions' %root_path,
+                'maths-grade11-questions'  : '%s/products_and_services/maths-grade11-questions' %root_path,
+                'maths-grade12-questions'  : '%s/products_and_services/maths-grade12-questions' %root_path,
+                'science-grade10-questions': '%s/products_and_services/science-grade10-questions' %root_path,
+                'science-grade11-questions': '%s/products_and_services/science-grade11-questions' %root_path,
+                'science-grade12-questions': '%s/products_and_services/science-grade12-questions' %root_path,
+            }">
+            
+            <!--h2 tal:content="view">view</h2-->
+
+            <form tal:condition="python:mode == 'service_selection'"
+                id="orderform" name="orderform" method="POST"
+                tal:attributes="action string:${context/absolute_url}/@@purchase">
+
+                <tal:services_and_products repeat="key items_dict">
+
+                <tal:def-item define="
+                    item python:portal.restrictedTraverse(items_dict[key])">
+                <h2 tal:content="item/Title">Product or Service Title</h2>
+
+                <fieldset>
+                    <legend tal:content="item/description">
+                        Product or Service description
+                    </legend>
+
+                    <div class="pricinginfo">
+                        Order <input class="quantity" name="order.[service name]:record:int:ignore_empty"
+                                     tal:attributes="price item/price;
+                                                     name string:order.${item/getId}:record:int:ignore_empty">
+                        @ <strong tal:content="item/price">R150</strong>
+                    </div>
+                </fieldset>
+                </tal:def-item>
+
+                </tal:services_and_products>
+
+                <div class="ordertotal">
+                    <div>
+                    Total = <span id="totalcost" class="amount">R0</span>
+                    </div>
+
+                    <input type="hidden" name="purchase.form.submitted" value="true"/>
+                
+                    <button type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="submit" value="1">Submit
+                    </button>
+                </div>
+
+
+            </form>
+
+            <form tal:condition="python:mode == 'selection_confirmation'"
+                id="orderform" name="orderconfirmationform" method="POST"
+                tal:attributes="action string:${context/absolute_url}/@@purchase">
+
+                <tal:services_and_products repeat="service_id view/selected_services">
+
+                <tal:def-item define="item python:services[service_id]">
+                <fieldset>
+                    <span tal:content="item/Title">Title</span>
+
+                    <span class="pricinginfo"
+                        tal:define="price item/price;
+                                    quantity python:view.selected_services[service_id];
+                                    name string:order.${item/getId}:record:int:ignore_empty;">
+                                    
+                        <span tal:content="quantity">quantity</span> @ <strong tal:content="string:R ${price}">R150</strong>
+                        
+                        <input type="hidden" class="quantity" name="order.[service name]:record:int:ignore_empty"
+                                     tal:attributes="value quantity;
+                                                     price price;
+                                                     name name;">
+                    </span>
+                </fieldset>
+
+                </tal:def-item>
+
+                </tal:services_and_products>
+
+                <div class="ordertotal">
+                    <div>
+                    Total = <span id="totalcost" class="amount">R0</span>
+                    </div>
+
+                    <input type="hidden" name="purchase.confirmed" value="true"/>
+                
+                    <button type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="submit" value="1">
+                        Confirm order
+                    </button>
+                </div>
+
+
+            </form>
+        
+        </div>
+
+    </metal:core>
+
+</body>
+</html>
