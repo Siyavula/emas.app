@@ -42,6 +42,7 @@ def onOrderPaid(order, event):
     """ Once the order is paid we create the memberservices.
     """
     if event.action == 'pay':
+        pms = getToolByName(order, 'portal_membership')
         pps = order.restrictedTraverse('@@plone_portal_state')
         portal = pps.portal()
         memberid = pps.member().getId()
@@ -78,7 +79,10 @@ def onOrderPaid(order, event):
                     related_service=create_relation(service.getPhysicalPath()),
                     service_type = service.service_type,
                 )
-                ms = memberservices[msid]
+                ms = memberservices._getOb(msid)
+                # give the order owner permissions on the new memberservice, or
+                # we wont' be able to find the memberservices for this user
+                pms.setLocalRoles(ms, order.userid, 'Owner')
                 tmpservices.append(ms)
 
             # update the memberservices with info from the orderitem
@@ -89,29 +93,3 @@ def onOrderPaid(order, event):
                     expiry_date = now + datetime.timedelta(
                                             service.subscription_period)
                     ms.expiry_date = expiry_date
-
-
-def onMemberJoined(obj, event):
-    portal = obj.restrictedTraverse('@@plone_portal_state').portal()
-    memberid = obj.getId()
-    
-    # we create a order and memberservices folder per user and disable all 
-    # other object creation, edit, etc. on the orders or memberservices folders.
-    folders = {'orders': 'emas.app.folder',
-               'memberservices': 'emas.app.memberservice'}
-    for name, types in folders.items():
-        folder = portal._getOb(name)
-        if not memberid in folder.objectIds():
-            memberfolder = ATFolder(memberid)
-            folder._setObject(memberid, memberfolder)
-            memberfolder.reindexObject()
-
-            memberfolder.setConstrainTypesMode(ENABLED)
-            memberfolder.setLocallyAllowedTypes([types,])
-            memberfolder.setImmediatelyAddableTypes([types,])
-
-            memberfolder.manage_permission(
-                ModifyPortalContent, roles=[], acquire=0)
-            memberfolder.manage_permission(ModifyConstrainTypes, roles=[])
-            memberfolder.manage_permission(ModifyViewTemplate, roles=[])
-
