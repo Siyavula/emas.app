@@ -8,6 +8,8 @@
   -->
 <object name="portal_types" meta_type="Plone Types Tool">
   <!-- -*- extra stuff goes here -*- -->
+  <object name="emas.app.memberservicefolder" meta_type="Dexterity FTI" />
+  <object name="emas.app.orderfolder" meta_type="Dexterity FTI" />
   <object name="emas.app.memberservice" meta_type="Dexterity FTI" />
   <object name="emas.app.orderitem" meta_type="Dexterity FTI" />
   <object name="emas.app.order" meta_type="Dexterity FTI" />
