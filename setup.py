@@ -29,7 +29,8 @@ setup(name='emas.app',
           'plone.app.dexterity',
           'collective.autopermission',
           'collective.testcaselayer',
-          'five.grok',
+          'plone.app.z3cform',
+          'plone.directives.form',
           # -*- Extra requirements: -*-
       ],
       extras_require={
