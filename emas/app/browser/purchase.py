@@ -38,7 +38,9 @@ class Purchase(grok.View):
             
         elif self.request.get('purchase.confirmed'):
             # create member service objects
-            portal_state = self.context.restrictedTraverse('@@plone_portal_state')
+            portal_state = self.context.restrictedTraverse(
+                '@@plone_portal_state'
+            )
             portal = portal_state.portal()
             member = portal_state.member()
             memberid = member.getId()
@@ -71,4 +73,5 @@ class Purchase(grok.View):
                     quantity=quantity,
                 )
 
-            self.request.response.redirect(self.context.absolute_url())
+            self.request.response.redirect(
+                '@@paymentdetails/?orderid=%s' %order.getId())
