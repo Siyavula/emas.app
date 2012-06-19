@@ -45,14 +45,16 @@ def onOrderPaid(order, event):
         pms = getToolByName(order, 'portal_membership')
         pps = order.restrictedTraverse('@@plone_portal_state')
         portal = pps.portal()
-        memberid = pps.member().getId()
+        # we cannot use the authenticated user since an admin user might
+        # trigger the workflow.
+        userid = order.userid 
 
         memberservices = portal['memberservices']
         ms_path = '/'.join(memberservices.getPhysicalPath())
 
         pc = getToolByName(portal, 'portal_catalog')
         query = {'portal_type': 'memberservice',
-                 'userid'   : memberid,
+                 'userid'   : userid,
                  'path'       : ms_path}
         
         tmpservices = []
@@ -75,7 +77,7 @@ def onOrderPaid(order, event):
                     type_name='emas.app.memberservice',
                     id=msid,
                     title=msid,
-                    userid=memberid,
+                    userid=userid,
                     related_service=create_relation(service.getPhysicalPath()),
                     service_type = service.service_type,
                 )
