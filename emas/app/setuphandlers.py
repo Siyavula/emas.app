@@ -72,6 +72,7 @@ def setupCatalogIndexes(portal):
     new_indexes = {
         'userid': 'FieldIndex',
         'serviceuid': 'FieldIndex',
+        'expiry_date': 'DateIndex',
     }
 
     catalog = getToolByName(portal, 'portal_catalog')

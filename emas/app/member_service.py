@@ -77,6 +77,12 @@ def serviceuid(obj):
 grok.global_adapter(serviceuid, name="serviceuid")
 
 
+@indexer(IMemberService)
+def expiry_date(obj):
+    return obj.expiry_date
+grok.global_adapter(expiry_date, name="expiry_date")
+
+
 class MemberService(dexterity.Item):
     grok.implements(IMemberService)
     
