@@ -47,11 +47,13 @@ class IService(IProduct):
     subscription_period = schema.Int(
         title=_(u"Subscription period"),
         required=False,
+        default=30,
     )
 
     amount_of_credits = schema.Int(
         title=_(u"Amount of credits"),
         required=False,
+        default=20,
     )
 
     grade = schema.Choice(
