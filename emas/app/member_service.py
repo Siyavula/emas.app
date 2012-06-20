@@ -66,7 +66,7 @@ class IMemberService(form.Schema):
 
 @indexer(IMemberService)
 def userid(obj):
-    return obj.Creator()
+    return obj.userid
 grok.global_adapter(userid, name="userid")
 
 
