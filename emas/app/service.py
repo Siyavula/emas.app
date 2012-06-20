@@ -1,5 +1,6 @@
 from five import grok
 from plone.directives import dexterity, form
+from plone.indexer import indexer
 
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -20,9 +21,9 @@ vocab_service_types = SimpleVocabulary(
 
 vocab_grades = SimpleVocabulary(
     [
-     SimpleTerm(value=u'grade10', title=_(u'Grade 10')),
-     SimpleTerm(value=u'grade11', title=_(u'Grade 11')),
-     SimpleTerm(value=u'grade12', title=_(u'Grade 12')),
+     SimpleTerm(value=u'grade-10', title=_(u'Grade 10')),
+     SimpleTerm(value=u'grade-11', title=_(u'Grade 11')),
+     SimpleTerm(value=u'grade-12', title=_(u'Grade 12')),
     ]
 )
 
@@ -67,6 +68,18 @@ class IService(IProduct):
         vocabulary=vocab_subjects,
         required=True,
     )
+
+
+@indexer(IService)
+def grade(obj):
+    return obj.grade
+grok.global_adapter(grade, name="grade")
+
+
+@indexer(IService)
+def subject(obj):
+    return obj.subject
+grok.global_adapter(subject, name="subject")
 
 
 class Service(Product):
