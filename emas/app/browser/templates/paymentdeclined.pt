@@ -8,7 +8,7 @@
 <body>
 
     <metal:core fill-slot="main">
-    <h1 class="documentFirstHeading">Place declined</h1>
+    <h1 class="documentFirstHeading">Payment declined</h1>
 
     <div id="content-core">
     
