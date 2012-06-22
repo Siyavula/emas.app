@@ -51,8 +51,10 @@ class Purchase(grok.View):
             if order_items is None or len(order_items) < 1:
                 # no items selected, show the selection UI
                 self.mode = SERVICE_SELECTION
-
-            order_id = member_orders.generateUniqueId(type_name='order')
+            
+            # we use a short type_name, since VCS has limited amount of chars
+            # it accepts and returns.
+            order_id = member_orders.generateUniqueId(type_name='on')
             member_orders.invokeFactory(
                 type_name='emas.app.order',
                 id=order_id,
