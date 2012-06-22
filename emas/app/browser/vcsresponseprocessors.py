@@ -12,6 +12,8 @@ from zope.component import queryUtility
 
 from Products.CMFCore.utils import getToolByName
 
+from emas.theme.interfaces import IEmasSettings
+
 
 grok.templatedir('templates')
 
