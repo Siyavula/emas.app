@@ -6,7 +6,9 @@ from plone.registry.interfaces import IRegistry
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
+
 from zope.interface import Interface
+from zope.component import queryUtility
 
 from Products.CMFCore.utils import getToolByName
 
