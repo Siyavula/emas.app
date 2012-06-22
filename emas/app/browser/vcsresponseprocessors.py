@@ -3,6 +3,8 @@ from Acquisition import aq_inner
 
 from zope.interface import Interface
 
+from Products.CMFCore.utils import getToolByName
+
 
 grok.templatedir('templates')
 
