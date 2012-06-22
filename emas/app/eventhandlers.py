@@ -100,6 +100,7 @@ def onOrderPaid(order, event):
                     expiry_date = now + datetime.timedelta(
                                             service.subscription_period)
                     ms.expiry_date = expiry_date
+                ms.reindexObject()
 
 
 def questionAsked(obj, event):
