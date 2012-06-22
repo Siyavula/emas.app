@@ -35,6 +35,10 @@ class PaymentDetails(grok.View):
 
         settings = queryUtility(IRegistry).forInterface(IEmasSettings)
         
+        # when debugging you can use this action to return to the approved
+        # page immediately.
+        # self.action = '%s/@@paymentapproved' %self.context.absolute_url()
+
         # becomes the action to which the page is posted.
         self.action=settings.vcs_url
 
