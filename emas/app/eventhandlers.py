@@ -89,7 +89,7 @@ def onOrderPaid(order, event):
                 ms = memberservices._getOb(msid)
                 # give the order owner permissions on the new memberservice, or
                 # we wont' be able to find the memberservices for this user
-                pms.setLocalRoles(ms, order.userid, 'Owner')
+                pms.setLocalRoles(ms, [order.userid], 'Owner')
                 tmpservices.append(ms)
 
             # update the memberservices with info from the orderitem

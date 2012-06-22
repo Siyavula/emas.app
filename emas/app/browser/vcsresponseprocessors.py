@@ -1,6 +1,11 @@
 from five import grok
 from Acquisition import aq_inner
 
+from plone.registry.interfaces import IRegistry
+
+from AccessControl.SecurityManagement import newSecurityManager
+from AccessControl.SecurityManagement import getSecurityManager
+from AccessControl.SecurityManagement import setSecurityManager
 from zope.interface import Interface
 
 from Products.CMFCore.utils import getToolByName
@@ -31,11 +36,25 @@ class PaymentApproved(grok.View):
         self.order = getOrder(self.context, self.request)
 
         wf = getToolByName(self.context, 'portal_workflow')
-        status = wf.getStatusOf('order_workflow', item)
+        status = wf.getStatusOf('order_workflow', self.order)
         if status['review_state'] != 'paid':
-            wf.doActionFor(order, 'pay')
-            order.reindexObject()
-       
+            pps = self.context.restrictedTraverse('@@plone_portal_state')
+            portal = pps.portal()
+
+            settings = queryUtility(IRegistry).forInterface(IEmasSettings)
+            userid = settings.vcs_user_id
+            user = portal.acl_users.getUserById(userid)
+
+            old_security_manager = getSecurityManager()
+            newSecurityManager(self.request, user)
+
+            try:
+                wf.doActionFor(self.order, 'pay')
+                self.order.reindexObject()
+            finally:
+                # restore the original Security Managemer
+                setSecurityManager(old_security_manager)
+
         # we put 'm1', the absolute_url of the context, in as a parameter to the
         # initial VCS call.  If it is returned we want to show the approved page
         # in that context rather than the current context, which could be the
@@ -71,6 +90,13 @@ class Callback(grok.View):
     
     def update(self):
         self.order = getOrder(self.context, self.request)
+
+        wf = getToolByName(self.context, 'portal_workflow')
+        status = wf.getStatusOf('order_workflow', self.order)
+        if status['review_state'] != 'paid':
+            wf.doActionFor(self.order, 'pay')
+            self.order.reindexObject()
+       
 
     def render(self):
         return ''
