@@ -81,7 +81,7 @@ def member_services(context, service_uids):
     pmt = getToolByName(context, 'portal_membership')
     member = pmt.getAuthenticatedMember()
     query = {'portal_type': 'emas.app.memberservice',
-             'memberid': member.getId(),
+             'userid': member.getId(),
              'serviceuid': service_uids,
              'sort_on': 'expiry_date'
             }
