@@ -93,8 +93,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-10',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
             'subject': u'maths'},
 
         'maths-grade11-practice'   : {
@@ -102,8 +102,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-11',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
             'subject': u'maths'},
 
         'maths-grade12-practice'   : {
@@ -111,8 +111,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-12',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
             'subject': u'maths'},
 
         'science-grade10-practice' : {
@@ -120,8 +120,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-10',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
             'subject': u'science'},
 
         'science-grade11-practice' : {
@@ -129,8 +129,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-11',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
             'subject': u'science'},
 
         'science-grade12-practice' : {
@@ -138,8 +138,8 @@ def setupProductsAndServices(portal):
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-12',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
             'subject': u'science'},
 
         'maths-grade10-questions'  : {
