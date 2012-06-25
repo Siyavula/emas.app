@@ -1,0 +1,9 @@
+#products_and_services input,
+#products_and_services input {
+    margin-left: 0;
+}
+
+#products_and_services th,
+#products_and_services td {
+    vertical-align: middle;
+}

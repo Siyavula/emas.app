@@ -77,3 +77,8 @@ class Purchase(grok.View):
 
             self.request.response.redirect(
                 '@@paymentdetails/?orderid=%s' %order.getId())
+    
+    def products_and_services(self):
+        pps = self.context.restrictedTraverse('@@plone_portal_state')
+        products_and_services = pps.portal()._getOb('products_and_services')
+        return products_and_services.getFolderContents(full_objects=True)

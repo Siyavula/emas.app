@@ -40,27 +40,22 @@
                 id="orderform" name="orderform" method="POST"
                 tal:attributes="action string:${context/absolute_url}/@@purchase">
 
-                <tal:services_and_products repeat="key items_dict">
-
-                <tal:def-item define="
-                    item python:portal.restrictedTraverse(items_dict[key])">
-                <h2 tal:content="item/Title">Product or Service Title</h2>
-
-                <fieldset>
-                    <legend tal:content="item/description">
-                        Product or Service description
-                    </legend>
-
-                    <div class="pricinginfo">
-                        Order <input class="quantity" name="order.[service name]:record:int:ignore_empty"
-                                     tal:attributes="price item/price;
-                                                     name string:order.${item/getId}:record:int:ignore_empty">
-                        @ <strong tal:content="item/price">R150</strong>
-                    </div>
-                </fieldset>
-                </tal:def-item>
-
-                </tal:services_and_products>
+                <table id="products_and_services">
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                    <tr tal:repeat="item view/products_and_services">
+                        <td tal:content="item/Title">Item title</td>
+                        <td tal:content="item/price">Price</td>
+                        <td><input class="quantity"
+                                   name="order.[service name]:record:int:ignore_empty"
+                                   tal:attributes="price item/price;
+                                                   name string:order.${item/getId}:record:int:ignore_empty">
+                        </td>
+                    </tr>
+                </table>
 
                 <div class="ordertotal">
                     <div>
