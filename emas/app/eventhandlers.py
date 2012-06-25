@@ -101,7 +101,7 @@ def onOrderPaid(order, event):
                 elif service.service_type == 'subscription':
                     expiry_date = now + datetime.timedelta(
                                             service.subscription_period)
-                    ms.expiry_date = expiry_date
+                    ms.expiry_date = expiry_date.date()
                 ms.reindexObject()
 
 
