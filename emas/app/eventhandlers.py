@@ -151,7 +151,7 @@ def memberServiceAdded(obj, event):
     obj_path = '/'.join(obj.getPhysicalPath())
 
     query = {'portal_type': 'emas.app.memberservice',
-             'memberid': obj.userid,
+             'userid': obj.userid,
              'serviceuid': IUUID(service),
             }
     pc = getToolByName(service, 'portal_catalog')
