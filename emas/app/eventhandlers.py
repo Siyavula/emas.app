@@ -58,7 +58,7 @@ def onOrderPaid(order, event):
         ms_path = '/'.join(memberservices.getPhysicalPath())
 
         pc = getToolByName(portal, 'portal_catalog')
-        query = {'portal_type': 'memberservice',
+        query = {'portal_type': 'emas.app.memberservice',
                  'userid'   : userid,
                  'path'       : ms_path}
         
@@ -95,7 +95,9 @@ def onOrderPaid(order, event):
             # update the memberservices with info from the orderitem
             for ms in tmpservices:
                 if service.service_type == 'credit':
-                    ms.credits = service.amount_of_credits
+                    credits = ms.credits
+                    credits += service.amount_of_credits
+                    ms.credits = credits
                 elif service.service_type == 'subscription':
                     expiry_date = now + datetime.timedelta(
                                             service.subscription_period)
