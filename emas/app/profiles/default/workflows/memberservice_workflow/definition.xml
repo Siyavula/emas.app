@@ -5,6 +5,17 @@
  <permission>Modify portal content</permission>
  <permission>View</permission>
  <state state_id="published" title="">
+  <permission-map name="Access contents information" acquired="True">
+  </permission-map>
+  <permission-map name="Change portal events" acquired="True">
+  </permission-map>
+  <permission-map name="Modify portal content" acquired="True">
+  </permission-map>
+  <permission-map name="View" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Site Administrator</permission-role>
+  </permission-map>
  </state>
  <transition transition_id="deactivate" title="Deactivate" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=deactivate" category="workflow" icon="">Deactivate</action>
