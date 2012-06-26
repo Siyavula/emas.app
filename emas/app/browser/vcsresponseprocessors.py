@@ -59,11 +59,11 @@ class PaymentApproved(grok.View):
                 # restore the original Security Managemer
                 setSecurityManager(old_security_manager)
 
-        # we put 'm1', the absolute_url of the context, in as a parameter to the
+        # we put 'm_1', the absolute_url of the context, in as a parameter to the
         # initial VCS call.  If it is returned we want to show the approved page
         # in that context rather than the current context, which could be the
         # root of the plone site.
-        original_url = self.request.get('m1', None)
+        original_url = self.request.get('m_1', None)
         if original_url is not None and len(original_url) > 0:
             url = original_url + '/@@paymentapproved'
             self.request.response.redirect(url)
@@ -78,7 +78,7 @@ class PaymentDeclined(grok.View):
 
     
     def update(self):
-        original_url = self.request.get('m1', None)
+        original_url = self.request.get('m_1', None)
         if original_url is not None and len(original_url) > 0:
             url = original_url + '/@@paymentdeclined'
             self.request.response.redirect(url)
