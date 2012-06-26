@@ -33,7 +33,7 @@
                         tal:attributes="value view/cost">
 
                         <input type="hidden" name="m_1" value="1"
-                        tal:attributes="value view/returnurl">
+                        tal:attributes="value string:${view/returnurl}">
                             
                         <input type="hidden" name="hash" value="1"
                             tal:attributes="value view/md5hash">
