@@ -1,0 +1,25 @@
+Dear <span tal:replace="options/fullname">John</span>
+
+Thank you for your order!
+
+You have ordered the following items from the <span tal:replace="options/sitename">Everything Maths</span> website:
+<tal:items tal:repeat="item options/orderitems">-  <tal:item tal:replace="item"/></tal:items>
+
+The total cost of your order is: R<tal:cost tal:replace="options/totalcost"/>.00
+
+Payment for this order can be made using an electronic funds transfer
+(EFT) to the bank account below. Please ensure that you use the correct
+reference as specified below.
+
+Account name: Siyavula Education
+Bank: Nedbank
+Account number: 1018177434
+Branch code:198765
+Reference: <tal:username tal:replace="options/ordernumber"/>
+
+Please email proof of payment to <tal:email tal:replace="options/email"/>
+
+Should you have any queries, please contact us by email at <tal:email tal:replace="options/email"/>, by phone at <tal:email tal:replace="options/phone"/> or simply reply to this email.
+
+Regards,
+Siyavula Education

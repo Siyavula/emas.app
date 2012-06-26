@@ -1,0 +1,13 @@
+A new order was just placed by <span tal:replace="options/fullname">John</span>
+
+Order Number:  <tal:ordernumber tal:replace="options/ordernumber"/>
+Username: <tal:username tal:replace="options/username"/>
+
+The following items were ordered <span tal:replace="options/sitename">Everything Maths</span> website:
+<tal:items tal:repeat="item options/orderitems">-  <tal:items tal:replace="item"/></tal:items>
+
+The total cost of the order is: R<tal:cost tal:replace="options/totalcost"/>.00
+
+To activate this user's services once payment has been made, simply change the order to 'paid' by selecting 'pay' from the workflow dropdown.
+
+<a href="#" tal:attributes="href options/orderurl">Link to user's order</a>
