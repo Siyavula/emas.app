@@ -51,7 +51,7 @@
                         Funds Transfer (EFT) and the following account details:
                     </h3>
                     <br/>
-                    <label for="ordernumber">Order number</label><br/>
+                    <label for="ordernumber">Order number (use this as reference number)</label><br/>
                     <p id="ordernumber"
                         tal:content="python:view.order.getId()">
                         Order number
@@ -66,7 +66,7 @@
                         Account number:
                     </label>
                     <p id="accountnumber">
-                        9999 9999 9999 9999
+                        1018177434
                     <p/>
 
                     <label for="bankname">
@@ -80,7 +80,7 @@
                         Branch code:
                     </label>
                     <p id="branchcode">
-                        9999 9999
+                        198765
                     </p>
                 </div>
             </fieldset>
