@@ -59,11 +59,14 @@ class PaymentDetails(grok.View):
         self.cost = self.order.total()
         self.quantity = 1
 
+        # the return url passed as m_1 in the template
+        self.returnurl = self.context.absolute_url()
+
         self.md5key = settings.vcs_md5_key
 
         self.md5hash = vcs_hash(self.vcs_terminal_id + self.tid + 
                                 self.description + str(self.cost) +
-                                self.md5key)
+                                self.returnurl + self.md5key)
 
     def getOrder(self, orderid):
         pps = self.context.restrictedTraverse('@@plone_portal_state')
