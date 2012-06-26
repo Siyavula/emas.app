@@ -63,7 +63,6 @@ class IMemberService(form.Schema):
     )
 
 
-
 @indexer(IMemberService)
 def userid(obj):
     return obj.userid
@@ -78,6 +77,12 @@ grok.global_adapter(serviceuid, name="serviceuid")
 
 
 @indexer(IMemberService)
+def subject(obj):
+    return obj.related_service.to_object.subject
+grok.global_adapter(subject, name="subject")
+
+
+@indexer(IMemberService)
 def expiry_date(obj):
     return obj.expiry_date
 grok.global_adapter(expiry_date, name="expiry_date")
@@ -86,18 +91,13 @@ grok.global_adapter(expiry_date, name="expiry_date")
 class MemberService(dexterity.Item):
     grok.implements(IMemberService)
     
-    def service_type(self):
-        if self.expiry_date != NULLDATE:
-            return SUBSCRIPTION
-        return CREDITS
-
     def is_enabled(self):
         """ 
             check expiry date, if it is greater than now, enabled = True
             check credits, if is greater than 0, enabled = True
         """
         enabled = False
-        st = self.service_type()
+        st = self.service_type
         if st == SUBSCRIPTION:
             now = date.today()
             enabled = now <= self.expiry_date 
