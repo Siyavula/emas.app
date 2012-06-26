@@ -37,29 +37,32 @@ class PaymentApproved(grok.View):
 
     
     def update(self):
-        self.order = getOrder(self.context, self.request)
+        # on the first pass after VCS the request will have a 'p2' var
+        # then we do the rest. Otherwise, just render the template.
+        if self.request.has_key('p2'):
+            self.order = getOrder(self.context, self.request)
 
-        wf = getToolByName(self.context, 'portal_workflow')
-        status = wf.getStatusOf('order_workflow', self.order)
-        if status['review_state'] != 'paid':
-            pps = self.context.restrictedTraverse('@@plone_portal_state')
-            portal = pps.portal()
+            wf = getToolByName(self.context, 'portal_workflow')
+            status = wf.getStatusOf('order_workflow', self.order)
+            if status['review_state'] != 'paid':
+                pps = self.context.restrictedTraverse('@@plone_portal_state')
+                portal = pps.portal()
 
-            settings = queryUtility(IRegistry).forInterface(IEmasSettings)
-            userid = settings.vcs_user_id
-            user = portal.acl_users.getUserById(userid)
+                settings = queryUtility(IRegistry).forInterface(IEmasSettings)
+                userid = settings.vcs_user_id
+                user = portal.acl_users.getUserById(userid)
 
-            old_security_manager = getSecurityManager()
-            newSecurityManager(self.request, user)
+                old_security_manager = getSecurityManager()
+                newSecurityManager(self.request, user)
 
-            try:
-                wf.doActionFor(self.order, 'pay')
-                self.order.reindexObject()
-            finally:
-                # restore the original Security Managemer
-                setSecurityManager(old_security_manager)
+                try:
+                    wf.doActionFor(self.order, 'pay')
+                    self.order.reindexObject()
+                finally:
+                    # restore the original Security Managemer
+                    setSecurityManager(old_security_manager)
 
-        # we put 'm_1', the absolute_url of the context, in as a parameter to the
+        # we put 'm_1', the absolute_url of the context, in as parameter to the
         # initial VCS call.  If it is returned we want to show the approved page
         # in that context rather than the current context, which could be the
         # root of the plone site.
