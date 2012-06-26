@@ -6,7 +6,7 @@ Username: <tal:username tal:replace="options/username"/>
 The following items were ordered <span tal:replace="options/sitename">Everything Maths</span> website:
 <tal:items tal:repeat="item options/orderitems">-  <tal:items tal:replace="item"/></tal:items>
 
-The total cost of the order is: R<tal:cost tal:replace="options/totalcost"/>.00
+The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
 To activate this user's services once payment has been made, simply change the order to 'paid' by selecting 'pay' from the workflow dropdown.
 
