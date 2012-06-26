@@ -63,7 +63,7 @@ def onOrderPaid(order, event):
                  'path'       : ms_path}
         
         tmpservices = []
-        now = datetime.datetime.now()
+        now = datetime.datetime.now().date()
         # grab the services from the orderitems
         for item in order.order_items():
             # try to find the memberservices based on the orderitem related services.
@@ -99,9 +99,16 @@ def onOrderPaid(order, event):
                     credits += service.amount_of_credits
                     ms.credits = credits
                 elif service.service_type == 'subscription':
-                    expiry_date = now + datetime.timedelta(
-                                            service.subscription_period)
-                    ms.expiry_date = expiry_date.date()
+                    # Always use the current expiry date if it is greater than
+                    # 'now', since that gives the user everything he paid for.
+                    # Only use 'now' if the service has already expired, so we
+                    # don't give the user more than he paid for.
+                    if now > ms.expiry_date:
+                        ms.expiry_date = now
+                    expiry_date = ms.expiry_date + datetime.timedelta(
+                        service.subscription_period
+                    )
+                    ms.expiry_date = expiry_date
                 ms.reindexObject()
 
 
