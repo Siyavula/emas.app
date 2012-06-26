@@ -50,6 +50,12 @@
                         Payment for Premium Services can also be made using an Electronic
                         Funds Transfer (EFT) and the following account details:
                     </h3>
+                    <br/>
+                    <label for="ordernumber">Order number</label><br/>
+                    <p id="ordernumber"
+                        tal:content="python:view.order.getId()">
+                        Order number
+                    </p>
 
                     <label for="accountholdername">Account holder</label><br/>
                     <p id="accountholdername">

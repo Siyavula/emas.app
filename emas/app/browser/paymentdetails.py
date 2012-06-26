@@ -51,12 +51,12 @@ class PaymentDetails(grok.View):
         if self.tid == None or len(self.tid) < 1:
             raise AttributeError('No orderid supplied')
 
-        order = self.getOrder(self.tid)
+        self.order = self.getOrder(self.tid)
         # becomes p3 in the template
-        self.description = 'Siyavula EMAS %s' %order.Title()
+        self.description = 'Siyavula EMAS %s' %self.order.Title()
         
         # becomes p4 in the template
-        self.cost = order.total()
+        self.cost = self.order.total()
         self.quantity = 1
 
         self.md5key = settings.vcs_md5_key
