@@ -61,7 +61,8 @@ def paths_to_uuids(paths, context):
 
 def qaservice_uuids(context):
     mapping = service_mapping.get('qaservices')
-    service_paths = mapping.get('general')
+    # better get a copy or we will modify this in-place and break the mapping
+    service_paths = mapping.get('general')[:]
     subject, grade = subject_and_grade(context)
     service_paths.extend(
         mapping.get('%s/%s' %(subject, grade), [])
