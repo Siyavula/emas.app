@@ -31,8 +31,9 @@ service_mapping = {
 }
 
 
-def qaservice_paths(self):
+def qaservice_paths():
     return service_mapping.get('qaservices')
+
 
 def subject_and_grade(context):
     """
@@ -134,4 +135,3 @@ def practice_service_expirydate(context):
         return  None
     
     return memberservices[0].expiry_date
-
