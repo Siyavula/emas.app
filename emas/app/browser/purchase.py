@@ -30,7 +30,8 @@ class Purchase(grok.View):
     ordernotification = ViewPageTemplateFile('templates/ordernotification.pt')
     
     def update(self):
-        # set local variables for use in the template
+        registry = queryUtility(IRegistry)
+        self.settings = registry.forInterface(IEmasSettings)
         self.mode = SERVICE_SELECTION
         self.selected_services = []
 
@@ -60,16 +61,16 @@ class Purchase(grok.View):
                 # no items selected, show the selection UI
                 self.mode = SERVICE_SELECTION
             
-            # we use a short type_name, since VCS has limited amount of chars
-            # it accepts and returns.
-            order_id = member_orders.generateUniqueId(type_name='on')
+            ordernumber = self.settings.order_sequence_number + 1
+            self.settings.order_sequence_number = ordernumber
+            self.ordernumber = '%04d' % ordernumber
             member_orders.invokeFactory(
                 type_name='emas.app.order',
-                id=order_id,
-                title=order_id,
+                id=self.ordernumber,
+                title=self.ordernumber,
                 userid=memberid
             )
-            self.order = member_orders._getOb(order_id)
+            self.order = member_orders._getOb(self.ordernumber)
 
             for sid, quantity in order_items.items():
                 service = products_and_services[sid]
@@ -96,8 +97,6 @@ class Purchase(grok.View):
     def send_invoice(self, order): 
         """ Send Invoice to recipients
         """
-        registry = queryUtility(IRegistry)
-        settings = registry.forInterface(IEmasSettings)
         state = self.context.restrictedTraverse('@@plone_portal_state')
         portal = state.portal()
         member = state.member()
@@ -105,7 +104,7 @@ class Purchase(grok.View):
         encoding = portal.getProperty('email_charset')
 
         send_from_address = formataddr(
-            ( 'Siyavula Education', settings.order_email_address )
+            ( 'Siyavula Education', self.settings.order_email_address )
         )
         
         send_to_address = formataddr((member.getProperty('fullname'),
@@ -119,9 +118,8 @@ class Purchase(grok.View):
         orderitems=[i.related_item.to_object.Title() for i in items]
         totalcost=order.total()
         username=member.getId()
-        ordernumber=order.getId()
-        email=settings.order_email_address
-        phone=settings.order_phone_number
+        email=self.settings.order_email_address
+        phone=self.settings.order_phone_number
 
         # Generate message and attach to mail message
         message = self.ordertemplate(
@@ -130,7 +128,7 @@ class Purchase(grok.View):
             orderitems=orderitems,
             totalcost=totalcost,
             username=username,
-            ordernumber=ordernumber,
+            ordernumber=self.ordernumber,
             email=email,
             phone=phone
         )
@@ -149,7 +147,7 @@ class Purchase(grok.View):
             totalcost=totalcost,
             orderurl=order.absolute_url(),
             username=username,
-            ordernumber=ordernumber,
+            ordernumber=self.ordernumber,
             email=email,
             phone=phone
         )
