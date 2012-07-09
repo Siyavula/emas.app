@@ -7,13 +7,14 @@ Service
 - a purchasable service
 - can be credit or subscription based
 - a credit based service allows a user access to a specific service for a set amount of times. The question-and-answer service is a credit based service.
-- a subscription based service allows a users access for a set a period. It has an expiry date. After this date the user no longer has access to the service. The intelligent practice service is a subscription based service.
+- a subscription based service allows a users access for a set period. It has an expiry date. After this date the user no longer has access to the service. The intelligent practice service is a subscription based service.
 
 Product
 - a purchasable product
 
 MemberService
 - this represents a service (or product) that a member has purchased.
+- used to determine access to products and services
 
 Order
 - represents a collection of products and/ or services that a user has ordered
@@ -23,13 +24,12 @@ Order
 OrderItem
 - a unique product or service a user has ordered
 
-These are contained in special folders:
+These types of objects are contained in the following special folders:
 orders
-- Order (which in turn contain OrderItems)
+- Order (which in turn contains OrderItems)
 
 memberservices
 - MemberService
-- used to determine access to products and services
 
 products_and_services
 - Product
