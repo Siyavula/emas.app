@@ -70,3 +70,32 @@ Now navigate to '/@@purchase'.
 The new service will be on the list.
 
 
+How it all works
+~~~~~~~~~~~~~~~~
+
+Products and services are created in the special 'Products and Services' folder.
+
+A user indicates which of these products and services he wants to purchase.
+
+The system creates orderitems for each of the indicated products and services.
+
+These are kept inside a new order that is created inside the 'Orders' folder.
+
+Emails are sent to the info account and the user to inform them of the order.
+
+If the user chooses to settle online, the order details are sent to VCS.
+
+VCS in turn prompts the user for the relevant credit card details.
+
+The transaction is settled by VCS and control is returned to EMAS.
+
+If the transaction was successful the relevant MemberServices are created in
+the 'Member Services' folder.
+
+If the transaction is declined, the user is informed and nothing more happens.
+
+The user might choose to settle via EFT. In this case the admin is responsible
+for checking the proof-of-payment, finding the relevant order and transitioning
+this order to 'payed' via the Plone user interface. This will cause the creation
+of the relevant MemberServices.
+
