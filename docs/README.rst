@@ -16,8 +16,9 @@ MemberService
 - this represents a service (or product) that a member has purchased.
 
 Order
-- represents a collection of products and/ or services
+- represents a collection of products and/ or services that a user has ordered
 - used to create invoice and notification emails as well as settlement requests to Virtual Card Services
+- when an order is marked as 'payed' the relevant MemberServices are automatically created
 
 OrderItem
 - a unique product or service a user has ordered
@@ -28,6 +29,7 @@ orders
 
 memberservices
 - MemberService
+- used to determine access to products and services
 
 products_and_services
 - Product
