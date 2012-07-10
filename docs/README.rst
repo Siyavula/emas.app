@@ -108,3 +108,14 @@ access if the user has credits for the service. Access to subscription based
 services is controlled by the expiry date. Thus if the system can find a
 memberservice for the given subject:grade combination with an expiry date in the
 future it will give the user access to the associated service.
+
+Example:
+John registers as a user on everythingmaths. He purchases access to the
+intelligent practice service for a month and he also purchases 20 credits for
+the Questions-and-Answers service. He pays with credit card via the VCS system.
+After successful completion of the transaction he browses to:
+grade-10/01-algebraic-expressions/01-algebraic-expressions-01.cnxmlplus
+The system computes that this is a request for a maths grade 10 page. It uses
+this information to check if John has any memberservices for maths grade 10.
+Upon finding 2 services, QA and Intelligent Practice, it displays the links in
+the premium services area.
