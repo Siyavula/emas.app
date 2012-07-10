@@ -1,44 +1,50 @@
-EMAS app
-========
+Introduction
+============
 
-We introduced the following new content types:
-
-Service
-- a purchasable service
-- can be credit or subscription based
-- a credit based service allows a user access to a specific service for a set amount of times. The question-and-answer service is a credit based service.
-- a subscription based service allows a users access for a set period. It has an expiry date. After this date the user no longer has access to the service. The intelligent practice service is a subscription based service.
+This product provides the following new content types:
 
 Product
-- a purchasable product
+-------
+* represents a physical product, like a textbook, sold through the
+  website
+* has a price attribute
+* can be added in the "Products and Services" folder
+
+Service
+-------
+* an online service provided through the EMAS website.
+* extends Product with attributes for service type, subscription period,
+  amount of credits, grade and subject.
+* can be credit or subscription based.
+* a credit based service specifies the amount of credits a user will
+  receive when purchasing the service.
+* a subscription based service specifies the period a user will access
+  to the service once they purchase the service.
+* can be added in the "Products and Services" folder.
 
 MemberService
-- this represents a service (or product) that a member has purchased.
-- it is associated with one and only one available service or product.
-- used to determine access to products and services
+-------------
+* represents the service a member has purchased.
+* automatically created inside the "Member Services" folder when an
+  order transitions to "paid".
 
 Order
-- represents a collection of products and/ or services that a user has ordered
-- used to create invoice and notification emails as well as settlement requests to Virtual Card Services
-- when an order is marked as 'payed' the relevant MemberServices are automatically created
+-----
+* represents a collection of products and/or services that a user has
+  ordered.
+* used to create invoice and notification emails as well as settlement
+  requests to Virtual Card Services.
+* when an order is marked as 'paid' the relevant MemberServices are
+  automatically created.
+* Automatically created in the toplevel "Orders" folder when a user
+  places an order.
 
 OrderItem
-- a unique product or service a user has ordered
-
-These types of objects are contained in the following special folders:
-orders
-- Order (which in turn contains OrderItems)
-
-memberservices
-- MemberService
-
-products_and_services
-- Product
-- Service
+---------
+* a product or service a user has ordered
 
 How to create a product
-~~~~~~~~~~~~~~~~~~~~~~~
-
+-----------------------
 Log-in as a user with administrative rights.
 
 Navigte to 'Products and Services'.
@@ -54,7 +60,7 @@ Now navigate to '/@@purchase'.
 The new product will be on the list.
 
 How to create a serivce
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Log-in as a user with administrative rights.
 
@@ -72,17 +78,17 @@ The new service will be on the list.
 
 
 How it all works
-~~~~~~~~~~~~~~~~
+----------------
 
 Products and services are created in the special 'Products and Services' folder.
 
 A user indicates which of these products and services he wants to purchase.
 
-The system creates orderitems for each of the indicated products and services.
+The system creates an order with orderitems for each of the selected
+products and services inside the top level "Orders" folder.
 
-These are kept inside a new order that is created inside the 'Orders' folder.
-
-Emails are sent to the info account and the user to inform them of the order.
+Emails are sent to both the info account and the user to inform them of
+the order.
 
 If the user chooses to settle online, the order details are sent to VCS.
 
@@ -96,26 +102,30 @@ the 'Member Services' folder.
 If the transaction is declined, the user is informed and nothing more happens.
 
 The user might choose to settle via EFT. In this case the admin is responsible
-for checking the proof-of-payment, finding the relevant order and transitioning
-this order to 'payed' via the Plone user interface. This will cause the creation
-of the relevant MemberServices.
+for verifying that payment was made by the user and proof of payment submitted.
+An admin user can then search for the order in the "Orders" folder and
+transition the order to "paid" via the Plone user interface. 
 
 The system determines access to services and products by looking at the subject
 and grade of the page the user is requesting. This information is used to find
 all the user's memberservices for the given page. Credit and subscription
-services are treating differently. For credit based services the system allows
+services are treated differently. For credit based services the system allows
 access if the user has credits for the service. Access to subscription based
-services is controlled by the expiry date. Thus if the system can find a
-memberservice for the given subject:grade combination with an expiry date in the
-future it will give the user access to the associated service.
+services is controlled by the expiry date. If the system can find a
+memberservice for the given subject-grade combination with an expiry
+date in the future it will give the user access to the associated
+service.
 
-Example:
-John registers as a user on everythingmaths. He purchases access to the
-intelligent practice service for a month and he also purchases 20 credits for
-the Questions-and-Answers service. He pays by credit card via the VCS system.
-After successful completion of the transaction he browses to:
+Example
+-------
+
+John registers as a user on everythingmaths.co.za. He purchases access
+to the intelligent practice service for a month and he also purchases 20
+credits for the Questions-and-Answers service. He pays by credit card
+via the VCS system. After successful completion of the transaction he
+browses to:
 grade-10/01-algebraic-expressions/01-algebraic-expressions-01.cnxmlplus
-The system computes that this is a request for a maths grade 10 page. It uses
-this information to check if John has any memberservices for maths grade 10.
-Upon finding 2 services, QA and Intelligent Practice, it displays the links in
-the premium services area.
+The system computes that this is a request for a maths grade 10 page. It
+uses this information to check if John has any memberservices for maths
+grade 10. Upon finding 2 services, QA and Intelligent Practice, it
+displays the links in the premium services area.
