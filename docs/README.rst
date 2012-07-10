@@ -14,6 +14,7 @@ Product
 
 MemberService
 - this represents a service (or product) that a member has purchased.
+- it is associated with one and only one available service or product.
 - used to determine access to products and services
 
 Order
@@ -99,3 +100,11 @@ for checking the proof-of-payment, finding the relevant order and transitioning
 this order to 'payed' via the Plone user interface. This will cause the creation
 of the relevant MemberServices.
 
+The system determines access to services and products by looking at the subject
+and grade of the page the user is requesting. This information is used to find
+all the user's memberservices for the given page. Credit and subscription
+services are treating differently. For credit based services the system allows
+access if the user has credits for the service. Access to subscription based
+services is controlled by the expiry date. Thus if the system can find a
+memberservice for the given subject:grade combination with an expiry date in the
+future it will give the user access to the associated service.
