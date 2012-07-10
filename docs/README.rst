@@ -112,7 +112,7 @@ future it will give the user access to the associated service.
 Example:
 John registers as a user on everythingmaths. He purchases access to the
 intelligent practice service for a month and he also purchases 20 credits for
-the Questions-and-Answers service. He pays with credit card via the VCS system.
+the Questions-and-Answers service. He pays by credit card via the VCS system.
 After successful completion of the transaction he browses to:
 grade-10/01-algebraic-expressions/01-algebraic-expressions-01.cnxmlplus
 The system computes that this is a request for a maths grade 10 page. It uses
