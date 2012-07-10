@@ -6,7 +6,7 @@ version = '0.1'
 setup(name='emas.app',
       version=version,
       description="emas.app",
-      long_description=open("README.md").read() + "\n" +
+      long_description=open("README.rst").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from
       # http://pypi.python.org/pypi?%3Aaction=list_classifiers
