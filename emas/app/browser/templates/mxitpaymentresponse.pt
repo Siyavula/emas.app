@@ -12,14 +12,12 @@
 
         <div id="content-core">
             
-            <fieldset>
-                <div id="mxitdetails">
-                    <h3>Mxit responded...</h3>
-                </div>
-                <a href="#" tal:attributes="href view/get_url">
-                    Return to exam papers.
-                </a>
-            </fieldset>
+            <div id="mxitdetails">
+                <h3>Mxit responded...</h3>
+            </div>
+            <a href="#" tal:attributes="href view/get_url">
+                Return to exam papers.
+            </a>
 
         </div>
     </metal:core>
