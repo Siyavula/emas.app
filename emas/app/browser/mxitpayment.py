@@ -51,10 +51,12 @@ class MxitPaymentResponse(grok.View):
     grok.context(Interface)
     grok.require('zope2.View')
     grok.name('mxitpaymentresponse')
-
-    def render(self):
-        return ''
-
+    
     def update(self):
-        import pdb;pdb.set_trace()
+        """ Handle the mxit response
+        """
+        self.base_url = self.context.absolute_url()
         return
+
+    def get_url(self):
+        return self.base_url + '/papers'
