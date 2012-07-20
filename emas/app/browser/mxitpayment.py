@@ -20,7 +20,7 @@ class MxitPaymentRequest(grok.View):
         self.action = 'http://billing.internal.mxit.com/Transaction/PaymentRequest'
         self.vendor_id = '1'
         self.transaction_reference = '1'
-        self.callback_url = self.context.absolute_url() + 'mxitpaymentresponse'
+        self.callback_url = self.context.absolute_url() + '/mxitpaymentresponse'
         self.product_id = 'test product'
         self.product_name = 'test product'
         self.product_description = 'test description'
