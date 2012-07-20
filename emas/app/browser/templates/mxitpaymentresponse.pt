@@ -8,13 +8,13 @@
 <body>
 
     <metal:core fill-slot="main">
-        <h1 class="documentFirstHeading">Mxit Payment details</h1>
+        <h1 class="documentFirstHeading">Mxit payment response</h1>
 
         <div id="content-core">
             
             <fieldset>
                 <div id="mxitdetails">
-                    <h3>Mxit payment response</h3>
+                    <h3>Mxit responded...</h3>
                 </div>
                 <a href="#" tal:attributes="href view/get_url">
                     Return to exam papers.
