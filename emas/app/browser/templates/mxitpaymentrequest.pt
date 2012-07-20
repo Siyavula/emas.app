@@ -20,34 +20,38 @@
                     <form id="form.mxitdetails" method="POST" action="."
                         tal:attributes="action view/action">
 
-                        <input type="hidden" name="VendorId" value="1"
+                        <input type="text" name="VendorId" value="1"
                             tal:attributes="value view/vendor_id">
 
-                        <input type="hidden" name="TransactionReference" value="1"
+                        <input type="text" name="TransactionReference" value="1"
                             tal:attributes="value view/transaction_reference">
                             
-                        <input type="hidden" name="CallbackUrl" value="1"
+                        <input type="text" name="CallbackUrl" value="1"
                             tal:attributes="value view/callback_url">
                             
-                        <input type="hidden" name="ProductId" value="1"
+                        <input type="text" name="ProductId" value="1"
                             tal:attributes="value view/product_id">
 
-                        <input type="hidden" name="ProductName" value="1"
+                        <input type="text" name="ProductName" value="1"
                             tal:attributes="value view/product_name">
 
-                        <input type="hidden" name="ProductDescription" value="1"
+                        <input type="text" name="ProductDescription" value="1"
                             tal:attributes="value view/product_description">
 
-                        <input type="hidden" name="MoolaAmount" value="1"
+                        <input type="text" name="MoolaAmount" value="1"
                             tal:attributes="value view/moola_amount">
 
-                        <input type="hidden" name="CurrencyAmount" value="1"
+                        <input type="text" name="CurrencyAmount" value="1"
                             tal:attributes="value view/currency_amount">
 
                         <input type="submit" name="submit" value="Proceed to Payment">
                     </form>
                 </div>
             </fieldset>
+
+            <a href="#" tal:attributes="href view/get_url">
+                Pay now
+            </a>
         </div>
     </metal:core>
 

@@ -1,3 +1,4 @@
+from urllib import urlencode
 from five import grok
 from Acquisition import aq_inner
 
@@ -17,7 +18,8 @@ class MxitPaymentRequest(grok.View):
     grok.name('mxitpaymentrequest')
     
     def update(self):
-        self.action = 'http://billing.internal.mxit.com/Transaction/PaymentRequest'
+        self.base_url = 'http://billing.internal.mxit.com/Transaction/PaymentRequest'
+        self.action = self.context.absolute_url() + '/@@mxitpaymentrequest'
         self.vendor_id = '1'
         self.transaction_reference = '1'
         self.callback_url = self.context.absolute_url() + '/mxitpaymentresponse'
@@ -26,6 +28,19 @@ class MxitPaymentRequest(grok.View):
         self.product_description = 'test description'
         self.moola_amount = 1
         self.currency_amount = 1
+
+    def get_url(self):
+        query_dict = {
+            "VendorId": self.vendor_id,
+            "TransactionReference": self.transaction_reference,
+            "CallbackUrl": self.callback_url,
+            "ProductId": self.product_id,
+            "ProductName": self.product_name,
+            "ProductDescription": self.product_description,
+            "MoolaAmount": self.moola_amount,
+            "CurrencyAmount": self.currency_amount,
+        }
+        return self.base_url + '?' + urlencode(query_dict)
 
 
 class MxitPaymentResponse(grok.View):
