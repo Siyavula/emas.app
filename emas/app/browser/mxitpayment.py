@@ -6,9 +6,12 @@ from zope.interface import Interface
 from zope.component import queryUtility
 
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.utils import getToolByName
 
 from emas.theme.interfaces import IEmasSettings
 
+from emas.app.browser.utils import compute_member_id
+from emas.app.browser.utils import get_password_hash
 
 grok.templatedir('templates')
     
@@ -67,7 +70,18 @@ class MxitPaymentResponse(grok.View):
         """ Handle the mxit response
         """
         self.base_url = self.context.absolute_url()
-        return
+
+        context = self.context
+        
+        login = request.get('X-MXit-ID-R')
+        internaluserid = request.get('X-MXit-USERID-R')
+        memberid = compute_member_id(internaluserid)
+        password = get_password_hash(login, internaluserid)
+
+        pmt = getToolByName(context, 'portal_membership')
+        member = pmt.getMemberId(memberid)
+        if not member:
+            member = self.addMember(memberid, password, 'Member', '')
 
     def get_url(self):
         return self.base_url + '/papers'
