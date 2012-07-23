@@ -1,6 +1,3 @@
-import os
-from hashlib import md5
-
 from datetime import date
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
@@ -140,15 +137,4 @@ def practice_service_expirydate(context):
     
     return memberservices[0].expiry_date
 
-
-def compute_member_id(mxit_id):
-    return '%s@mxit.com' %mxit_id
-
-
-def get_password_hash(request, login, internaluserid):
-    secret = os.environ['MXIT_HASH']
-    hstr = login + internaluserid + secret
-    m = md5()
-    m.update(hstr)
-    return m.hexdigest()
 

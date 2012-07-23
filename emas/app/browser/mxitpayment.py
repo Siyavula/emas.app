@@ -13,9 +13,39 @@ from emas.theme.interfaces import IEmasSettings
 from emas.app.browser.utils import compute_member_id
 from emas.app.browser.utils import get_password_hash
 
+    
+MXIT_MESSAGES = {
+    '0':
+        u'Transaction completed successfully.',
+
+    '1':
+        u'Transaction rejected by user.',
+
+    '2':
+        u'Invalid MXit login name or password (authentication failure).',
+
+    '3':
+        u'User account is locked.',
+
+    '4':
+        u'User has insufficient funds.',
+
+    '5':
+        u'Transaction timed out before a response was received from the user.',
+
+    '6': 
+        u'The user logged out without confirming or rejecting the transaction.',
+
+    '-2':
+        u'The transaction parameters are not valid.',
+
+    '-1':
+        u'Technical system error occurred.',
+}
+
 grok.templatedir('templates')
-    
-    
+
+
 class MxitPaymentRequest(grok.View):
     """
         Mxit payment processor.
@@ -65,23 +95,37 @@ class MxitPaymentResponse(grok.View):
     grok.context(Interface)
     grok.require('zope2.View')
     grok.name('mxitpaymentresponse')
+
     
     def update(self):
         """ Handle the mxit response
         """
-        self.base_url = self.context.absolute_url()
-
+        import pdb;pdb.set_trace()
         context = self.context
-        
-        login = request.get('X-MXit-ID-R')
-        internaluserid = request.get('X-MXit-USERID-R')
-        memberid = compute_member_id(internaluserid)
-        password = get_password_hash(login, internaluserid)
+        request = self.request
+        self.base_url = context.absolute_url()
+        self.response_code = request.get('mxit_transaction_res', None)
+        self.message = MXIT_MESSAGES.get(self.response_code, '')
 
-        pmt = getToolByName(context, 'portal_membership')
-        member = pmt.getMemberId(memberid)
-        if not member:
-            member = self.addMember(memberid, password, 'Member', '')
+        # check response code
+        if not self.response_code:
+            return
+       
+        # Transaction completed successfully.
+        if self.response_code == '0':
+            if request.has_key() and request.has_key():
+                login = request.get('X-MXit-ID-R')
+                internaluserid = request.get('X-MXit-USERID-R')
+                memberid = compute_member_id(internaluserid)
+                password = get_password_hash(login, internaluserid)
+
+                pmt = getToolByName(context, 'portal_membership')
+                member = pmt.getMemberId(memberid)
+                if not member:
+                    member = self.addMember(memberid, password, 'Member', '')
+                
+                # now add the member to the correct group
+
 
     def get_url(self):
         return self.base_url + '/papers'
