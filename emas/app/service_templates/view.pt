@@ -30,16 +30,6 @@
             </div>
 
             <div class="field">
-                <label>Subscription period</label>
-                <div tal:content="structure view/w/subscription_period/render" />
-            </div>
-
-            <div class="field">
-                <label>Amount of credits</label>
-                <div tal:content="structure view/w/amount_of_credits/render" />
-            </div>
-
-            <div class="field">
                 <label>Grade</label>
                 <div tal:content="structure view/w/grade/render" />
             </div>
@@ -50,10 +40,35 @@
             </div>
 
             <div class="field">
+                <label>Channels</label>
+                <div tal:content="structure view/w/channels/render" />
+            </div>
+
+            <div class="field">
+                <label>Subscription period</label>
+                <div tal:content="structure view/w/subscription_period/render" />
+            </div>
+
+            <div class="field">
                 <label>Price</label>
                 <div>
                     R&nbsp;<span tal:content="structure view/w/price/render" />
                 </div>
+            </div>
+
+            <div class="field">
+                <label>Amount of credits</label>
+                <div tal:content="structure view/w/amount_of_credits/render" />
+            </div>
+
+            <div class="field">
+                <label>Amount of moola</label>
+                <div tal:content="structure view/w/amount_of_moola/render" />
+            </div>
+
+            <div class="field">
+                <label>Access group</label>
+                <div tal:content="structure view/w/access_group/render" />
             </div>
 
             <div tal:replace="structure provider:plone.belowcontentbody" />
