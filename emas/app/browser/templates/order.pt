@@ -1,0 +1,147 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emas.theme">
+<body>
+
+    <metal:core fill-slot="main">
+        <h1 tal:condition="view/ordersubmitted" class="documentFirstHeading"> Order Successful</h1>
+
+        <div id="content-core"
+            tal:define="mode view/mode | string:service_selection;
+                        isAnon context/@@plone_portal_state/anonymous;">
+
+            <div id="individual-order-form" class="selectpackage" 
+                tal:condition="not:view/ordersubmitted">
+
+                <form id="individual-orderform" name="orderform" method="POST"
+                    tal:attributes="action string:${context/absolute_url}/${view/__name__}">
+
+                    <input type="hidden" name="ordersubmitted" value="true"/>
+                    
+                    <h2>Subject</h2>
+                    <fieldset><legend>
+                            Choose your subject(s) and grade:
+                        </legend>
+                        <p>
+                            <input multiplier="1" name="practice_subjects" value="Maths" type="radio"> Maths
+                            <input multiplier="1" name="practice_subjects" value="Science" type="radio"> Science
+                            <input multiplier="2" name="practice_subjects" value="Maths,Science" type="radio"> Both Maths &amp; Science
+                        </p>
+                        <p>
+                            <input name="practice_grade" value="Grade 10" type="radio"> Grade 10 (CAPS)
+                            <input name="practice_grade" value="Grade 11" type="radio"> Grade 11 (CAPS)
+                            <input name="practice_grade" value="Grade 12" type="radio"> Grade 12 (NCS)
+                        </p>
+
+                    <h2>Product</h2>
+
+                    <fieldset><legend>
+                            Select your product:
+                        </legend>
+                    <fieldset>
+                        <p>
+                            <input class="textbook add-textbook" name="prod_practice_book" value="PracticeBook" type="radio" price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
+                        </p>
+                    </fieldset>
+                    <fieldset>
+                        <p>
+                            <input class="no-textbook" name="prod_practice_book" value="Practice" type="radio" price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong>R150</strong>]
+                        </p>
+                    </fieldset>
+                    <fieldset>
+                        <p>
+                            <input class="add-textbook" name="prod_practice_book" value="Book" type="radio" price="95"> Textbook only (no Intelligent Practice) [per subject: <strong>R95</strong>]
+                        </p>
+                    </fieldset>
+
+                    </fieldset>
+                    <h2>Details</h2>
+                    <fieldset><legend>
+                            How would you like to pay?
+                        </legend>
+                        <p>
+                            <input name="prod_payment" value="creditcard" type="radio"> Credit Card payment<br />
+                        </p>
+                        <p>
+                            <input name="prod_payment" value="eft" type="radio"> Electronic Funds Transfer (EFT)<br />
+                        </p>
+                    </fieldset>
+                    <div id='bookonly' class='hidden'>
+                    <fieldset>
+                        <legend id='postaladdress'>
+                            You have requested a <b>textbook</b>, we need to know your details for delivery: 
+                        </legend>
+                        <p>
+                            Name and surname:<input  value="" type="text">
+                        </p>
+                        <p>
+                            Phone number:<input  value="" type="text">
+                        </p>
+                        <p>
+                            Postal address: <textarea></textarea>
+                        </p>
+                    </fieldset>
+                    </div>
+
+                    <div class="ordertotal">
+                        <div>
+                            Total = <span id="totalcost" class="amount">R0</span>
+                        </div>
+
+                        <button type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="submit" value="1">Submit
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <div id="selectpackage" tal:condition="view/ordersubmitted">
+                <h3>Order Number: <span tal:replace="view/ordernumber">1000</span></h3>
+                <p>Thanks for your order!</p>
+
+                <p>You have ordered the following:
+                <ol>
+                    <li tal:repeat="package view/packages" tal:content="package">1 year sub to Maths</li>
+                </ol>
+
+                <fieldset tal:condition="isAnon">
+                    <legend id='loginrequest'>
+                        You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#">login or register</a>. 
+                    </legend>
+                </fieldset>
+
+                <p>
+                The total cost of your order is: <strong>R<tal:cost tal:replace="view/totalcost"/></strong>
+                </p>
+
+                <p>You will receive an email to confirm your order. The
+                confirmation email will contain the instructions for
+                payment as described below. Your services will only be
+                activated once we have received payment.</p>
+
+                <p>
+                Payment for this order can be made using an electronic
+                funds transfer (EFT) to the bank account below. Please
+                ensure that you use the correct reference number as
+                specified below.
+                </p>
+
+                <pre class="bankdetails">
+Account name:   Siyavula Education
+Bank:           Nedbank
+Account number: 1018177434
+Branch code:    198765
+Reference:      <tal:username tal:replace="view/ordernumber"/>
+                </pre>
+
+            </div>
+        </div>
+
+    </metal:core>
+
+</body>
+</html>

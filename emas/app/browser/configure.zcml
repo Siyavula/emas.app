@@ -5,9 +5,15 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="emas.app">
 
-  <!-- Grok the package to initialise schema interfaces and content classes -->
-  <grok:grok package="." />
+    <!-- Grok the package to initialise schema interfaces and content classes -->
+    <grok:grok package="." />
+
+    <browser:resourceDirectory
+        name="emas.app.resources"
+        directory="resources"
+        />
 
 </configure>
