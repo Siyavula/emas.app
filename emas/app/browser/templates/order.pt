@@ -8,33 +8,45 @@
 <body>
 
     <metal:core fill-slot="main">
-        <h1 tal:condition="view/ordersubmitted" class="documentFirstHeading"> Order Successful</h1>
+        <h1 class="documentFirstHeading">Order form</h1>
 
         <div id="content-core"
-            tal:define="mode view/mode | string:service_selection;
-                        isAnon context/@@plone_portal_state/anonymous;">
-
-            <div id="individual-order-form" class="selectpackage" 
-                tal:condition="not:view/ordersubmitted">
+            tal:define="isAnon context/@@plone_portal_state/anonymous;
+                        action python:view.action(isAnon);">
+            <div id="individual-order-form" class="selectpackage">
 
                 <form id="individual-orderform" name="orderform" method="POST"
-                    tal:attributes="action string:${context/absolute_url}/${view/__name__}">
+                    tal:attributes="action action">
 
-                    <input type="hidden" name="ordersubmitted" value="true"/>
+                    <input type="hidden" name="order.form.submitted" value="true"/>
+                    <input type="hidden" name="isAnon" value="True"
+                        tal:attributes="value isAnon"/>
                     
+                    <fieldset id="login-links" tal:condition="isAnon"
+                        tal:define="login_url string:${context/absolute_url}/login;
+                                    register_url string:${context/absolute_url}/@@register;">
+                        <legend id='loginrequest'>
+                            You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#" tal:attributes="href login_url">login</a> <a href="#" tal:attributes="href register_url">or register</a>. 
+                        </legend>
+                    </fieldset>
+
                     <h2>Subject</h2>
                     <fieldset><legend>
                             Choose your subject(s) and grade:
                         </legend>
                         <p>
-                            <input multiplier="1" name="practice_subjects" value="Maths" type="radio"> Maths
-                            <input multiplier="1" name="practice_subjects" value="Science" type="radio"> Science
-                            <input multiplier="2" name="practice_subjects" value="Maths,Science" type="radio"> Both Maths &amp; Science
+                            <input name="subjects"
+                                   value="Maths"
+                                   type="radio"
+                                   multiplier="1"
+                                   > Maths
+                            <input multiplier="1" name="subjects" value="Science" type="radio"> Science
+                            <input multiplier="2" name="subjects" value="Maths,Science" type="radio"> Both Maths &amp; Science
                         </p>
                         <p>
-                            <input name="practice_grade" value="Grade 10" type="radio"> Grade 10 (CAPS)
-                            <input name="practice_grade" value="Grade 11" type="radio"> Grade 11 (CAPS)
-                            <input name="practice_grade" value="Grade 12" type="radio"> Grade 12 (NCS)
+                            <input name="grade" value="Grade 10" type="radio"> Grade 10 (CAPS)
+                            <input name="grade" value="Grade 11" type="radio"> Grade 11 (CAPS)
+                            <input name="grade" value="Grade 12" type="radio"> Grade 12 (NCS)
                         </p>
 
                     <h2>Product</h2>
@@ -44,7 +56,7 @@
                         </legend>
                     <fieldset>
                         <p>
-                            <input class="textbook add-textbook" name="prod_practice_book" value="PracticeBook" type="radio" price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
+                            <input class="textbook add-textbook" name="prod_practice_book" value="Practice,Book" type="radio" price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
                         </p>
                     </fieldset>
                     <fieldset>
@@ -97,47 +109,6 @@
                     </div>
 
                 </form>
-            </div>
-
-            <div id="selectpackage" tal:condition="view/ordersubmitted">
-                <h3>Order Number: <span tal:replace="view/ordernumber">1000</span></h3>
-                <p>Thanks for your order!</p>
-
-                <p>You have ordered the following:
-                <ol>
-                    <li tal:repeat="package view/packages" tal:content="package">1 year sub to Maths</li>
-                </ol>
-
-                <fieldset tal:condition="isAnon">
-                    <legend id='loginrequest'>
-                        You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#">login or register</a>. 
-                    </legend>
-                </fieldset>
-
-                <p>
-                The total cost of your order is: <strong>R<tal:cost tal:replace="view/totalcost"/></strong>
-                </p>
-
-                <p>You will receive an email to confirm your order. The
-                confirmation email will contain the instructions for
-                payment as described below. Your services will only be
-                activated once we have received payment.</p>
-
-                <p>
-                Payment for this order can be made using an electronic
-                funds transfer (EFT) to the bank account below. Please
-                ensure that you use the correct reference number as
-                specified below.
-                </p>
-
-                <pre class="bankdetails">
-Account name:   Siyavula Education
-Bank:           Nedbank
-Account number: 1018177434
-Branch code:    198765
-Reference:      <tal:username tal:replace="view/ordernumber"/>
-                </pre>
-
             </div>
         </div>
 

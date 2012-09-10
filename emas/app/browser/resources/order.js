@@ -1,7 +1,7 @@
 // local functions
 function ordertotal() {
     var totalcost = 0;
-    var multiplier_selector = 'input[name="practice_subjects"]:checked';
+    var multiplier_selector = 'input[name="subjects"]:checked';
     var multiplier = parseInt($(multiplier_selector).attr("multiplier"));
     if (isNaN(multiplier)) {
         multiplier = 1;
@@ -37,22 +37,27 @@ $(function($) {
     ordertotal();
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(function () {
+        var isAnon = $('input[name="isAnon"]').val() == 'True' && false || true;
+        if (isAnon == true) {
+            alert('You have to login before you continue.');
+            return false;
+        }
 
-        var practice_subjects = $('input[name="practice_subjects"]:checked').val();
-        var practice_grade = $('input[name="practice_grade"]:checked').val();
+        result = true;
+        var subjects = $('input[name="subjects"]:checked').val();
+        var grade = $('input[name="grade"]:checked').val();
         var include_textbook = $('input[name="include_textbook"]:checked').val() == 'yes';
         var include_expert_answers = $('input[name="include_expert_answers"]:checked').val() == 'yes';
         result = true;
-        if (practice_subjects != undefined && practice_grade == undefined) {
+        if (subjects != undefined && grade == undefined) {
             alert('You have to select a grade before you can continue');
             result = false;
         }
-        if (practice_subjects == undefined && practice_grade != undefined) {
+        if (subjects == undefined && grade != undefined) {
             alert('You have to specify which subjects you would like to subscribe to before you can continue');
             result = false;
         }
-        if (include_textbook && practice_grade == undefined &&
-                                practice_subjects == undefined ) {
+        if (include_textbook && grade == undefined && subjects == undefined ) {
             alert('You have to specify which subjects and which grade you would like to subscribe to before you can continue');
             result = false;
         }
@@ -87,5 +92,37 @@ $(function($) {
     $("input.no-textbook").click(function (event) {
         $("div#bookonly").hide(); 
     });
+
+    // login form
+    $('#login-links a[href$="/login"]').prepOverlay(
+        {
+            subtype: 'ajax',
+            filter: common_content_filter,
+            formselector: 'form#login_form',
+            noform: function () {
+                return 'redirect';
+            },
+            redirect: function () {
+                var href = location.href;
+                if (href.search(/pwreset_finish$/) >= 0) {
+                    return href.slice(0, href.length-14) + 'logged_in';
+                } else {
+                    var form = $('form#individual-orderform');
+                    $(form).unbind();
+                    $(form).submit();
+                    return $(form).attr('action');
+                }
+            }
+        }
+    );
+
+    // registration
+    $('#login-links a[href$="/@@register"]').prepOverlay(
+        {
+            subtype: 'ajax',
+            filter: common_content_filter,
+            formselector: 'form.kssattr-formname-register'
+        }
+    );
 
 });
