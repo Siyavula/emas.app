@@ -63,6 +63,7 @@ class Confirm(grok.View):
                     related_item=relation,
                     quantity=quantity,
                 )
+            self.totalcost = self.order.total()
 
     def selected_services(self):
         selected_items = {}

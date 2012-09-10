@@ -19,7 +19,7 @@
 
                 <p>You have ordered the following:
                 <ol>
-                    <li tal:repeat="package view/packages" tal:content="package">1 year sub to Maths</li>
+                    <li tal:repeat="package view/selected_services" tal:content="package">1 year sub to Maths</li>
                 </ol>
 
                 <h2>Details</h2>
