@@ -8,11 +8,4 @@
                 id="++resource++emas.app.resources/order.js"
                 inline="False"/>
 
-    <javascript cacheable="True"
-                compression="none"
-                cookable="True"
-                enabled="True"
-                id="++resource++emas.app.resources/confirm.js"
-                inline="False"/>
-
 </object>
