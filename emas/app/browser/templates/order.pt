@@ -15,7 +15,8 @@
                         action python:view.action(isAnon);">
             <div id="individual-order-form" class="selectpackage">
 
-                <form id="individual-orderform" name="orderform" method="POST"
+                <form id="individual-orderform" name="orderform" 
+                      class="update-action" method="POST"
                     tal:attributes="action action;
                                     base_action action;">
 
@@ -60,9 +61,9 @@
                                   type="radio"> Both Maths &amp; Science
                         </p>
                         <p>
-                            <input name="grade" value="grade-10" type="radio"> Grade 10 (CAPS)
-                            <input name="grade" value="grade-11" type="radio"> Grade 11 (CAPS)
-                            <input name="grade" value="grade-12" type="radio"> Grade 12 (NCS)
+                            <input name="grade" value="grade10" type="radio"> Grade 10 (CAPS)
+                            <input name="grade" value="grade11" type="radio"> Grade 11 (CAPS)
+                            <input name="grade" value="grade12" type="radio"> Grade 12 (NCS)
                         </p>
                     </fieldset>
 
@@ -79,9 +80,9 @@
                             <p>
                             <input name="prod_practice_book"
                                    checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Book', selected)"
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Textbook', selected)"
                                    class="textbook add-textbook"
-                                   value="Practice,Book" 
+                                   value="Practice,Textbook" 
                                    type="radio" 
                                    price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
                             </p>
@@ -101,9 +102,9 @@
                             <p>
                                 <input name="prod_practice_book"
                                    checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Book', selected)"
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Textbook', selected)"
                                    class="add-textbook"
-                                   value="Book"
+                                   value="Textbook"
                                    type="radio"
                                    price="95"> Textbook only (no Intelligent Practice) [per subject: <strong>R95</strong>]
                             </p>

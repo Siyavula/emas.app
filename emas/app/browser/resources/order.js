@@ -67,11 +67,11 @@ function update_action() {
 // runs when the page is loaded
 $(function($) {
     ordertotal();
-    $(".selectpackage input[type='radio']").change(update_action);
+    $("form.update_action input[type='radio']").change(update_action);
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(function () {
-        var isAnon = $('input[name="isAnon"]').val() == 'True' && false || true;
-        if (isAnon == true) {
+        var isAnon = $('input[name="isAnon"]').val();
+        if (isAnon == "True") {
             alert('You have to login before you continue.');
             return false;
         }
@@ -157,4 +157,8 @@ $(function($) {
         }
     );
 
+    var isAnon = $('input[name="isAnon"]').val();
+    if (isAnon == "True") {
+        $("form.update_action input[type='radio']").change(update_action);
+    }
 });
