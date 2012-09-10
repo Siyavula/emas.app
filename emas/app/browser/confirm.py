@@ -24,7 +24,6 @@ class Confirm(grok.View):
     ordernotification = ViewPageTemplateFile('templates/ordernotification.pt')
     
     def update(self):
-        import pdb;pdb.set_trace()
         self.portal_state = self.context.restrictedTraverse(
             '@@plone_portal_state'
         )
@@ -69,7 +68,7 @@ class Confirm(grok.View):
         selected_items = {}
         # the submitted form data looks like this:
         #{'order.form.submitted': 'true',
-        #'prod_practice_book': 'Practice,Book',
+        #'prod_practice_book': 'Practice,Textbook',
         #'practice_subjects': 'Maths,Science',
         #'submit': '1',
         #'practice_grade': 'Grade 10'}
