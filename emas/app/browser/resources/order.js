@@ -32,9 +32,42 @@ function hideForms()
     return false;
 }
 
+function update_action() {
+    action = $('form#individual-orderform').attr('base_action');
+    params = '';
+
+    subject_selector = 'input[name="subjects"]:checked';
+    subjects = $(subject_selector);
+    if (subjects.length > 0) {
+        params = params + 'subjects=' + subjects.val();
+    }
+
+    grade_selector = 'input[name="grade"]:checked';
+    grade = $(grade_selector);
+    if (grade.length > 0) {
+        params = params + '&grade=' + grade.val();
+    }
+
+    prod_practice_book_selector = 'input[name="prod_practice_book"]:checked';
+    prod_practice_book = $(prod_practice_book_selector);
+    if (prod_practice_book.length > 0) {
+        params = params + '&prod_practice_book=' + prod_practice_book.val();
+    }
+
+    prod_payment_selector = 'input[name="prod_payment"]:checked';
+    prod_payment = $(prod_payment_selector);
+    if (prod_payment.length > 0) {
+        params = params + '&prod_payment=' + prod_payment.val();
+    }
+
+    action = action + '?' + params;
+    $('form#individual-orderform').attr('action', action);
+}
+
 // runs when the page is loaded
 $(function($) {
     ordertotal();
+    $(".selectpackage input[type='radio']").change(update_action);
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(function () {
         var isAnon = $('input[name="isAnon"]').val() == 'True' && false || true;
@@ -109,7 +142,6 @@ $(function($) {
                 } else {
                     var form = $('form#individual-orderform');
                     $(form).unbind();
-                    $(form).submit();
                     return $(form).attr('action');
                 }
             }

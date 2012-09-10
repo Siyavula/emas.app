@@ -24,3 +24,28 @@ class Order(grok.View):
         if isAnon:
             url = '%s/@@order' %self.context.absolute_url()
         return url
+        
+    def subjects(self):
+        return self.request.get('subjects', '')
+   
+    def subject_selected(self, subject, selected):
+        return subject == selected and 'checked' or ''
+
+    def grade(self):
+        return self.request.get('grade', '')
+
+    def grade_selected(self, grade, selected):
+        return grade == grade and 'checked' or ''
+
+    def prod_practice_book(self):
+        return self.request.get('prod_practice_book', '')
+
+    def prod_practice_book_selected(self, prod_practice_book, selected):
+        return prod_practice_book == selected and 'checked' or ''
+
+    def prod_payment(self):
+        return self.request.get('prod_payment', '')
+
+    def prod_payment_selected(self, prod_payment, selected):
+        return prod_payment == selected and 'checked' or ''
+

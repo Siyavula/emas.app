@@ -16,7 +16,8 @@
             <div id="individual-order-form" class="selectpackage">
 
                 <form id="individual-orderform" name="orderform" method="POST"
-                    tal:attributes="action action">
+                    tal:attributes="action action;
+                                    base_action action;">
 
                     <input type="hidden" name="order.form.submitted" value="true"/>
                     <input type="hidden" name="isAnon" value="True"
@@ -31,72 +32,121 @@
                     </fieldset>
 
                     <h2>Subject</h2>
-                    <fieldset><legend>
+                    <fieldset
+                        tal:define="selected view/subjects">
+                        <legend>
                             Choose your subject(s) and grade:
                         </legend>
                         <p>
                             <input name="subjects"
+                                   checked=""
+                                   tal:attributes="checked python:view.subject_selected('Maths', selected)"
                                    value="Maths"
                                    type="radio"
-                                   multiplier="1"
-                                   > Maths
-                            <input multiplier="1" name="subjects" value="Science" type="radio"> Science
-                            <input multiplier="2" name="subjects" value="Maths,Science" type="radio"> Both Maths &amp; Science
+                                   multiplier="1"> Maths
+
+                           <input name="subjects"
+                                  checked=""
+                                  tal:attributes="checked python:view.subject_selected('Science', selected)"
+                                  value="Science"
+                                  multiplier="1"
+                                  type="radio"> Science
+
+                           <input name="subjects"
+                                  checked=""
+                                  tal:attributes="checked python:view.subject_selected('Maths,Science', selected)"
+                                  multiplier="2"
+                                  value="Maths,Science"
+                                  type="radio"> Both Maths &amp; Science
                         </p>
                         <p>
-                            <input name="grade" value="Grade 10" type="radio"> Grade 10 (CAPS)
-                            <input name="grade" value="Grade 11" type="radio"> Grade 11 (CAPS)
-                            <input name="grade" value="Grade 12" type="radio"> Grade 12 (NCS)
+                            <input name="grade" value="grade-10" type="radio"> Grade 10 (CAPS)
+                            <input name="grade" value="grade-11" type="radio"> Grade 11 (CAPS)
+                            <input name="grade" value="grade-12" type="radio"> Grade 12 (NCS)
                         </p>
+                    </fieldset>
 
                     <h2>Product</h2>
 
-                    <fieldset><legend>
+                    <fieldset
+                        tal:define="selected view/prod_practice_book">
+
+                        <legend>
                             Select your product:
                         </legend>
-                    <fieldset>
-                        <p>
-                            <input class="textbook add-textbook" name="prod_practice_book" value="Practice,Book" type="radio" price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
-                        </p>
-                    </fieldset>
-                    <fieldset>
-                        <p>
-                            <input class="no-textbook" name="prod_practice_book" value="Practice" type="radio" price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong>R150</strong>]
-                        </p>
-                    </fieldset>
-                    <fieldset>
-                        <p>
-                            <input class="add-textbook" name="prod_practice_book" value="Book" type="radio" price="95"> Textbook only (no Intelligent Practice) [per subject: <strong>R95</strong>]
-                        </p>
-                    </fieldset>
+
+                        <fieldset>
+                            <p>
+                            <input name="prod_practice_book"
+                                   checked=""
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Book', selected)"
+                                   class="textbook add-textbook"
+                                   value="Practice,Book" 
+                                   type="radio" 
+                                   price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
+                            </p>
+                        </fieldset>
+                        <fieldset>
+                            <p>
+                                <input name="prod_practice_book" 
+                                   checked=""
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice', selected)"
+                                   class="no-textbook" 
+                                   value="Practice" 
+                                   type="radio" 
+                                   price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong>R150</strong>]
+                            </p>
+                        </fieldset>
+                        <fieldset>
+                            <p>
+                                <input name="prod_practice_book"
+                                   checked=""
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Book', selected)"
+                                   class="add-textbook"
+                                   value="Book"
+                                   type="radio"
+                                   price="95"> Textbook only (no Intelligent Practice) [per subject: <strong>R95</strong>]
+                            </p>
+                        </fieldset>
 
                     </fieldset>
                     <h2>Details</h2>
-                    <fieldset><legend>
+                    <fieldset
+                        tal:define="selected view/prod_payment">
+                        <legend>
                             How would you like to pay?
                         </legend>
                         <p>
-                            <input name="prod_payment" value="creditcard" type="radio"> Credit Card payment<br />
+                            <input name="prod_payment"
+                                checked=""
+                                tal:attributes="checked python:view.prod_payment_selected('creditcard', selected)"
+                                value="creditcard"
+                                type="radio"> Credit Card payment<br />
                         </p>
                         <p>
-                            <input name="prod_payment" value="eft" type="radio"> Electronic Funds Transfer (EFT)<br />
+                            <input name="prod_payment"
+                                checked=""
+                                tal:attributes="checked python:view.prod_payment_selected('eft', selected)"
+                                value="eft"
+                                type="radio"> Electronic Funds Transfer (EFT)<br />
                         </p>
                     </fieldset>
+
                     <div id='bookonly' class='hidden'>
-                    <fieldset>
-                        <legend id='postaladdress'>
-                            You have requested a <b>textbook</b>, we need to know your details for delivery: 
-                        </legend>
-                        <p>
-                            Name and surname:<input  value="" type="text">
-                        </p>
-                        <p>
-                            Phone number:<input  value="" type="text">
-                        </p>
-                        <p>
-                            Postal address: <textarea></textarea>
-                        </p>
-                    </fieldset>
+                        <fieldset>
+                            <legend id='postaladdress'>
+                                You have requested a <b>textbook</b>, we need to know your details for delivery: 
+                            </legend>
+                            <p>
+                                Name and surname:<input  value="" type="text">
+                            </p>
+                            <p>
+                                Phone number:<input  value="" type="text">
+                            </p>
+                            <p>
+                                Postal address: <textarea></textarea>
+                            </p>
+                        </fieldset>
                     </div>
 
                     <div class="ordertotal">
