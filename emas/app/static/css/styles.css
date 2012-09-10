@@ -7,3 +7,7 @@
 #products_and_services td {
     vertical-align: middle;
 }
+
+div#content div.selectpackage fieldset {
+    border: medium none;
+}
