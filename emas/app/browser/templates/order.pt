@@ -60,10 +60,23 @@
                                   value="Maths,Science"
                                   type="radio"> Both Maths &amp; Science
                         </p>
-                        <p>
-                            <input name="grade" value="grade10" type="radio"> Grade 10 (CAPS)
-                            <input name="grade" value="grade11" type="radio"> Grade 11 (CAPS)
-                            <input name="grade" value="grade12" type="radio"> Grade 12 (NCS)
+                        <p
+                            tal:define="selected view/grade">
+                            <input name="grade"
+                                   checked=""
+                                   tal:attributes="checked python:view.grade_selected('grade10', selected)"
+                                   value="grade10"
+                                   type="radio"> Grade 10 (CAPS)
+                            <input name="grade" 
+                                   checked=""
+                                   tal:attributes="checked python:view.grade_selected('grade11', selected)"
+                                   value="grade11" 
+                                   type="radio"> Grade 11 (CAPS)
+                            <input name="grade"
+                                   checked=""
+                                   tal:attributes="checked python:view.grade_selected('grade12', selected)"
+                                   value="grade12" 
+                                   type="radio"> Grade 12 (NCS)
                         </p>
                     </fieldset>
 

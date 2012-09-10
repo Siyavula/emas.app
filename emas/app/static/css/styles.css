@@ -11,3 +11,7 @@
 div#content div.selectpackage fieldset {
     border: medium none;
 }
+
+div.selectpackage ol li {
+    font-weight: normal;
+}

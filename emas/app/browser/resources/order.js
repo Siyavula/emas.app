@@ -159,6 +159,17 @@ $(function($) {
 
     var isAnon = $('input[name="isAnon"]').val();
     if (isAnon == "True") {
-        $("form.update_action input[type='radio']").change(update_action);
+        $("form.update-action input[type='radio']").change(update_action);
     }
+
+    $('input[name="prod_payment"]').click(function(event) {
+        // show the EFT details
+        if ($(this).val() == 'eft') {
+            $('div#bankdetails').show();
+            $('button[type="submit"]').attr('disabled', 'disabled');
+        } else {
+            $('div#bankdetails').hide();
+            $('button[type="submit"]').removeAttr('disabled');
+        }
+    });
 });

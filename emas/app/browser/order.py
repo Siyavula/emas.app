@@ -40,7 +40,7 @@ class Order(grok.View):
         return self.request.get('grade', '')
 
     def grade_selected(self, grade, selected):
-        return grade == grade and 'checked' or ''
+        return grade == selected and 'checked' or ''
 
     def prod_practice_book(self):
         return self.request.get('prod_practice_book', '')
@@ -53,4 +53,3 @@ class Order(grok.View):
 
     def prod_payment_selected(self, prod_payment, selected):
         return prod_payment == selected and 'checked' or ''
-
