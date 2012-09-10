@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emas.theme">
+<body>
+
+    <metal:core fill-slot="main">
+        <h1 class="documentFirstHeading">Order confirmation</h1>
+
+        <div id="content-core"
+            tal:define="isAnon context/@@plone_portal_state/anonymous;">
+
+            <div id="selectpackage">
+                <h3>Order Number: <span tal:replace="view/ordernumber">1000</span></h3>
+                <p>Thanks for your order!</p>
+
+                <p>You have ordered the following:
+                <ol>
+                    <li tal:repeat="package view/packages" tal:content="package">1 year sub to Maths</li>
+                </ol>
+
+                <h2>Details</h2>
+                <fieldset>
+                    <legend>
+                        How would you like to pay?
+                    </legend>
+                    <p>
+                        <input name="prod_payment" value="creditcard" type="radio"> Credit Card payment<br />
+                    </p>
+                    <p>
+                        <input name="prod_payment" value="eft" type="radio"> Electronic Funds Transfer (EFT)<br />
+                    </p>
+                </fieldset>
+
+                <p>
+                The total cost of your order is: <strong>R<tal:cost tal:replace="view/totalcost"/></strong>
+                </p>
+
+                <p>You will receive an email to confirm your order. The
+                confirmation email will contain the instructions for
+                payment as described below. Your services will only be
+                activated once we have received payment.</p>
+
+                <p>
+                Payment for this order can be made using an electronic
+                funds transfer (EFT) to the bank account below. Please
+                ensure that you use the correct reference number as
+                specified below.
+                </p>
+
+                <pre class="bankdetails">
+Account name:   Siyavula Education
+Bank:           Nedbank
+Account number: 1018177434
+Branch code:    198765
+Reference:      <tal:username tal:replace="view/ordernumber"/>
+                </pre>
+
+            </div>
+        </div>
+
+    </metal:core>
+
+</body>
+</html>
+
