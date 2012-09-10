@@ -20,6 +20,11 @@ class Order(grok.View):
         return products_and_services.getFolderContents(full_objects=True)
 
     def action(self, isAnon):
+        """ We cannot go to the 'confirm' view until the user has
+            authenticated, since the 'confirm' view has to create objects on
+            behalf of the authenticated user. That is why we rather submit back
+            to the 'order' view.
+        """
         url = '%s/@@confirm' %self.context.absolute_url()
         if isAnon:
             url = '%s/@@order' %self.context.absolute_url()
