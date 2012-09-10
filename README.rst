@@ -129,3 +129,10 @@ The system computes that this is a request for a maths grade 10 page. It
 uses this information to check if John has any memberservices for maths
 grade 10. Upon finding 2 services, QA and Intelligent Practice, it
 displays the links in the premium services area.
+
+
+Installing version 1.0
+----------------------
+
+After rebuilding your instance, remove the order.js from portal_javascripts.
+Then run the setup steps for the emas.app.
