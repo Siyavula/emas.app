@@ -63,7 +63,7 @@ class Confirm(grok.View):
             # set the shipping address if we have one
             self.order.fullname = self.request.get('fullname', '')
             self.order.phone= self.request.get('phone', '')
-            self.order.shipping = self.request.get('shipping_address', '')
+            self.order.shipping_address = self.request.get('shipping_address', '')
 
             for service, quantity in self.selected_services.items():
                 relation = create_relation(service.getPhysicalPath())
