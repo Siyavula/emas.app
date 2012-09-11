@@ -171,10 +171,8 @@ $(function($) {
         // show the EFT details
         if ($(this).val() == 'eft') {
             $('div#bankdetails').show();
-            $('button[type="submit"]').attr('disabled', 'disabled');
         } else {
             $('div#bankdetails').hide();
-            $('button[type="submit"]').removeAttr('disabled');
         }
     });
 });
