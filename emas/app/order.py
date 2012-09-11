@@ -55,6 +55,16 @@ class IOrder(form.Schema):
         required=False,
     )
 
+    fullname = schema.TextLine(
+        title=_(u"Full name"),
+        required=False,
+    )
+
+    phone = schema.TextLine(
+        title=_(u"Phone number"),
+        required=False,
+    )
+
     addvat = schema.Bool(
         title=_(u"Add VAT"),
         required=True,
