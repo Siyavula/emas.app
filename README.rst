@@ -136,3 +136,6 @@ Installing version 1.0
 
 After rebuilding your instance, remove the order.js from portal_javascripts.
 Then run the setup steps for the emas.app.
+
+After installation *MAKE SURE* that the vcs_user_id is set to that of a user
+with the permission to transition the order and create memberservices.
