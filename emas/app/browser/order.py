@@ -53,3 +53,12 @@ class Order(grok.View):
 
     def prod_payment_selected(self, prod_payment, selected):
         return prod_payment == selected and 'checked' or ''
+
+    def fullname(self):
+        return self.request.get('fullname', '')
+
+    def phone(self):
+        return self.request.get('phone', '')
+
+    def shipping_address(self):
+        return self.request.get('shipping_address', '')

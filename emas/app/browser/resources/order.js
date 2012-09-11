@@ -60,6 +60,24 @@ function update_action() {
         params = params + '&prod_payment=' + prod_payment.val();
     }
 
+    fullname_selector = 'input[name="fullname"]';
+    fullname = $(fullname_selector).val();
+    if (fullname.length > 0) {
+        params = params + '&fullname=' + fullname;
+    }
+
+    phone_selector = 'input[name="phone"]';
+    phone = $(phone_selector).val();
+    if (phone.length > 0) {
+        params = params + '&phone=' + phone;
+    }
+
+    address_selector = 'textarea[name="shipping_address"]';
+    address = $(address_selector).val();
+    if (address.length > 0) {
+        params = params + '&shipping_address=' + address;
+    }
+
     action = action + '?' + params;
     $('form#individual-orderform').attr('action', action);
 }
@@ -67,7 +85,10 @@ function update_action() {
 // runs when the page is loaded
 $(function($) {
     ordertotal();
-    $("form.update_action input[type='radio']").change(update_action);
+    $("form.update-action input[type='radio']").change(update_action);
+    $("form.update-action input[type='text']").blur(update_action);
+    $("form.update-action textarea").blur(update_action);
+
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(function () {
         // check if the user is logged in before we worry about anything else.
@@ -175,4 +196,9 @@ $(function($) {
             $('div#bankdetails').hide();
         }
     });
+
+    book_selectors = 'input.add-textbook:checked';
+    if ($(book_selectors).length > 0) {
+        $('div#bookonly').show();
+    }
 });
