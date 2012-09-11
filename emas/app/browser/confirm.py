@@ -60,6 +60,11 @@ class Confirm(grok.View):
             )
             self.order = self.member_orders._getOb(self.ordernumber)
 
+            # set the shipping address if we have one
+            self.order.fullname = self.request.get('fullname', '')
+            self.order.phone= self.request.get('phone', '')
+            self.order.shipping = self.request.get('shipping_address', '')
+
             for service, quantity in self.selected_services.items():
                 relation = create_relation(service.getPhysicalPath())
                 item_id = self.order.generateUniqueId(type_name='orderitem')
