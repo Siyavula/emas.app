@@ -70,24 +70,29 @@ $(function($) {
     $("form.update_action input[type='radio']").change(update_action);
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(function () {
+        // check if the user is logged in before we worry about anything else.
         var isAnon = $('input[name="isAnon"]').val();
         if (isAnon == "True") {
             alert('You have to login before you continue.');
             return false;
         }
-
+        
+        // user is logged in; now we check the required fields.
         result = true;
         var subjects = $('input[name="subjects"]:checked').val();
         var grade = $('input[name="grade"]:checked').val();
         var include_textbook = $('input[name="include_textbook"]:checked').val() == 'yes';
         var include_expert_answers = $('input[name="include_expert_answers"]:checked').val() == 'yes';
-        result = true;
         if (subjects != undefined && grade == undefined) {
             alert('You have to select a grade before you can continue');
             result = false;
         }
         if (subjects == undefined && grade != undefined) {
             alert('You have to specify which subjects you would like to subscribe to before you can continue');
+            result = false;
+        }
+        if (subjects == undefined && grade == undefined) {
+            alert('You have to select a grade and subject.');
             result = false;
         }
         if (include_textbook && grade == undefined && subjects == undefined ) {
