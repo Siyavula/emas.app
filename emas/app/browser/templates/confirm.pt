@@ -14,13 +14,9 @@
             tal:define="isAnon context/@@plone_portal_state/anonymous;">
 
             <div id="payment-form-container" class="selectpackage">
-                <h2>Order Number: <span tal:replace="view/ordernumber">1000</span></h2>
-                <p>Thanks for your order!</p>
-                
-                <h2>Details</h2>
+                <h2>You have ordered the following</h2>
 
                 <fieldset>
-                    <legend>You have ordered the following:</legend>
                     <ol>
                         <li tal:repeat="service view/selected_services"
                             tal:content="service/Title">1 year sub to Maths
