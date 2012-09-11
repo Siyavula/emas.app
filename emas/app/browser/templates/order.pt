@@ -28,7 +28,7 @@
                         tal:define="login_url string:${context/absolute_url}/login;
                                     register_url string:${context/absolute_url}/@@register;">
                         <legend id='loginrequest'>
-                            You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#" tal:attributes="href login_url">login</a> <a href="#" tal:attributes="href register_url">or register</a>. 
+                            You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
                         </legend>
                     </fieldset>
 
@@ -124,12 +124,9 @@
                         </fieldset>
 
                     </fieldset>
-                    <h2>Details</h2>
+                    <h2>How would you like to pay?</h2>
                     <fieldset
                         tal:define="selected view/prod_payment">
-                        <legend>
-                            How would you like to pay?
-                        </legend>
                         <p>
                             <input name="prod_payment"
                                 checked=""
@@ -152,13 +149,13 @@
                                 You have requested a <b>textbook</b>, we need to know your details for delivery: 
                             </legend>
                             <p>
-                                Name and surname:<input  value="" type="text">
+                                Name and surname:<input name="fullname" value="" type="text">
                             </p>
                             <p>
-                                Phone number:<input  value="" type="text">
+                                Phone number:<input name="phone" value="" type="text">
                             </p>
                             <p>
-                                Postal address: <textarea></textarea>
+                                Postal address: <textarea name="shipping_address"></textarea>
                             </p>
                         </fieldset>
                     </div>
