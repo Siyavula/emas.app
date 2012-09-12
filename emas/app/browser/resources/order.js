@@ -82,6 +82,19 @@ function update_action() {
     $('form#individual-orderform').attr('action', action);
 }
 
+function checkAddressDetails() {
+    result = false;
+    name = ($('input[name="fullname"]').val()).length;
+    phone = ($('input[name="phone"]').val()).length;
+    address = ($('textarea[name="shipping_address"]').val()).length;
+
+    if (name > 0 && phone > 0 && address > 0) {
+        result = true;
+    }
+
+    return result;
+}
+
 // runs when the page is loaded
 $(function($) {
     ordertotal();
@@ -91,19 +104,13 @@ $(function($) {
 
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(function () {
-        // check if the user is logged in before we worry about anything else.
-        var isAnon = $('input[name="isAnon"]').val();
-        if (isAnon == "True") {
-            alert('You have to login before you continue.');
-            return false;
-        }
-        
-        // user is logged in; now we check the required fields.
-        result = true;
+        var result = true;
         var subjects = $('input[name="subjects"]:checked').val();
         var grade = $('input[name="grade"]:checked').val();
-        var include_textbook = $('input[name="include_textbook"]:checked').val() == 'yes';
-        var include_expert_answers = $('input[name="include_expert_answers"]:checked').val() == 'yes';
+        var add_textbook = $('input.add-textbook:checked').val();
+        var address_details = checkAddressDetails();
+        var payment_method = $('input[name="prod_payment"]:checked').val();
+
         if (subjects != undefined && grade == undefined) {
             alert('You have to select a grade before you can continue');
             result = false;
@@ -116,13 +123,30 @@ $(function($) {
             alert('You have to select a grade and subject.');
             result = false;
         }
-        if (include_textbook && grade == undefined && subjects == undefined ) {
+        if (add_textbook && grade == undefined && subjects == undefined ) {
             alert('You have to specify which subjects and which grade you would like to subscribe to before you can continue');
             result = false;
         }
+        if (result == true && add_textbook != undefined && address_details == false) {
+            alert('You have to supply address details.');
+            result = false;
+        }
+        if (result == true && payment_method == undefined) {
+            alert('You have to select a payment method.');
+            result = false;
+        }
+
         if (result == true && $('#totalcost').html() == "R0") {
             alert('You have to order something before you can continue');
             result = false;
+        }
+
+        if (result == true) {
+            isAnon = $('input[name="isAnon"]').val();
+            if (isAnon == "True") {
+                alert('You have to login before you continue.');
+                result = false;
+            }
         }
 
         return result;
