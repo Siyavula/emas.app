@@ -98,68 +98,10 @@ function checkAddressDetails() {
 // runs when the page is loaded
 $(function($) {
     ordertotal();
-    $("form.update-action input[type='radio']").change(update_action);
-    $("form.update-action input[type='text']").blur(update_action);
-    $("form.update-action textarea").blur(update_action);
 
     $(".selectpackage input[type='radio']").change(ordertotal);
-    $(".selectpackage button[type='submit']").click(function () {
-        var result = true;
-        var subjects = $('input[name="subjects"]:checked').val();
-        var grade = $('input[name="grade"]:checked').val();
-        var add_textbook = $('input.add-textbook:checked').val();
-        var address_details = checkAddressDetails();
-        var payment_method = $('input[name="prod_payment"]:checked').val();
-
-        if (subjects != undefined && grade == undefined) {
-            alert('You have to select a grade before you can continue');
-            result = false;
-        }
-        if (subjects == undefined && grade != undefined) {
-            alert('You have to specify which subjects you would like to subscribe to before you can continue');
-            result = false;
-        }
-        if (subjects == undefined && grade == undefined) {
-            alert('You have to select a grade and subject.');
-            result = false;
-        }
-        if (add_textbook && grade == undefined && subjects == undefined ) {
-            alert('You have to specify which subjects and which grade you would like to subscribe to before you can continue');
-            result = false;
-        }
-        if (result == true && add_textbook != undefined && address_details == false) {
-            alert('You have to supply address details.');
-            result = false;
-        }
-        if (result == true && payment_method == undefined) {
-            alert('You have to select a payment method.');
-            result = false;
-        }
-
-        if (result == true && $('#totalcost').html() == "R0") {
-            alert('You have to order something before you can continue');
-            result = false;
-        }
-
-        if (result == true) {
-            isAnon = $('input[name="isAnon"]').val();
-            if (isAnon == "True") {
-                alert('You have to login before you continue.');
-                result = false;
-            }
-        }
-
-        return result;
-    });
-
+    $(".selectpackage button[type='submit']").click(validate);
     $("table tr:even").css("background-color", "#ccccff");
-
-    $("#individual-order-form-link").click(function() {
-        hideForms();
-        $(this).addClass( "formactive" );
-        $("div#individual-order-form").show();
-        return false;
-    });
 
     $("#school-order-form-link").click(function() {
         hideForms();
@@ -210,6 +152,12 @@ $(function($) {
     var isAnon = $('input[name="isAnon"]').val();
     if (isAnon == "True") {
         $("form.update-action input[type='radio']").change(update_action);
+        $("form.update-action input[type='text']").blur(update_action);
+        $("form.update-action textarea").blur(update_action);
+    } else {
+        $("form.update-action input[type='radio']").unbind('click', update_action);
+        $("form.update-action input[type='text']").unbind('blur', update_action);
+        $("form.update-action textarea").unbind('blur', update_action);
     }
 
     $('input[name="prod_payment"]').click(function(event) {
@@ -225,4 +173,66 @@ $(function($) {
     if ($(book_selectors).length > 0) {
         $('div#bookonly').show();
     }
+    
+    $('input[name="prod_payment"]').click(function (event) {
+        payment = $('input[name="prod_payment"]:checked').val();
+        button_selector = 'button#confirmsubmit';
+        button = $(button_selector);
+        if (payment == 'creditcard') {
+            $(button).show();
+        }
+        if (payment == 'eft') {
+            $(button).hide();
+        }
+    });
 });
+
+function validate() {
+    var result = true;
+    var subjects = $('input[name="subjects"]:checked').val();
+    var grade = $('input[name="grade"]:checked').val();
+    var add_textbook = $('input.add-textbook:checked').val();
+    var address_details = checkAddressDetails();
+    var payment_method = $('input[name="prod_payment"]:checked').val();
+
+    if (subjects != undefined && grade == undefined) {
+        alert('You have to select a grade before you can continue');
+        result = false;
+    }
+    if (subjects == undefined && grade != undefined) {
+        alert('You have to specify which subjects you would like to subscribe to before you can continue');
+        result = false;
+    }
+    if (subjects == undefined && grade == undefined) {
+        alert('You have to select a grade and subject.');
+        result = false;
+    }
+    if (add_textbook && grade == undefined && subjects == undefined ) {
+        alert('You have to specify which subjects and which grade you would like to subscribe to before you can continue');
+        result = false;
+    }
+    if (result == true && add_textbook != undefined && address_details == false) {
+        alert('You have to supply address details.');
+        result = false;
+    }
+    if (result == true && payment_method == undefined) {
+        alert('You have to select a payment method.');
+        result = false;
+    }
+
+    if (result == true && $('#totalcost').html() == "R0") {
+        alert('You have to order something before you can continue');
+        result = false;
+    }
+
+    if (result == true) {
+        isAnon = $('input[name="isAnon"]').val();
+        if (isAnon == "True") {
+            alert('You have to login before you continue.');
+            result = false;
+        }
+    }
+
+    return result;
+}
+
