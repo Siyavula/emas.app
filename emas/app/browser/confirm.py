@@ -45,20 +45,28 @@ class Confirm(grok.View):
         self.settings = registry.forInterface(IEmasSettings)
 
         self.selected_services = self.selected_services()
-        self.ordernumber = ''
+        self.ordernumber = ordernumber = self.request.get('ordernumber', '')
 
         if self.ordersubmitted():
-            # create member service objects
-            tmpnumber = self.settings.order_sequence_number + 1
-            self.settings.order_sequence_number = tmpnumber
-            self.ordernumber = '%04d' % tmpnumber
-            self.member_orders.invokeFactory(
-                type_name='emas.app.order',
-                id=self.ordernumber,
-                title=self.ordernumber,
-                userid=self.memberid
-            )
-            self.order = self.member_orders._getOb(self.ordernumber)
+
+            if self.request.has_key('confirm_back_button'):
+                return self.context.restrictedTraverse('@@order')
+
+            if ordernumber:
+                self.order = self.member_orders._getOb(self.ordernumber)
+                self.order.manage_delObjects(self.order.objectIds()) 
+            else:
+                # create member service objects
+                tmpnumber = self.settings.order_sequence_number + 1
+                self.settings.order_sequence_number = tmpnumber
+                self.ordernumber = '%04d' % tmpnumber
+                self.member_orders.invokeFactory(
+                    type_name='emas.app.order',
+                    id=self.ordernumber,
+                    title=self.ordernumber,
+                    userid=self.memberid
+                )
+                self.order = self.member_orders._getOb(self.ordernumber)
 
             # set the shipping address if we have one
             self.order.fullname = self.request.get('fullname', '')
@@ -120,13 +128,13 @@ class Confirm(grok.View):
         #'practice_subjects': 'Maths,Science',
         #'submit': '1',
         #'practice_grade': 'Grade 10'}
-        grade = self.request.form['grade']
-        selected = self.request.form['prod_practice_book'].split(',')
-        subjects = self.request.form['subjects'].split(',')
-        # subject + grade + practice | questions | textbook
-        for subject in subjects:
-            for item in selected:
-                sid = '%s-%s-%s' %(subject, grade, item)
+        self.grade = self.request.form.get('grade', '')
+        self.prod_practice_book = self.request.form.get('prod_practice_book', '')
+        self.subjects = self.request.form.get('subjects', '')
+        for subject in self.subjects.split(','):
+            for item in self.prod_practice_book.split(','):
+                # e.g. subject-grade-[practice | questions | textbook]
+                sid = '%s-%s-%s' %(subject, self.grade, item)
                 sid = sid.replace(' ', '-').lower()
                 quantity = selected_items.get(sid, 0) +1
                 service = self.products_and_services._getOb(sid)
@@ -137,6 +145,9 @@ class Confirm(grok.View):
     def ordersubmitted(self):
         return self.request.has_key('order.form.submitted')
 
+    def prod_payment(self):
+        return self.request.get('prod_payment', '')
+
     def creditcard_selected(self):
         payment = self.request.get('prod_payment', '')
         return payment == 'creditcard' and 'checked' or ''
@@ -144,3 +155,13 @@ class Confirm(grok.View):
     def eft_selected(self):
         payment = self.request.get('prod_payment', '')
         return payment == 'eft' and 'checked' or ''
+
+    def fullname(self):
+        return self.request.get('fullname', '')
+
+    def phone(self):
+        return self.request.get('phone', '')
+
+    def shipping_address(self):
+        return self.request.get('shipping_address', '')
+    

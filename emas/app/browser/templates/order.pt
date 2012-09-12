@@ -23,6 +23,8 @@
                     <input type="hidden" name="order.form.submitted" value="true"/>
                     <input type="hidden" name="isAnon" value="True"
                         tal:attributes="value isAnon"/>
+                    <input type="hidden" name="ordernumber" value=""
+                        tal:attributes="value view/ordernumber"/>
                     
                     <fieldset id="login-links" tal:condition="isAnon"
                         tal:define="login_url string:${context/absolute_url}/login;
@@ -160,7 +162,7 @@
                             </p>
                             <p>
                                 Postal address: <textarea name="shipping_address"
-                                    tal:content="view/shipping_address"></textarea>
+                                    tal:content="structure view/shipping_address"></textarea>
                             </p>
                         </fieldset>
                     </div>
@@ -173,6 +175,14 @@
                         <button type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="submit" value="1">Submit
                         </button>
                     </div>
+
+                    <fieldset id="login-links" tal:condition="isAnon"
+                        tal:define="login_url string:${context/absolute_url}/login;
+                                    register_url string:${context/absolute_url}/@@register;">
+                        <legend id='loginrequest'>
+                            You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
+                        </legend>
+                    </fieldset>
 
                 </form>
             </div>

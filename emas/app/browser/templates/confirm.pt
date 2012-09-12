@@ -65,7 +65,8 @@
                             <div>
                                 Total = <span id="total" class="amount" tal:content="view/totalcost">R0</span>
                             </div>
-                            <button id="confirmsubmit" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirmsubmit" value="1">Make payment</button>
+
+                            <button id="confirmsubmit" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirmsubmit" value="make payment">Make payment</button>
                         </div>
 
                         <fieldset>
@@ -110,6 +111,39 @@
                         </fieldset>
 
                     </fieldset>
+                </form>
+
+                <form action="." method="POST"
+                    tal:attributes="action string:${context/absolute_url}/@@order">
+
+                    <!-- all the values from the order form, in case we 
+                         want to go back to it.
+                    -->
+                    <input name="ordernumber" value="" type="hidden"
+                        tal:attributes="value view/ordernumber">
+
+                    <input name="subjects" value="" type="hidden"
+                        tal:attributes="value view/subjects">
+
+                    <input name="grade" value="" type="hidden"
+                        tal:attributes="value view/grade">
+
+                    <input name="prod_practice_book" value="" type="hidden"
+                        tal:attributes="value view/prod_practice_book">
+
+                    <input name="prod_payment" value="" type="hidden"
+                        tal:attributes="value view/prod_payment" >
+                        
+                    <input name="fullname" value="" type="hidden"
+                        tal:attributes="value view/fullname" >
+                        
+                    <input name="phone" value="" type="hidden"
+                        tal:attributes="value view/phone" >
+                        
+                    <input name="shipping_address" value="" type="hidden"
+                        tal:attributes="value view/shipping_address" >
+                        
+                    <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Back</button>
                 </form>
 
             </div>

@@ -62,3 +62,6 @@ class Order(grok.View):
 
     def shipping_address(self):
         return self.request.get('shipping_address', '')
+
+    def ordernumber(self):
+        return self.request.get('ordernumber', '')
