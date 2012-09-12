@@ -136,3 +136,11 @@ class Confirm(grok.View):
 
     def ordersubmitted(self):
         return self.request.has_key('order.form.submitted')
+
+    def creditcard_selected(self):
+        payment = self.request.get('prod_payment', '')
+        return payment == 'creditcard' and 'checked' or ''
+
+    def eft_selected(self):
+        payment = self.request.get('prod_payment', '')
+        return payment == 'eft' and 'checked' or ''

@@ -54,10 +54,19 @@
                             tal:attributes="value view/md5hash">
                             
                         <input name="prod_payment" value="creditcard"
+                            tal:attributes="checked view/creditcard_selected"
                             type="radio" checked="checked"> Credit Card payment<br />
 
                         <input name="prod_payment" value="eft"
+                            tal:attributes="checked view/eft_selected"
                             type="radio"> Electronic Funds Transfer (EFT)<br />
+
+                        <div class="ordertotal">
+                            <div>
+                                Total = <span id="total" class="amount" tal:content="view/totalcost">R0</span>
+                            </div>
+                            <button id="confirmsubmit" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirmsubmit" value="1">Make payment</button>
+                        </div>
 
                         <fieldset>
                             <div id="bankdetails" class="hidden">
@@ -99,14 +108,6 @@
                                 </p>
                             </div>
                         </fieldset>
-
-                        <div class="ordertotal">
-                            <div>
-                                Total = <span id="total" class="amount" tal:content="view/totalcost">R0</span>
-                            </div>
-                            <button type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="submit" value="1">Submit
-                            </button>
-                        </div>
 
                     </fieldset>
                 </form>
