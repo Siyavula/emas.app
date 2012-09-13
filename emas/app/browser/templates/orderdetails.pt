@@ -1,0 +1,107 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emas.theme">
+
+<body>
+
+    <metal:core fill-slot="main">
+    <h1 class="documentFirstHeading">Order details</h1>
+
+    <div id="content-core"
+        tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;">
+
+        <table
+            id="InvoiceHeader"
+            width="100%" tal:define="mode string:view">
+            <tr>
+                <td class="datefield">
+                    <label for="date-ordered">Date ordered</label>: 
+                    <div id="date-ordered"
+                        tal:content="python:toLocalizedTime(context.date_ordered)">
+                        12/04/2012
+                    </div>
+                </td>
+                <td>
+                    <label id="label-userid">User id</label>: 
+                    <div id="userid"
+                        tal:content="context/userid">
+                        12/04/2012
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for=""
+                        id="label-shipping-method">Shipping method</label>: 
+                    <div id="shipping_method"
+                        tal:content="context/shipping_method">
+                        12/04/2012
+                    </div>
+                </td>
+                <td>
+                    <label id="label-shipping-address">Shipping address</label>: 
+                    <div id="shipping_address"
+                        tal:content="context/shipping_address">
+                        12/04/2012
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table
+            id="InvoiceItems"
+            summary="Invoice items"
+            cellpadding="0" cellspacing="0">
+
+            <thead>
+
+                <tr class="table-header">
+                    <th i18n:translate="label_description">Description</th>
+                    <th class="quantity amount" i18n:translate="label_quantity">Quantity</th>
+                    <th class="price amount" i18n:translate="label_price">Price</th>
+                    <th class="total amount"  i18n:translate="label_total">Total</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr tal:repeat="item context/order_items">
+                    <td tal:content="item/related_item/to_object/Title">Description</td>
+                    <td class="amount" tal:content="item/quantity">10.00</td>
+                    <td class="amount" tal:content="item/price">R 10.00</td>
+                    <td class="amount" tal:content="item/total">R 100.00</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <table id="InvoiceTotals"
+            cellpadding="0" cellspacing="0">
+            <tr>
+                <th i18n:translate="label_subtotal">Subtotal</th>
+                <td class="amount" tal:content="context/subtotal">R100.00</td>
+            </tr>
+            <tr>
+                <th i18n:translate="label_tax">Tax</th>
+                <td class="amount" tal:content="python:context.vat(context.subtotal)">R100.00</td>
+            </tr>
+            <tr>
+                <th i18n:translate="label_total">Total</th>
+                <td class="amount" tal:content="context/total">R100.00</td>
+            </tr>
+        </table>
+
+    </div>
+    </metal:core>
+
+</body>
+
+</html>
+
