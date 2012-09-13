@@ -16,4 +16,13 @@
         directory="resources"
         />
 
+    <!-- Join form definition -->
+    <browser:page
+        name="register-from-orderform"
+        for="*"
+        class=".register.RegistrationForm"
+        permission="cmf.AddPortalMember"
+        layer="emas.app.interfaces.IEmasAppLayer"
+        />
+
 </configure>

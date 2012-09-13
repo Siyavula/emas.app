@@ -141,7 +141,7 @@ $(function($) {
     );
 
     // registration
-    $('#login-links a[href$="/@@register"]').prepOverlay(
+    $('#login-links a[href$="/@@register-from-orderform"]').prepOverlay(
         {
             subtype: 'ajax',
             filter: common_content_filter,
