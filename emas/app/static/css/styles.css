@@ -48,6 +48,7 @@
 #InvoiceItems thead th.quantity,
 #InvoiceItems thead th.price {
     width: 1%;
+    padding-right: 5px;
 }
 
 #InvoiceItems thead th.total {
@@ -71,6 +72,7 @@
 #InvoiceCalculations .amount {
     text-align: right;
     white-space: nowrap;
+    padding-right: 5px;
 }
 
 #InvoiceItems textarea.Description  {
