@@ -141,3 +141,7 @@ div.selectpackage ol li {
     text-align: center;
     width: 100%;
 }
+
+.orderitem a {
+    border: none;
+}

@@ -72,7 +72,13 @@
             <tbody>
 
                 <tr tal:repeat="item context/order_items">
-                    <td tal:content="item/related_item/to_object/Title">Description</td>
+                    <td class="orderitem">
+                        <a href="#" tal:attributes="href item/absolute_url">
+                            <span tal:replace="item/related_item/to_object/Title">
+                                Description
+                            </span>
+                        </a>
+                     </td>
                     <td class="amount" tal:content="item/quantity">10.00</td>
                     <td class="amount" tal:content="item/price">R 10.00</td>
                     <td class="amount" tal:content="item/total">R 100.00</td>
