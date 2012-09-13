@@ -101,7 +101,6 @@ $(function($) {
 
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(validate);
-    $("table tr:even").css("background-color", "#ccccff");
 
     $("#school-order-form-link").click(function() {
         hideForms();
