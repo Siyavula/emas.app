@@ -9,3 +9,13 @@ Changelog
 - Create content types
 
 - Add VCS integration
+
+- Add custom orderfolder listing
+
+- Add custom order view
+
+- Add custom order form
+
+- Add popup registration to order view
+
+- Add popup login to order view
