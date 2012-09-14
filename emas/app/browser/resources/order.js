@@ -146,8 +146,13 @@ $(function($) {
             filter: common_content_filter,
             formselector: 'form.kssattr-formname-register-from-orderform, form.loginform',
             noform: function () {
-                return 'close';
+                return 'redirect';
             },
+            redirect: function () {
+                var form = $('form#individual-orderform');
+                $(form).unbind();
+                return $(form).attr('action');
+            }
         }
     );
 
