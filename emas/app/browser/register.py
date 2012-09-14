@@ -11,6 +11,14 @@ class RegistrationForm(BaseRegForm):
                  validator='validate_registration', name=u'register')
     def action_join(self, action, data):
         self.handle_join_success(data)
-        came_from = '%s/order' %self.context.absolute_url()
-        self.request['came_from'] = came_from
-        return self.context.unrestrictedTraverse('registered')()
+
+        auth = self.context.acl_users.credentials_cookie_auth
+        ac_name = getattr(auth, 'name_cookie', '__ac_name')
+        ac_password = getattr(auth, 'pw_cookie', '__ac_password')
+    
+        self.request[ac_name] = self.request.get('form.username')
+        self.request[ac_password] = self.request.get('form.password')
+
+        return self.context.unrestrictedTraverse('@@login-from-orderform')()
+
+

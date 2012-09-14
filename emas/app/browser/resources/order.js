@@ -144,7 +144,10 @@ $(function($) {
         {
             subtype: 'ajax',
             filter: common_content_filter,
-            formselector: 'form.kssattr-formname-register'
+            formselector: 'form.kssattr-formname-register-from-orderform, form.loginform',
+            noform: function () {
+                return 'close';
+            },
         }
     );
 
