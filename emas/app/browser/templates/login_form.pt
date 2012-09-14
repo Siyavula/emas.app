@@ -49,10 +49,16 @@
                 tal:attributes="name ac_password;
                                 value python:request.get(ac_password, '')"/>
 
+            <div class="registration-success">
+                <p>You have successfully registered.</p>
+                
+                <p>Continue by clicking on the button below.</p>
+            </div>
+
             <button type="submit" 
                 class="button generic no-icon small-caps allowMultiSubmit" 
                 name="submit" value="1">
-                Submit
+                Click to continue
             </button>
         </form>
     </div>
