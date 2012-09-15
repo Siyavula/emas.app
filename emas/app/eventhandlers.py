@@ -10,6 +10,7 @@ from Products.ATContentTypes.permission import ModifyConstrainTypes
 from Products.ATContentTypes.permission import ModifyViewTemplate
 from Products.ATContentTypes.content.folder import ATFolder
 from Products.ATContentTypes.lib.constraintypes import ENABLED
+from plone.dexterity.utils import createContentInContainer
 
 from emas.theme.browser.views import is_expert
 
@@ -77,16 +78,20 @@ def onOrderPaid(order, event):
             if brains is None or len(brains) < 1:
                 msid = memberservices.generateUniqueId(
                             type_name='emas.app.memberservice')
+               
+                related_service = create_relation(service.getPhysicalPath())
+                props = {'id'              :msid,
+                         'title'           :msid,
+                         'userid'          :userid,
+                         'related_service' :related_service,
+                         'service_type'    : service.service_type,}
 
-                ms = memberservices.invokeFactory(
-                    type_name='emas.app.memberservice',
-                    id=msid,
-                    title=msid,
-                    userid=userid,
-                    related_service=create_relation(service.getPhysicalPath()),
-                    service_type = service.service_type,
+                ms = createContentInContainer(
+                    portal_type = 'emas.app.memberservice',
+                    checkConstraints = False,
+                    **properties
                 )
-                ms = memberservices._getOb(msid)
+
                 # give the order owner permissions on the new memberservice, or
                 # we wont' be able to find the memberservices for this user
                 pms.setLocalRoles(ms, [order.userid], 'Owner')
