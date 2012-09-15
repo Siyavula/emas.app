@@ -32,8 +32,6 @@ class PaymentDetails(grok.View):
         """
         Set local variables for use in the template.
         """
-
-
         settings = queryUtility(IRegistry).forInterface(IEmasSettings)
         
         # when debugging you can use this action to return to the approved
