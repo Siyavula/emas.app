@@ -9,6 +9,9 @@ from zope.interface import invariant, Invalid
 
 from z3c.form import group, field
 
+from Products.CMFCore.permissions import ManagePortal
+from Products.CMFCore.utils import getToolByName
+
 from plone.namedfile.field import NamedImage, NamedFile
 from plone.namedfile.field import NamedBlobImage, NamedBlobFile
 
@@ -17,6 +20,9 @@ from plone.app.textfield import RichText
 from z3c.relationfield.schema import RelationList, RelationChoice
 from plone.formwidget.contenttree import ObjPathSourceBinder
 
+from emas.theme.interfaces import IEmasSettings
+
+from emas.app.browser.paymentdetails import vcs_hash
 from emas.app import MessageFactory as _
 
 
@@ -95,6 +101,31 @@ class Order(dexterity.Container):
 
     def order_items(self):
         return self.getFolderContents(full_objects=True)
+    
+    def may_transition_to_paid(self, **kwargs):
+        """ This method expects a dictionary like object as part of the 
+            keyword args. The 'wf.doActionFor' call from 
+            emas.app.browser.vcsresponseprocessor currently supplies this and
+            we access it as 'request' in this method.
+
+            We try to get the 'Hash' key from this dictionary. It will be
+            supplied by VCS on the return call. This is compared to the hash
+            we stored in an annotation on the order object just before passing
+            payment control to VCS.
+
+            This is done in order to stop the spoofing of successful payment
+            responses.
+        """
+        pps = self.restrictedTraverse('@@plone_portal_state')
+        member = pps.member()
+        pmt = getToolByName(self, 'portal_membership')
+        manage_portal = pmt.checkPermission(ManagePortal, self)
+        if manage_portal:
+            return True
+        
+        stored_vcs_hash = get_annotation('vcs_hash')
+        original_hash = request.get('Hash', '')
+        return original_hash == stored_vcs_hash
 
 
 class SampleView(grok.View):
