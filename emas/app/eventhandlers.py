@@ -87,9 +87,10 @@ def onOrderPaid(order, event):
                          'service_type'    : service.service_type,}
 
                 ms = createContentInContainer(
-                    portal_type = 'emas.app.memberservice',
-                    checkConstraints = False,
-                    **properties
+                    memberservices,
+                    'emas.app.memberservice',
+                    False,
+                    **props
                 )
 
                 # give the order owner permissions on the new memberservice, or
