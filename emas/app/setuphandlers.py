@@ -250,19 +250,71 @@ def setupProductsAndServices(portal):
             'service_type': 'credit',
             'amount_of_credits': 100,
             'subject': u'science'},
+
+        'maths-grade10-discount'   : {
+            'title': 'Maths Grade 10 Discount',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade-10',
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
+            'subject': u'maths'},
+
+        'maths-grade11-discount'   : {
+            'title': 'Maths Grade 11 Discount',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade-11',
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
+            'subject': u'maths'},
+
+        'maths-grade12-discount'   : {
+            'title': 'Maths Grade 12 Discount',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade-12',
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
+            'subject': u'maths'},
+
+        'science-grade10-discount' : {
+            'title': 'Science Grade 10 Discount',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade-10',
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
+            'subject': u'science'},
+
+        'science-grade11-discount' : {
+            'title': 'Science Grade 11 Discount',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade-11',
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
+            'subject': u'science'},
+
+        'science-grade12-discount' : {
+            'title': 'Science Grade 12 Discount',
+            'type': 'emas.app.service',
+            'price': 10.00,
+            'grade': u'grade-12',
+            'service_type': 'subscription',
+            'amount_of_credits': 0,
+            'subject': u'science'},
     }
 
     wf = getToolByName(portal, 'portal_workflow')
     products_and_services = portal._getOb('products_and_services')
     ids = products_and_services.objectIds()
     for key, values in items.items():
-        # if it's there, move along.
-        if key in ids: continue
-
-        products_and_services.invokeFactory(type_name=values['type'],
-            id=key,
-            **values
-        ) 
+        if not key in ids:
+            products_and_services.invokeFactory(type_name=values['type'],
+                id=key,
+                **values
+            ) 
         
         item = products_and_services._getOb(key)
         item.subject = values['subject']
