@@ -19,5 +19,4 @@ class OrderDetails(grok.View):
         return schema
 
     def formatDate(self, date):
-        import pdb;pdb.set_trace()
         return date
