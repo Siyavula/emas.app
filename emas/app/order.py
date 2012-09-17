@@ -100,7 +100,7 @@ class Order(dexterity.Container):
         return subtotal + vat
 
     def order_items(self):
-        return self.getFolderContents(full_objects=True)
+        return self.objectValues()
     
     def may_transition_to_paid(self, **kwargs):
         """ This method expects a dictionary like object as part of the 
