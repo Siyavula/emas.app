@@ -92,7 +92,7 @@ def setupProductsAndServices(portal):
         'maths-grade10-practice'   : {
             'title': 'Maths Grade 10 Practice',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 150.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -101,7 +101,7 @@ def setupProductsAndServices(portal):
         'maths-grade11-practice'   : {
             'title': 'Maths Grade 11 Practice',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 150.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -110,7 +110,7 @@ def setupProductsAndServices(portal):
         'maths-grade12-practice'   : {
             'title': 'Maths Grade 12 Practice',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 150.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -119,7 +119,7 @@ def setupProductsAndServices(portal):
         'science-grade10-practice' : {
             'title': 'Science Grade 10 Practice',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 150.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -128,7 +128,7 @@ def setupProductsAndServices(portal):
         'science-grade11-practice' : {
             'title': 'Science Grade 11 Practice',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 150.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -137,7 +137,7 @@ def setupProductsAndServices(portal):
         'science-grade12-practice' : {
             'title': 'Science Grade 12 Practice',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 150.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -200,7 +200,7 @@ def setupProductsAndServices(portal):
         'maths-grade10-textbook'  : {
             'title': 'Maths Grade 10 Textbook',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 95.00,
             'grade': u'grade-10',
             'service_type': 'credit',
             'amount_of_credits': 100,
@@ -209,7 +209,7 @@ def setupProductsAndServices(portal):
         'maths-grade11-textbook'  : {
             'title': 'Maths Grade 11 Textbook',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 95.00,
             'grade': u'grade-11',
             'service_type': 'credit',
             'amount_of_credits': 100,
@@ -218,16 +218,16 @@ def setupProductsAndServices(portal):
         'maths-grade12-textbook'  : {
             'title': 'Maths Grade 12 Textbook',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 95.00,
             'grade': u'grade-12',
             'service_type': 'credit',
             'amount_of_credits': 100,
             'subject': u'maths'},
 
         'science-grade10-textbook': {
-            'title': 'Science Grade 10 Textbook',
+            'title': 'Science Grade 95 Textbook',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 95.00,
             'grade': u'grade-10',
             'service_type': 'credit',
             'amount_of_credits': 100,
@@ -236,7 +236,7 @@ def setupProductsAndServices(portal):
         'science-grade11-textbook': {
             'title': 'Science Grade 11 Textbook',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 95.00,
             'grade': u'grade-11',
             'service_type': 'credit',
             'amount_of_credits': 100,
@@ -245,7 +245,7 @@ def setupProductsAndServices(portal):
         'science-grade12-textbook': {
             'title': 'Science Grade 12 Textbook',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': 95.00,
             'grade': u'grade-12',
             'service_type': 'credit',
             'amount_of_credits': 100,
@@ -254,7 +254,7 @@ def setupProductsAndServices(portal):
         'maths-grade10-discount'   : {
             'title': 'Maths Grade 10 Discount',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': -45.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -263,7 +263,7 @@ def setupProductsAndServices(portal):
         'maths-grade11-discount'   : {
             'title': 'Maths Grade 11 Discount',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': -45.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -272,7 +272,7 @@ def setupProductsAndServices(portal):
         'maths-grade12-discount'   : {
             'title': 'Maths Grade 12 Discount',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': -45.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -281,7 +281,7 @@ def setupProductsAndServices(portal):
         'science-grade10-discount' : {
             'title': 'Science Grade 10 Discount',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': -45.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -290,7 +290,7 @@ def setupProductsAndServices(portal):
         'science-grade11-discount' : {
             'title': 'Science Grade 11 Discount',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': -45.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
             'amount_of_credits': 0,
@@ -299,7 +299,7 @@ def setupProductsAndServices(portal):
         'science-grade12-discount' : {
             'title': 'Science Grade 12 Discount',
             'type': 'emas.app.service',
-            'price': 10.00,
+            'price': -45.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
             'amount_of_credits': 0,
