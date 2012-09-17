@@ -18,14 +18,6 @@ from emas.app.browser.utils import member_services
 from emas.app.browser.utils import qaservice_uuids
 
 
-def orderAdded(order, event):
-    """ Set the userid
-    """
-    member = order.restrictedTraverse('@@plone_portal_state').member()
-    order.userid = member.getId()
-    order.date_ordered = datetime.datetime.now()
-
-
 def orderItemAdded(item, event):
     """ Calculate the total and set the price at purchase time.
     """
@@ -49,8 +41,7 @@ def onOrderPaid(order, event):
     """
     if event.action == 'pay':
         pms = getToolByName(order, 'portal_membership')
-        pps = order.restrictedTraverse('@@plone_portal_state')
-        portal = pps.portal()
+        portal = getToolByName(order, 'portal_url').getPortalObject()
         # we cannot use the authenticated user since an admin user might
         # trigger the workflow.
         userid = order.userid 
@@ -76,9 +67,7 @@ def onOrderPaid(order, event):
 
             # create new memberservices if not found
             if brains is None or len(brains) < 1:
-                msid = memberservices.generateUniqueId(
-                            type_name='emas.app.memberservice')
-               
+                msid = 'Memberservice:%s' %item.Title()
                 related_service = create_relation(service.getPhysicalPath())
                 props = {'id'              :msid,
                          'title'           :msid,
