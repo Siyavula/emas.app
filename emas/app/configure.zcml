@@ -31,12 +31,6 @@
     <plone:static type="theme" directory="static" />
 
     <subscriber
-        for="emas.app.order.IOrder
-             zope.lifecycleevent.IObjectAddedEvent"
-        handler=".eventhandlers.orderAdded"
-        />
-
-    <subscriber
         for="emas.app.orderitem.IOrderItem
              zope.lifecycleevent.IObjectAddedEvent"
         handler=".eventhandlers.orderItemAdded"

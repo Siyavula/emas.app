@@ -1,0 +1,68 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+<head>
+    <metal:js fill-slot="javascript_head_slot">
+        <script type="text/javascript" src=""
+                tal:attributes="src string:${context/portal_url}/login.js">
+        </script>
+    </metal:js>
+    <metal:block fill-slot="top_slot"
+                 tal:define="dummy python:request.set('disable_border',1);
+                             disable_column_one python:request.set('disable_plone.leftcolumn',1);
+                             disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+</head>
+
+<body>
+    <metal:main fill-slot="main">
+
+    <div id="content-core"
+            tal:define="auth nocall:context/acl_users/credentials_cookie_auth|context/cookie_authentication|nothing;
+                        came_from request/came_from|request/HTTP_REFERER|nothing;
+                        ac_name auth/name_cookie|string:__ac_name;
+                        ac_password auth/pw_cookie|string:__ac_password;
+                        ac_persist auth/persist_cookie|nothing;">
+        <form id="login-form" class="loginform" name="login-form" action=""
+            tal:attributes="action string:${context/absolute_url}/@@order">
+            <input type="hidden" name="subjects" value=""
+                tal:attributes="value request/subjects|string:"/>
+            <input type="hidden" name="grade" value=""
+                tal:attributes="value request/grad|string:"/>
+            <input type="hidden" name="prod_practice_book" value=""
+                tal:attributes="value request/prod_practice_book|string:"/>
+            <input type="hidden" name="prod_payment" value=""
+                tal:attributes="value request/prod_payment|string:"/>
+            <input type="hidden" name="fullname" value=""
+                tal:attributes="value request/fullname|string:"/>
+            <input type="hidden" name="phone" value=""
+                tal:attributes="value request/phone|string:"/>
+            <input type="hidden" name="shipping_address" value=""
+                tal:attributes="value request/shipping_address|string:"/>
+            <input type="hidden" name="__ac_name" value=""
+                tal:attributes="name ac_name;
+                                value python:request.get(ac_name, '')"/>
+            <input type="hidden" name="_ac_password" value=""
+                tal:attributes="name ac_password;
+                                value python:request.get(ac_password, '')"/>
+
+            <div class="registration-success">
+                <p>You have successfully registered.</p>
+                
+                <p>Continue by clicking on the button below.</p>
+            </div>
+
+            <button type="submit" 
+                class="button generic no-icon small-caps allowMultiSubmit" 
+                name="submit" value="1">
+                Click to continue
+            </button>
+        </form>
+    </div>
+
+    </metal:main>
+</body>
+</html>

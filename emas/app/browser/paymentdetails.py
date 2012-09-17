@@ -8,6 +8,7 @@ from zope.interface import Interface
 from plone.registry.interfaces import IRegistry
 
 from emas.theme.interfaces import IEmasSettings
+from emas.app.browser.utils import annotate
 
 
 grok.templatedir('templates')
@@ -31,8 +32,6 @@ class PaymentDetails(grok.View):
         """
         Set local variables for use in the template.
         """
-
-
         settings = queryUtility(IRegistry).forInterface(IEmasSettings)
         
         # when debugging you can use this action to return to the approved
@@ -67,6 +66,8 @@ class PaymentDetails(grok.View):
         self.md5hash = vcs_hash(self.vcs_terminal_id + self.tid + 
                                 self.description + str(self.cost) +
                                 self.returnurl + self.md5key)
+        
+        annotate(self.order, 'vcs_hash', self.md5hash)
 
     def getOrder(self, orderid):
         pps = self.context.restrictedTraverse('@@plone_portal_state')

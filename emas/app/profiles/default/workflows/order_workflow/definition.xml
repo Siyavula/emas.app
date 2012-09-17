@@ -53,6 +53,7 @@
   <action url="%(content_url)s/content_status_modify?workflow_action=pay" category="workflow" icon="">Pay</action>
   <guard>
    <guard-permission>Review portal content</guard-permission>
+   <guard-expression>here/may_transition_to_paid</guard-expression>
   </guard>
  </transition>
  <transition transition_id="retract" title="Retract" new_state="ordered" trigger="USER" before_script="" after_script="">

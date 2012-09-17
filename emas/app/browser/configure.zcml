@@ -16,4 +16,22 @@
         directory="resources"
         />
 
+    <!-- Join form definition -->
+    <browser:page
+        name="register-from-orderform"
+        for="*"
+        class=".register.RegistrationForm"
+        permission="cmf.AddPortalMember"
+        layer="emas.app.interfaces.IEmasAppLayer"
+        />
+
+    <browser:page
+        name="login-from-orderform"
+        for="*"
+        class=".login.LoginFromOrderForm"
+        permission="zope2.View"
+        template="templates/login_form.pt"
+        layer="emas.app.interfaces.IEmasAppLayer"
+        />
+
 </configure>

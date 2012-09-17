@@ -101,7 +101,6 @@ $(function($) {
 
     $(".selectpackage input[type='radio']").change(ordertotal);
     $(".selectpackage button[type='submit']").click(validate);
-    $("table tr:even").css("background-color", "#ccccff");
 
     $("#school-order-form-link").click(function() {
         hideForms();
@@ -141,11 +140,19 @@ $(function($) {
     );
 
     // registration
-    $('#login-links a[href$="/@@register"]').prepOverlay(
+    $('#login-links a[href$="/@@register-from-orderform"]').prepOverlay(
         {
             subtype: 'ajax',
             filter: common_content_filter,
-            formselector: 'form.kssattr-formname-register'
+            formselector: 'form.kssattr-formname-register-from-orderform, form.loginform',
+            noform: function () {
+                return 'redirect';
+            },
+            redirect: function () {
+                var form = $('form#individual-orderform');
+                $(form).unbind();
+                return $(form).attr('action');
+            }
         }
     );
 

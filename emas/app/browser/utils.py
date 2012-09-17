@@ -1,7 +1,9 @@
 from datetime import date
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
+from zope.annotation.interfaces import IAnnotations
 
+KEY_BASE = 'emas.app'
 
 service_mapping = {
     'qaservices' : {
@@ -135,3 +137,13 @@ def practice_service_expirydate(context):
         return  None
     
     return memberservices[0].expiry_date
+
+def annotate(obj, key, value):
+    annotations = IAnnotations(obj)
+    key = '%s.%s' %(KEY_BASE, key)
+    annotations[key] = value
+
+def get_annotation(obj, key):
+    annotations = IAnnotations(obj)
+    key = '%s.%s' %(KEY_BASE, key)
+    return annotations.get(key, '')

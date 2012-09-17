@@ -13,6 +13,10 @@ class Order(grok.View):
     
     grok.context(Interface)
     grok.require('zope2.View')
+    
+    def update(self):
+        #TODO: check for authed before re-authing
+        self.context.restrictedTraverse('logged_in')()
 
     def products_and_services(self):
         pps = self.context.restrictedTraverse('@@plone_portal_state')

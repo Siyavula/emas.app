@@ -72,7 +72,7 @@
                     </fieldset>
                 </form>
 
-                <form class="ordertotal" action="." method="POST"
+                <form class="backbutton" action="." method="POST"
                     tal:attributes="action string:${context/absolute_url}/@@order">
 
                     <!-- all the values from the order form, in case we 

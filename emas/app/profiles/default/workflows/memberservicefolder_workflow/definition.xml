@@ -12,6 +12,7 @@
   <permission-map name="Add portal content" acquired="False">
    <permission-role>Manager</permission-role>
    <permission-role>Member</permission-role>
+   <permission-role>Site Administrator</permission-role>
   </permission-map>
   <permission-map name="Change portal events" acquired="False">
    <permission-role>Manager</permission-role>
