@@ -4,12 +4,14 @@ import sys
 import datetime
 import transaction
 from Testing import makerequest
-from AccessControl.SecurityManagement import getSecurityManager
-from AccessControl.SecurityManagement import setSecurityManager
-from AccessControl.SecurityManagement import newSecurityManager
 from zope.component import queryUtility
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
+from plone.dexterity.utils import createContentInContainer
+from AccessControl.SecurityManagement import getSecurityManager
+from AccessControl.SecurityManagement import setSecurityManager
+from AccessControl.SecurityManagement import newSecurityManager
+from z3c.relationfield.relation import create_relation
 
 from zope.app.component.hooks import setSite
 
@@ -31,8 +33,8 @@ setSite(portal)
 
 # we assume there is an admin user
 app = makerequest.makerequest(app)
-user = app.acl_users.getUser('admin')
-newSecurityManager(None, user.__of__(app.acl_users))
+user = portal.acl_users.getUser('rijkadmin')
+newSecurityManager(None, user.__of__(portal.acl_users))
 
 members = portal.portal_membership.listMembers()
 created = skipped = 0
@@ -62,45 +64,61 @@ services_map = {'answerdatabase_expirydate':
                     ]
                }
 
-new_orders = []
 osm = getSecurityManager()
+now = datetime.datetime.utcnow()
+new_orders = []
+pms = getToolByName(portal, 'portal_membership')
 for member in members:
     try:
-    newSecurityManager(None, member)
-    print "Migrating orders for:%s." % member.getId()
-    for old_service_id, new_service_ids in services_map.items():
-        if getattr(member, old_service_id).asdatetime() < today:
-            # create an order
-            ordernumber = settings.order_sequence_number + 1
-            settings.order_sequence_number = ordernumber
-            ordernumber = '%04d' % ordernumber
-            orders.invokeFactory(
-                type_name='emas.app.order',
-                id=ordernumber,
-                title=ordernumber,
-                userid=member.getId()
-            )
-            order = orders._getOb(ordernumber)
-            new_orders.append(order)
-            # add orderitems for each service
-            for sid in new_service_ids:
-                service = products_and_services[sid]
-                relation = create_relation(service.getPhysicalPath())
-                item_id = order.generateUniqueId(type_name='orderitem')
-                order.invokeFactory(
-                    type_name='emas.app.orderitem',
-                    id=item_id,
-                    title=item_id,
-                    related_item=relation,
-                    quantity=1,
+        print "Migrating orders for:%s." % member.getId()
+        newSecurityManager(None, member)
+        for old_service_id, new_service_ids in services_map.items():
+            if getattr(member, old_service_id).asdatetime() < today:
+                # create an order
+                ordernumber = settings.order_sequence_number + 1
+                settings.order_sequence_number = ordernumber
+                ordernumber = '%04d' % ordernumber
+                props = {'id': ordernumber,
+                         'title': ordernumber,
+                         'userid': member.getId(),
+                         'date_ordered': now}
+                
+                createContentInContainer(
+                    orders,
+                    'emas.app.order',
+                    False,
+                    **props
                 )
+                order = orders._getOb(ordernumber)
+                pms.setLocalRoles(order, [order.userid], 'Owner')
+                new_orders.append(order)
 
-    # go back to being manager
-    setSecurityManager(osm)
-    for order in new_orders:
-        # transition it to paid
-        wf = getToolByName(portal, 'portal_workflow')
-        wf.doActionFor(order, 'pay')
-        order.reindexObject()
+                # add orderitems for each service
+                for sid in new_service_ids:
+                    service = products_and_services[sid]
+                    relation = create_relation(service.getPhysicalPath())
+                    item_id = 'orderitem.%s' %service.getId()
+                    title = service.Title()
+                    props = {'id': item_id,
+                             'title': title,
+                             'related_item': relation,
+                             'quantity': 1}
+
+                    orderitem = createContentInContainer(
+                        order,
+                        'emas.app.orderitem',
+                        False,
+                        **props
+                    )
+                    pms.setLocalRoles(orderitem, [order.userid], 'Owner')
+
+        setSecurityManager(osm)
+        for order in new_orders:
+            # transition it to paid
+            wf = getToolByName(portal, 'portal_workflow')
+            wf.doActionFor(order, 'pay')
+            order.reindexObject()
+    except:
+        print 'Unable to migrate orders for:%s' %member.getId()
 
 transaction.commit()
