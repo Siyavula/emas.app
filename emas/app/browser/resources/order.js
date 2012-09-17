@@ -167,31 +167,16 @@ $(function($) {
         $("form.update-action textarea").unbind('blur', update_action);
     }
 
-    $('input[name="prod_payment"]').click(function(event) {
-        // show the EFT details
-        if ($(this).val() == 'eft') {
-            $('div#bankdetails').show();
-        } else {
-            $('div#bankdetails').hide();
-        }
-    });
-
     book_selectors = 'input.add-textbook:checked';
     if ($(book_selectors).length > 0) {
         $('div#bookonly').show();
     }
     
-    $('input[name="prod_payment"]').click(function (event) {
-        payment = $('input[name="prod_payment"]:checked').val();
-        button_selector = 'button#confirmsubmit';
-        button = $(button_selector);
-        if (payment == 'creditcard') {
-            $(button).show();
-        }
-        if (payment == 'eft') {
-            $(button).hide();
-        }
+    $('input[name="prod_payment"]').click(function () {
+        togglePayment();
     });
+    togglePayment();
+
 });
 
 function validate() {
@@ -243,3 +228,16 @@ function validate() {
     return result;
 }
 
+function togglePayment() {
+    payment = $('input[name="prod_payment"]:checked').val();
+    button_selector = 'button#confirmsubmit';
+    button = $(button_selector);
+    if (payment == 'creditcard') {
+        $(button).show();
+        $('div#bankdetails').hide();
+    }
+    if (payment == 'eft') {
+        $(button).hide();
+        $('div#bankdetails').show();
+    }
+}
