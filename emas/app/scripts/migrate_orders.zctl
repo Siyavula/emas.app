@@ -73,7 +73,7 @@ for member in members:
         print "Migrating orders for:%s." % member.getId()
         newSecurityManager(None, member)
         for old_service_id, new_service_ids in services_map.items():
-            if getattr(member, old_service_id).asdatetime() < today:
+            if getattr(member, old_service_id).asdatetime() > today:
                 # create an order
                 ordernumber = settings.order_sequence_number + 1
                 settings.order_sequence_number = ordernumber
