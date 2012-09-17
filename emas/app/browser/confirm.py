@@ -139,8 +139,22 @@ class Confirm(grok.View):
                 quantity = selected_items.get(sid, 0) +1
                 service = self.products_and_services._getOb(sid)
                 selected_items[service] = quantity
-
+                
+                # get the discount sorted out
+                discount = self.discount(self.grade, subject)
+                if discount:
+                    quantity = selected_items.get(discount.getId(), 0) +1
+                    selected_items[discount] = quantity
+        
         return selected_items
+
+    def discount(self, grade, subject): 
+        discount_service = None
+        discount_id = '%s-%s-discount' %(subject, self.grade)
+        discount_id = discount_id.replace(' ', '-').lower()
+        if discount_id in self.products_and_services.objectIds():
+            discount_service = self.products_and_services._getOb(discount_id)
+        return discount_service
 
     def ordersubmitted(self):
         return self.request.has_key('order.form.submitted')
