@@ -95,6 +95,7 @@ def setupProductsAndServices(portal):
             'price': 150.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'maths'},
 
@@ -104,6 +105,7 @@ def setupProductsAndServices(portal):
             'price': 150.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'maths'},
 
@@ -113,6 +115,7 @@ def setupProductsAndServices(portal):
             'price': 150.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'maths'},
 
@@ -122,6 +125,7 @@ def setupProductsAndServices(portal):
             'price': 150.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'science'},
 
@@ -131,6 +135,7 @@ def setupProductsAndServices(portal):
             'price': 150.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'science'},
 
@@ -140,6 +145,7 @@ def setupProductsAndServices(portal):
             'price': 150.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'science'},
 
@@ -257,6 +263,7 @@ def setupProductsAndServices(portal):
             'price': -45.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'maths'},
 
@@ -266,6 +273,7 @@ def setupProductsAndServices(portal):
             'price': -45.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'maths'},
 
@@ -275,6 +283,7 @@ def setupProductsAndServices(portal):
             'price': -45.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'maths'},
 
@@ -284,6 +293,7 @@ def setupProductsAndServices(portal):
             'price': -45.00,
             'grade': u'grade-10',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'science'},
 
@@ -293,6 +303,7 @@ def setupProductsAndServices(portal):
             'price': -45.00,
             'grade': u'grade-11',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'science'},
 
@@ -302,6 +313,7 @@ def setupProductsAndServices(portal):
             'price': -45.00,
             'grade': u'grade-12',
             'service_type': 'subscription',
+            'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'science'},
     }
