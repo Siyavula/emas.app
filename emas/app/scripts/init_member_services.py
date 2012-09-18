@@ -80,7 +80,8 @@ for member in members:
                 **props
             )
             ms.expiry_date = practice_expirydate
-            ms.changeOwnership(member)
+            pms.setLocalRoles(ms, [member.getId()], 'Owner')
+            ms.changeOwnership(member.getUser())
             ms.reindexObject()
 
 transaction.commit()
