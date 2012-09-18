@@ -310,12 +310,13 @@ def setupProductsAndServices(portal):
     products_and_services = portal._getOb('products_and_services')
     ids = products_and_services.objectIds()
     for key, values in items.items():
-        if not key in ids:
-            products_and_services.invokeFactory(type_name=values['type'],
-                id=key,
-                **values
-            ) 
+        if key in ids:
+            continue
         
+        products_and_services.invokeFactory(type_name=values['type'],
+            id=key,
+            **values
+        ) 
         item = products_and_services._getOb(key)
         item.subject = values['subject']
         wf = getToolByName(portal, 'portal_workflow')
