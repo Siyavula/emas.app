@@ -1,4 +1,5 @@
 import hashlib
+from itertools import chain
 from email.Utils import formataddr
 
 from five import grok
@@ -45,7 +46,13 @@ class Confirm(grok.View):
         registry = queryUtility(IRegistry)
         self.settings = registry.forInterface(IEmasSettings)
 
-        self.selected_services = self.selected_services()
+        self.display_items = self._display_items()
+        # get the discount sorted out
+        self.discount_items = self._discount_items(self.display_items)
+        self.selected_items = dict(
+            chain(self.display_items.items(), self.discount_items.items())
+        )
+
         self.ordernumber = ordernumber = self.request.get('ordernumber', '')
 
         if self.ordersubmitted():
@@ -77,7 +84,7 @@ class Confirm(grok.View):
             self.order.phone= self.request.get('phone', '')
             self.order.shipping_address = self.request.get('shipping_address', '')
 
-            for service, quantity in self.selected_services.items():
+            for service, quantity in self.selected_items.items():
                 item_id = 'orderitem.%s' %service.getId()
                 relation = create_relation(service.getPhysicalPath())
                 props = {'id'           :item_id,
@@ -128,8 +135,8 @@ class Confirm(grok.View):
                                 self.description + str(self.cost) +
                                 self.returnurl + self.md5key)
 
-    def selected_services(self):
-        selected_items = {}
+    def _display_items(self):
+        display_items = {}
         # the submitted form data looks like this:
         #{'order.form.submitted': 'true',
         #'prod_practice_book': 'Practice,Textbook',
@@ -144,25 +151,42 @@ class Confirm(grok.View):
                 # e.g. subject-grade-[practice | questions | textbook]
                 sid = '%s-%s-%s' %(subject, self.grade, item)
                 sid = sid.replace(' ', '-').lower()
-                quantity = selected_items.get(sid, 0) +1
+                quantity = display_items.get(sid, 0) +1
                 service = self.products_and_services._getOb(sid)
-                selected_items[service] = quantity
+                display_items[service] = quantity
                 
-                # get the discount sorted out
-                discount = self.discount(self.grade, subject)
-                if discount:
-                    quantity = selected_items.get(discount.getId(), 0) +1
-                    selected_items[discount] = quantity
-        
-        return selected_items
+        return display_items
 
-    def discount(self, grade, subject): 
-        discount_service = None
-        discount_id = '%s-%s-discount' %(subject, self.grade)
-        discount_id = discount_id.replace(' ', '-').lower()
-        if discount_id in self.products_and_services.objectIds():
-            discount_service = self.products_and_services._getOb(discount_id)
-        return discount_service
+    def _discount_items(self, selected_items): 
+        discount_items = {}
+        deals = {'maths-grade10-discount'   :['maths-grade10-practice',
+                                              'maths-grade10-textbook'],
+                 'science-grade10-discount' :['science-grade10-practice',
+                                              'science-grade10-textbook'],
+                 'maths-grade11-discount'   :['maths-grade11-practice',
+                                              'maths-grade11-textbook'],
+                 'science-grade11-discount' :['science-grade11-practice',
+                                              'science-grade11-textbook'],
+                 'maths-grade12-discount'   :['maths-grade12-practice',
+                                              'maths-grade12-textbook'],
+                 'science-grade12-discount' :['science-grade12-practice',
+                                              'science-grade12-textbook'], }
+        
+        selected_items = set(selected_items.keys())
+        for discount_id, items in deals.items():
+            deal_items = \
+                set([self.products_and_services._getOb(item) for item in items])
+
+            common_items = selected_items.intersection(deal_items)
+            if len(common_items) == len(deal_items):
+                discount_service = self.products_and_services._getOb(discount_id)
+                quantity = discount_items.get(discount_service.getId(), 0) +1
+                discount_items[discount_service] = quantity
+
+        return discount_items
+
+    def _applyDiscount(self, selected_items):
+        return True    
 
     def ordersubmitted(self):
         return self.request.has_key('order.form.submitted')
