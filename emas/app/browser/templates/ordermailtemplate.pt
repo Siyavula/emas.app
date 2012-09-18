@@ -7,7 +7,7 @@ You have ordered the following items from the <span tal:replace="options/sitenam
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
-<tal:eft condition="python:view.prod_payment() == 'eft'">
+<tal:eft condition="python:options.get('payment', '') == 'eft'">
 Payment for this order can be made using an electronic funds transfer
 (EFT) to the bank account below. Please ensure that you use the correct
 reference as specified below.
