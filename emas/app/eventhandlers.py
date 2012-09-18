@@ -206,6 +206,6 @@ def onMemberJoined(obj, event):
             **props
         )
         ms.expiry_date = trialend 
-        ms.manage_setLocalRoles(order.userid, ('Owner',))
+        ms.manage_setLocalRoles(memberid, ('Owner',))
         ms.changeOwnership(obj)
         ms.reindexObject()
