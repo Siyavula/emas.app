@@ -14,24 +14,41 @@
             tal:define="isAnon context/@@plone_portal_state/anonymous;">
 
             <div id="payment-form-container" class="selectpackage">
+                <h3>Order Number: <span tal:replace="view/ordernumber">1000</span></h3>
+                <p>Thank you for your order!</p>
 
-                <h2>You have ordered the following</h2>
+                <p>You have ordered the following:
+                <ol>
+                    <li tal:repeat="service view/display_items"
+                        tal:content="service/Title">1 year sub to Maths
+                    </li>
+                </ol>
 
-                <fieldset>
-                    <ol>
-                        <li tal:repeat="service view/display_items"
-                            tal:content="service/Title">1 year sub to Maths
-                        </li>
-                    </ol>
-                </fieldset>
+                <p>
+                The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong>
+                </p>
 
-                <div class="ordertotal">
-                    <div>
-                        Total = <span id="total" class="amount" tal:content="view/totalcost">R0</span>
-                    </div>
-                </div>
+                <tal:eft tal:condition="view/eft_selected">
+                    <p>You will receive an email to confirm your order. The
+                    confirmation email will contain the instructions for
+                    payment as described below. Your services will only be
+                    activated once we have received payment.</p>
 
-                <h2>How would you like to pay?</h2>
+                    <p>
+                    Payment for this order can be made using an electronic
+                    funds transfer (EFT) to the bank account below. Please
+                    ensure that you use the correct reference number as
+                    specified below.
+                    </p>
+
+                    <pre class="bankdetails">
+    Account name:   Siyavula Education
+    Bank:           Nedbank
+    Account number: 1018177434
+    Branch code:    198765
+    Reference:      <tal:username tal:replace="view/ordernumber"/>
+                    </pre>
+                </tal:eft>
 
                 <form id="payment-form" method="POST" action="."
                     tal:attributes="action view/action"
@@ -110,4 +127,3 @@
 
 </body>
 </html>
-
