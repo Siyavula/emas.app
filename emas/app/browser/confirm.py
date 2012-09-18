@@ -98,7 +98,7 @@ class Confirm(grok.View):
                     **props
                 )
 
-            self.totalcost = self.order.total()
+            self.totalcost = "R %.2f" % self.order.total()
 
             self.prepVCS()
 

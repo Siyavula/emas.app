@@ -90,7 +90,7 @@ def setupProductsAndServices(portal):
 
     items = {
         'maths-grade10-practice'   : {
-            'title': 'Maths Grade 10 Practice',
+            'title': 'Maths Grade 10 Intelligent Practice',
             'type': 'emas.app.service',
             'price': 150.00,
             'grade': u'grade-10',
@@ -99,7 +99,7 @@ def setupProductsAndServices(portal):
             'subject': u'maths'},
 
         'maths-grade11-practice'   : {
-            'title': 'Maths Grade 11 Practice',
+            'title': 'Maths Grade 11 Intelligent Practice',
             'type': 'emas.app.service',
             'price': 150.00,
             'grade': u'grade-11',
@@ -108,7 +108,7 @@ def setupProductsAndServices(portal):
             'subject': u'maths'},
 
         'maths-grade12-practice'   : {
-            'title': 'Maths Grade 12 Practice',
+            'title': 'Maths Grade 12 Intelligent Practice',
             'type': 'emas.app.service',
             'price': 150.00,
             'grade': u'grade-12',
@@ -117,7 +117,7 @@ def setupProductsAndServices(portal):
             'subject': u'maths'},
 
         'science-grade10-practice' : {
-            'title': 'Science Grade 10 Practice',
+            'title': 'Science Grade 10 Intelligent Practice',
             'type': 'emas.app.service',
             'price': 150.00,
             'grade': u'grade-10',
@@ -126,7 +126,7 @@ def setupProductsAndServices(portal):
             'subject': u'science'},
 
         'science-grade11-practice' : {
-            'title': 'Science Grade 11 Practice',
+            'title': 'Science Grade 11 Intelligent Practice',
             'type': 'emas.app.service',
             'price': 150.00,
             'grade': u'grade-11',
@@ -135,7 +135,7 @@ def setupProductsAndServices(portal):
             'subject': u'science'},
 
         'science-grade12-practice' : {
-            'title': 'Science Grade 12 Practice',
+            'title': 'Science Grade 12 Intelligent Practice',
             'type': 'emas.app.service',
             'price': 150.00,
             'grade': u'grade-12',
@@ -144,7 +144,7 @@ def setupProductsAndServices(portal):
             'subject': u'science'},
 
         'maths-grade10-questions'  : {
-            'title': 'Maths Grade 10 Questions',
+            'title': 'Maths Grade 10 Expert Answer Service',
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-10',
@@ -153,7 +153,7 @@ def setupProductsAndServices(portal):
             'subject': u'maths'},
 
         'maths-grade11-questions'  : {
-            'title': 'Maths Grade 11 Questions',
+            'title': 'Maths Grade 11 Expert Answer Service',
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-11',
@@ -162,7 +162,7 @@ def setupProductsAndServices(portal):
             'subject': u'maths'},
 
         'maths-grade12-questions'  : {
-            'title': 'Maths Grade 12 Questions',
+            'title': 'Maths Grade 12 Expert Answer Service',
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-12',
@@ -171,7 +171,7 @@ def setupProductsAndServices(portal):
             'subject': u'maths'},
 
         'science-grade10-questions': {
-            'title': 'Science Grade 10 Questions',
+            'title': 'Science Grade 10 Expert Answer Service',
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-10',
@@ -180,7 +180,7 @@ def setupProductsAndServices(portal):
             'subject': u'science'},
 
         'science-grade11-questions': {
-            'title': 'Science Grade 11 Questions',
+            'title': 'Science Grade 11 Expert Answer Service',
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-11',
@@ -189,7 +189,7 @@ def setupProductsAndServices(portal):
             'subject': u'science'},
 
         'science-grade12-questions': {
-            'title': 'Science Grade 12 Questions',
+            'title': 'Science Grade 12 Expert Answer Service',
             'type': 'emas.app.service',
             'price': 10.00,
             'grade': u'grade-12',
@@ -225,7 +225,7 @@ def setupProductsAndServices(portal):
             'subject': u'maths'},
 
         'science-grade10-textbook': {
-            'title': 'Science Grade 95 Textbook',
+            'title': 'Science Grade 10 Textbook',
             'type': 'emas.app.service',
             'price': 95.00,
             'grade': u'grade-10',
