@@ -88,6 +88,8 @@ def onOrderPaid(order, event):
                 # we wont' be able to find the memberservices for this user
                 pms.setLocalRoles(ms, [order.userid], 'Owner')
                 tmpservices.append(ms)
+            else:
+                tmpservices.extend([brain.getObject() for brain in brains])
 
             # update the memberservices with info from the orderitem
             for ms in tmpservices:
@@ -167,3 +169,44 @@ def memberServiceAdded(obj, event):
             'This member (%s) already has a memberservice for '
             '%s.' %(obj.userid, service.Title())
         )
+
+
+def onMemberJoined(obj, event):
+    import pdb;pdb.set_trace()
+    memberid = obj.getId()
+    portal = obj.restrictedTraverse('@@plone_portal_state').portal()
+    pms = getToolByName(portal, 'portal_membership')
+    products_and_services = portal._getOb('products_and_services')
+    memberservices = portal._getOb('memberservices')
+
+    # 30 days free trial with 2 questions
+    today = datetime.date.today()
+    trialend = today + datetime.timedelta(days=30)
+    intelligent_practice_services = (
+        'maths-grade10-practice',
+        'maths-grade11-practice',
+        'maths-grade12-practice',
+        'science-grade10-practice',
+        'science-grade11-practice',
+        'science-grade12-practice',
+    )
+
+    for sid in intelligent_practice_services:
+        service = products_and_services[sid]
+        service_relation = create_relation(service.getPhysicalPath())
+        mstitle = '%s for %s' % (service.title, memberid)
+        props = {'title': mstitle,
+                 'userid': memberid,
+                 'related_service': service_relation,
+                 'service_type': service.service_type}
+
+        ms = createContentInContainer(
+            memberservices,
+            'emas.app.memberservice',
+            False,
+            **props
+        )
+        ms.expiry_date = trialend 
+        pms.setLocalRoles(ms, [memberid], 'Owner')
+        ms.changeOwnership(obj)
+        ms.reindexObject()
