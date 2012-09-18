@@ -172,7 +172,6 @@ def memberServiceAdded(obj, event):
 
 
 def onMemberJoined(obj, event):
-    import pdb;pdb.set_trace()
     memberid = obj.getId()
     portal = obj.restrictedTraverse('@@plone_portal_state').portal()
     pms = getToolByName(portal, 'portal_membership')
