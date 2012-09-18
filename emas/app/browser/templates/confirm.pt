@@ -18,7 +18,7 @@
 
                 <fieldset>
                     <ol>
-                        <li tal:repeat="service view/selected_services"
+                        <li tal:repeat="service view/display_items"
                             tal:content="service/Title">1 year sub to Maths
                         </li>
                     </ol>
