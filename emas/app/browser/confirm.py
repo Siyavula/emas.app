@@ -102,6 +102,8 @@ class Confirm(grok.View):
 
             self.prepVCS()
 
+            self.send_invoice(self.order)
+
     def prepVCS(self):
         # when debugging you can use this action to return to the approved
         # page immediately.
@@ -210,4 +212,68 @@ class Confirm(grok.View):
 
     def shipping_address(self):
         return self.request.get('shipping_address', '')
+
+    def email_send_count(self):
+        return self.request.get('email_send_count', 0) +1
     
+    def send_invoice(self, order): 
+        """ Send Invoice to recipients
+        """
+        state = self.context.restrictedTraverse('@@plone_portal_state')
+        portal = state.portal()
+        member = state.member()
+        host = portal.MailHost
+        encoding = portal.getProperty('email_charset')
+
+        send_from_address = formataddr(
+            ( 'Siyavula Education', self.settings.order_email_address )
+        )
+        
+        send_to_address = formataddr((member.getProperty('fullname'),
+                                      member.getProperty('email')))
+
+        subject = 'Order from %s Website' % state.navigation_root_title()
+
+        fullname=member.getProperty('fullname')
+        sitename=state.navigation_root_title()
+        items = order.order_items()
+        orderitems=[i.related_item.to_object.Title() for i in items]
+        totalcost=order.total()
+        username=member.getId()
+        email=self.settings.order_email_address
+        phone=self.settings.order_phone_number
+
+        # Generate message and attach to mail message
+        message = self.ordertemplate(
+            fullname=fullname,
+            sitename=sitename,
+            orderitems=orderitems,
+            totalcost=totalcost,
+            username=username,
+            ordernumber=self.ordernumber,
+            email=email,
+            phone=phone
+        )
+
+        portal.MailHost.send(message, send_to_address, send_from_address,
+                             subject, charset=encoding)
+
+        subject = 'New Order placed on %s Website' % \
+            state.navigation_root_title()
+
+        # Generate order notification
+        message = self.ordernotification(
+            fullname=fullname,
+            sitename=sitename,
+            orderitems=orderitems,
+            totalcost=totalcost,
+            orderurl=order.absolute_url(),
+            username=username,
+            ordernumber=self.ordernumber,
+            email=email,
+            phone=phone
+        )
+
+        # Siyavula's copy
+        portal.MailHost.send(message, send_from_address, send_from_address,
+                             subject, charset=encoding)
