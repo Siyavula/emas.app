@@ -118,7 +118,7 @@ $(function($) {
     });
 
     // login form
-    $('#login-links a[href$="/login"]').prepOverlay(
+    $('.login-links a[href$="/login"]').prepOverlay(
         {
             subtype: 'ajax',
             filter: common_content_filter,
@@ -140,7 +140,7 @@ $(function($) {
     );
 
     // registration
-    $('#login-links a[href$="/@@register-from-orderform"]').prepOverlay(
+    $('.login-links a[href$="/@@register-from-orderform"]').prepOverlay(
         {
             subtype: 'ajax',
             filter: common_content_filter,
