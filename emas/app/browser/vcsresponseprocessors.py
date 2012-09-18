@@ -33,6 +33,7 @@ class PaymentApproved(grok.View):
 
     
     def update(self):
+        self.pps = self.context.restrictedTraverse('@@plone_portal_state')
         # on the first pass after VCS the request will have a 'p2' var
         # then we do the rest. Otherwise, just render the template.
         if self.request.has_key('p2'):
@@ -52,6 +53,15 @@ class PaymentApproved(grok.View):
             url = original_url + '/@@paymentapproved'
             self.request.response.redirect(url)
     
+    def memberservices(self):
+        memberservices = self.pps.portal()['memberservices']
+        return memberservices.objectValues()
+    
+    def service_url(self, service):
+        portal_url = self.pps.portal().absolute_url()
+        grade = service.related_service.to_object.grade
+        return '%s/@@practice/%s' %(portal_url, grade)
+
 
 class PaymentDeclined(grok.View):
     """

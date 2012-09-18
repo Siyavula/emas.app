@@ -10,9 +10,21 @@
     <metal:core fill-slot="main">
     <h1 class="documentFirstHeading">Payment approved</h1>
 
-    <div id="content-core">
+    <div id="content-core"
+        tal:define="services view/memberservices">
     
         Payment was approved.
+        
+        <div tal:condition="services">
+            You have access to the following services:
+            <ul>
+                <li tal:repeat="service services">
+                    <a href="#" tal:attributes="href python:view.service_url(service)">
+                        <span tal:replace="service/Title">Service link</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
         
     </div>
 
