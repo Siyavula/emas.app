@@ -7,6 +7,7 @@ from zope.component import queryUtility
 from zope.interface import Interface
 from z3c.relationfield.relation import create_relation
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.dexterity.utils import createContentInContainer
 
 from plone.registry.interfaces import IRegistry
 
@@ -38,7 +39,7 @@ class Confirm(grok.View):
         self.portal = self.portal_state.portal()
         self.member = self.portal_state.member()
         self.memberid = self.member.getId()
-        self.member_orders = self.portal['orders']
+        self.orders = self.portal['orders']
         self.products_and_services = self.portal['products_and_services']
 
         registry = queryUtility(IRegistry)
@@ -53,20 +54,23 @@ class Confirm(grok.View):
                 return self.context.restrictedTraverse('@@order')
 
             if ordernumber:
-                self.order = self.member_orders._getOb(self.ordernumber)
+                self.order = self.orders._getOb(self.ordernumber)
                 self.order.manage_delObjects(self.order.objectIds()) 
             else:
                 # create member service objects
                 tmpnumber = self.settings.order_sequence_number + 1
                 self.settings.order_sequence_number = tmpnumber
                 self.ordernumber = '%04d' % tmpnumber
-                self.member_orders.invokeFactory(
-                    type_name='emas.app.order',
-                    id=self.ordernumber,
-                    title=self.ordernumber,
-                    userid=self.memberid
+                props = {'id'     :self.ordernumber,
+                         'title'  :self.ordernumber,
+                         'userid' :self.memberid}
+                createContentInContainer(
+                    self.orders,
+                    'emas.app.order',
+                    False,
+                    **props
                 )
-                self.order = self.member_orders._getOb(self.ordernumber)
+                self.order = self.orders._getOb(self.ordernumber)
 
             # set the shipping address if we have one
             self.order.fullname = self.request.get('fullname', '')
@@ -74,15 +78,19 @@ class Confirm(grok.View):
             self.order.shipping_address = self.request.get('shipping_address', '')
 
             for service, quantity in self.selected_services.items():
+                item_id = 'orderitem.%s' %service.getId()
                 relation = create_relation(service.getPhysicalPath())
-                item_id = self.order.generateUniqueId(type_name='orderitem')
-                self.order.invokeFactory(
-                    type_name='emas.app.orderitem',
-                    id=item_id,
-                    title=item_id,
-                    related_item=relation,
-                    quantity=quantity,
+                props = {'id'           :item_id,
+                         'title'        :service.Title(),
+                         'related_item' :relation,
+                         'quantity'     :quantity}
+                createContentInContainer(
+                    self.order,
+                    'emas.app.orderitem',
+                    False,
+                    **props
                 )
+
             self.totalcost = self.order.total()
 
             self.prepVCS()
