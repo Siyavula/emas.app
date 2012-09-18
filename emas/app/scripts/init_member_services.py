@@ -45,7 +45,10 @@ now = datetime.datetime.utcnow()
 pms = getToolByName(portal, 'portal_membership')
 pc = getToolByName(portal, 'portal_catalog')
 
+count = 0
+
 for member in members:
+    count += 1
     practice_expirydate = member.getProperty('moreexercise_expirydate')
     intelligent_practice_access = member.getProperty(        
         'intelligent_practice_access')
@@ -87,5 +90,8 @@ for member in members:
             pms.setLocalRoles(ms, [member.getId()], 'Owner')
             ms.changeOwnership(member.getUser())
             ms.reindexObject()
+
+    if count % 10 == 0:
+        transaction.commit()
 
 transaction.commit()
