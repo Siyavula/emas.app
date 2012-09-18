@@ -4,12 +4,9 @@ import sys
 import datetime
 import transaction
 from Testing import makerequest
-from zope.component import queryUtility
-from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.utils import createContentInContainer
 from AccessControl.SecurityManagement import getSecurityManager
-from AccessControl.SecurityManagement import setSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
 from z3c.relationfield.relation import create_relation
 
@@ -33,92 +30,45 @@ setSite(portal)
 
 # we assume there is an admin user
 app = makerequest.makerequest(app)
-user = portal.acl_users.getUser('rijkadmin')
-newSecurityManager(None, user.__of__(portal.acl_users))
+user = app.acl_users.getUser('admin')
+newSecurityManager(None, user.__of__(app.acl_users))
 
 members = portal.portal_membership.listMembers()
-created = skipped = 0
 print 'Preparing to update %s folders for members.' %len(members)
 
 today = datetime.datetime.now()
-orders = portal._getOb('orders')
 products_and_services = portal._getOb('products_and_services')
-registry = queryUtility(IRegistry)
-settings = registry.forInterface(IEmasSettings)
+memberservices = portal._getOb('memberservices')
 
-services_map = {'answerdatabase_expirydate':
-                    ['maths-grade10-questions',
-                     'maths-grade11-questions',
-                     'maths-grade12-questions',
-                     'science-grade10-questions',
-                     'science-grade11-questions',
-                     'science-grade12-questions',
-                    ],
-                'moreexercise_expirydate':
-                    ['maths-grade10-practice',
-                     'maths-grade11-practice',
-                     'maths-grade12-practice',
-                     'science-grade10-practice',
-                     'science-grade11-practice',
-                     'science-grade12-practice',
-                    ]
-               }
-
-osm = getSecurityManager()
 now = datetime.datetime.utcnow()
-new_orders = []
 pms = getToolByName(portal, 'portal_membership')
 for member in members:
-    try:
-        print "Migrating orders for:%s." % member.getId()
-        newSecurityManager(None, member)
-        for old_service_id, new_service_ids in services_map.items():
-            if getattr(member, old_service_id).asdatetime() > today:
-                # create an order
-                ordernumber = settings.order_sequence_number + 1
-                settings.order_sequence_number = ordernumber
-                ordernumber = '%04d' % ordernumber
-                props = {'id': ordernumber,
-                         'title': ordernumber,
-                         'userid': member.getId(),
-                         'date_ordered': now}
-                
-                createContentInContainer(
-                    orders,
-                    'emas.app.order',
-                    False,
-                    **props
-                )
-                order = orders._getOb(ordernumber)
-                pms.setLocalRoles(order, [order.userid], 'Owner')
-                new_orders.append(order)
+    print "Migrating services for:%s." % member.getId()
 
-                # add orderitems for each service
-                for sid in new_service_ids:
-                    service = products_and_services[sid]
-                    relation = create_relation(service.getPhysicalPath())
-                    item_id = 'orderitem.%s' %service.getId()
-                    title = service.Title()
-                    props = {'id': item_id,
-                             'title': title,
-                             'related_item': relation,
-                             'quantity': 1}
+    practice_expirydate = getattr(member, 'moreexercise_expirydate')
+    intelligent_practice_access = getattr(member, 'intelligent_practice_access')
 
-                    orderitem = createContentInContainer(
-                        order,
-                        'emas.app.orderitem',
-                        False,
-                        **props
-                    )
-                    pms.setLocalRoles(orderitem, [order.userid], 'Owner')
+    if practice_expirydate > today and len(intelligent_practice_access) > 0:
 
-        setSecurityManager(osm)
-        for order in new_orders:
-            # transition it to paid
-            wf = getToolByName(portal, 'portal_workflow')
-            wf.doActionFor(order, 'pay')
-            order.reindexObject()
-    except:
-        print 'Unable to migrate orders for:%s' %member.getId()
+        for grade_subject in intelligent_practice_access:
+            sid = '%s-practice' % grade_subject
+            service = products_and_services[sid]
+            service_relation = create_relation(service.getPhysicalPath())
+            mstitle = '%s for %s' (service.title, member.getId())
+
+            props = {'title': '%s for %s',
+                     'userid': member.getId(),
+                     'related_service': service_relation,
+                     'service_type': service.service_type}
+
+            ms = createContentInContainer(
+                memberservices,
+                'emas.app.memberservice',
+                False,
+                **props
+            )
+            ms.expiry_date = practice_expirydate
+            ms.changeOwnership(member)
+            ms.reindexObject()
 
 transaction.commit()
