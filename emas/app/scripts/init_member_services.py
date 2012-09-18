@@ -68,7 +68,7 @@ for member in members:
             if len(pc(query)) > 0:
                 continue
 
-            props = {'title': '%s for %s',
+            props = {'title': mstitle,
                      'userid': member.getId(),
                      'related_service': service_relation,
                      'service_type': service.service_type}
