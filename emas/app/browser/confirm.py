@@ -246,7 +246,7 @@ class Confirm(grok.View):
         message = self.ordertemplate(
             fullname=fullname,
             sitename=sitename,
-            orderitems=self.display_items,
+            orderitems=self.display_items.keys(),
             totalcost=totalcost,
             username=username,
             ordernumber=self.ordernumber,
@@ -265,7 +265,7 @@ class Confirm(grok.View):
         message = self.ordernotification(
             fullname=fullname,
             sitename=sitename,
-            orderitems=self.display_items,
+            orderitems=self.display_items.keys(),
             totalcost=totalcost,
             orderurl=order.absolute_url(),
             username=username,

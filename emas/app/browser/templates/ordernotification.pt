@@ -4,7 +4,7 @@ Order Number:  <tal:ordernumber tal:replace="options/ordernumber"/>
 Username: <tal:username tal:replace="options/username"/>
 
 The following items were ordered <span tal:replace="options/sitename">Everything Maths</span> website:
-<tal:items tal:repeat="item options/orderitems">-  <tal:items tal:replace="item"/></tal:items>
+<tal:items tal:repeat="item options/orderitems">-  <tal:items tal:replace="item/Title"/></tal:items>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
