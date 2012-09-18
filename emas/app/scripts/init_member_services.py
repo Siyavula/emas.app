@@ -50,9 +50,13 @@ for member in members:
     intelligent_practice_access = member.getProperty(        
         'intelligent_practice_access')
 
+    # no need to give mxit users access
+    if member.getId().endswith('mxit.com'):
+        continue
+
     if practice_expirydate > today and len(intelligent_practice_access) > 0:
 
-        print "Migrating services for %s." % member.getId()
+        print "Migrating services for %s" % member.getId()
 
         for grade_subject in intelligent_practice_access:
             subject, x, grade = grade_subject.split('-')
