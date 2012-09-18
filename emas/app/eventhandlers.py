@@ -86,7 +86,7 @@ def onOrderPaid(order, event):
 
                 # give the order owner permissions on the new memberservice, or
                 # we wont' be able to find the memberservices for this user
-                pms.setLocalRoles(ms, [order.userid], 'Owner')
+                ms.manage_setLocalRoles(order.userid, ('Owner',))
                 tmpservices.append(ms)
             else:
                 tmpservices.extend([brain.getObject() for brain in brains])
@@ -206,6 +206,6 @@ def onMemberJoined(obj, event):
             **props
         )
         ms.expiry_date = trialend 
-        pms.setLocalRoles(ms, [memberid], 'Owner')
+        ms.manage_setLocalRoles(order.userid, ('Owner',))
         ms.changeOwnership(obj)
         ms.reindexObject()
