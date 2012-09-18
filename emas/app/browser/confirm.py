@@ -83,7 +83,7 @@ class Confirm(grok.View):
                     related_item=relation,
                     quantity=quantity,
                 )
-            self.totalcost = self.order.total()
+            self.totalcost = "R %.2f" % self.order.total()
 
             self.prepVCS()
 
