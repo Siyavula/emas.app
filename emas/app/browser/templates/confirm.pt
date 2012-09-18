@@ -14,26 +14,45 @@
             tal:define="isAnon context/@@plone_portal_state/anonymous;">
 
             <div id="payment-form-container" class="selectpackage">
-                <h2>You have ordered the following</h2>
+                <h3>Order Number: <span tal:replace="view/ordernumber">1000</span></h3>
+                <p>Thank you for your order!</p>
 
-                <fieldset>
-                    <ol>
-                        <li tal:repeat="service view/selected_services"
-                            tal:content="service/Title">1 year sub to Maths
-                        </li>
-                    </ol>
-                </fieldset>
+                <p>You have ordered the following:
+                <ol>
+                    <li tal:repeat="service view/selected_services"
+                        tal:content="service/Title">1 year sub to Maths
+                    </li>
+                </ol>
 
-                <div class="ordertotal">
-                    <div>
-                        Total = <span id="total" class="amount" tal:content="view/totalcost">R0</span>
-                    </div>
-                </div>
+                <p>
+                The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong>
+                </p>
 
-                <h2>How would you like to pay?</h2>
+                <tal:eft tal:condition="view/eft_selected">
+                    <p>You will receive an email to confirm your order. The
+                    confirmation email will contain the instructions for
+                    payment as described below. Your services will only be
+                    activated once we have received payment.</p>
+
+                    <p>
+                    Payment for this order can be made using an electronic
+                    funds transfer (EFT) to the bank account below. Please
+                    ensure that you use the correct reference number as
+                    specified below.
+                    </p>
+
+                    <pre class="bankdetails">
+    Account name:   Siyavula Education
+    Bank:           Nedbank
+    Account number: 1018177434
+    Branch code:    198765
+    Reference:      <tal:username tal:replace="view/ordernumber"/>
+                    </pre>
+                </tal:eft>
 
                 <form id="payment-form" method="POST" action="."
-                    tal:attributes="action view/action">
+                    tal:attributes="action view/action"
+                    tal:condition="view/creditcard_selected">
 
                     <fieldset>
                         <input name="orderid" value="4444" type="hidden"
@@ -49,22 +68,18 @@
                             tal:attributes="value view/description">
                             
                         <input type="hidden" name="p4" value="1"
-                        tal:attributes="value view/cost">
+                            tal:attributes="value view/cost">
 
                         <input type="hidden" name="m_1" value="1"
-                        tal:attributes="value string:${view/returnurl}">
+                            tal:attributes="value string:${view/returnurl}">
                             
                         <input type="hidden" name="hash" value="1"
-                        tal:attributes="value view/md5hash">
+                            tal:attributes="value view/md5hash">
 
                         <input name="prod_payment" value="creditcard"
                             tal:attributes="checked view/creditcard_selected"
-                            type="radio" checked="checked"> Credit Card payment<br />
+                            type="hidden" checked="checked">
 
-                        <input name="prod_payment" value="eft"
-                            tal:attributes="checked view/eft_selected"
-                            type="radio"> Electronic Funds Transfer (EFT)<br />
-                        
                         <div class="ordertotal">
                             <button id="confirmsubmit" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirmsubmit" value="make payment">Make payment</button>
                         </div>
@@ -73,7 +88,7 @@
                 </form>
 
                 <form class="backbutton" action="." method="POST"
-                    tal:attributes="action string:${context/absolute_url}/@@order">
+                    tal:attributes="action string:${context/absolute_url}/@@order" tal:condition="view/creditcard_selected">
 
                     <!-- all the values from the order form, in case we 
                          want to go back to it.
@@ -104,47 +119,6 @@
                         
                     <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Back</button>
                 </form>
-
-                <fieldset>
-                    <div id="bankdetails" class="hidden">
-                        <h2>
-                            Payment for can also be made using an Electronic
-                            Funds Transfer (EFT) and the following account details:
-                        </h2>
-                        <br/>
-                        <label for="ordernumber">Order number (use this as reference number)</label><br/>
-                        <p id="ordernumber"
-                            tal:content="python:view.order.getId()">
-                            Order number
-                        </p>
-
-                        <label for="accountholdername">Account holder</label><br/>
-                        <p id="accountholdername">
-                            Siyavula Education
-                        </p>
-
-                        <label for="accountnumber">
-                            Account number:
-                        </label>
-                        <p id="accountnumber">
-                            1018177434
-                        <p/>
-
-                        <label for="bankname">
-                            Bank name
-                        </label>
-                        <p id="bankname">
-                            Nedbank
-                        </p>
-
-                        <label for="branchcode">
-                            Branch code:
-                        </label>
-                        <p id="branchcode">
-                            198765
-                        </p>
-                    </div>
-                </fieldset>
 
             </div>
         </div>
