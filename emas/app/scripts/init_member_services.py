@@ -5,12 +5,13 @@ import datetime
 import transaction
 from Testing import makerequest
 from Products.CMFCore.utils import getToolByName
-from plone.dexterity.utils import createContentInContainer
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
-from z3c.relationfield.relation import create_relation
 
 from zope.app.component.hooks import setSite
+from z3c.relationfield.relation import create_relation
+from plone.dexterity.utils import createContentInContainer
+from plone.uuid.interfaces import IUUID
 
 from emas.theme.interfaces import IEmasSettings
 
@@ -36,25 +37,36 @@ newSecurityManager(None, user.__of__(app.acl_users))
 members = portal.portal_membership.listMembers()
 print 'Preparing to update %s folders for members.' %len(members)
 
-today = datetime.datetime.now()
+today = datetime.datetime.today().date()
 products_and_services = portal._getOb('products_and_services')
 memberservices = portal._getOb('memberservices')
 
 now = datetime.datetime.utcnow()
 pms = getToolByName(portal, 'portal_membership')
-for member in members:
-    print "Migrating services for:%s." % member.getId()
+pc = getToolByName(portal, 'portal_catalog')
 
-    practice_expirydate = getattr(member, 'moreexercise_expirydate')
-    intelligent_practice_access = getattr(member, 'intelligent_practice_access')
+for member in members:
+    practice_expirydate = member.getProperty('moreexercise_expirydate')
+    intelligent_practice_access = member.getProperty(        
+        'intelligent_practice_access')
 
     if practice_expirydate > today and len(intelligent_practice_access) > 0:
 
+        print "Migrating services for %s." % member.getId()
+
         for grade_subject in intelligent_practice_access:
-            sid = '%s-practice' % grade_subject
+            subject, x, grade = grade_subject.split('-')
+            sid = '%s-grade%s-practice' % (subject, grade)
             service = products_and_services[sid]
             service_relation = create_relation(service.getPhysicalPath())
-            mstitle = '%s for %s' (service.title, member.getId())
+            mstitle = '%s for %s' % (service.title, member.getId())
+
+            query = {'portal_type': 'emas.app.memberservice',
+                     'userid': member.getId(),
+                     'serviceuid': IUUID(service),
+                    }
+            if len(pc(query)) > 0:
+                continue
 
             props = {'title': '%s for %s',
                      'userid': member.getId(),
