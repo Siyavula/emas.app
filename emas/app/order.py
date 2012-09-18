@@ -116,13 +116,6 @@ class Order(dexterity.Container):
             This is done in order to stop the spoofing of successful payment
             responses.
         """
-        pps = self.restrictedTraverse('@@plone_portal_state')
-        member = pps.member()
-        pmt = getToolByName(self, 'portal_membership')
-        manage_portal = pmt.checkPermission(ManagePortal, self)
-        if manage_portal:
-            return True
-        
         stored_vcs_hash = get_annotation('vcs_hash')
         original_hash = request.get('Hash', '')
         return original_hash == stored_vcs_hash
