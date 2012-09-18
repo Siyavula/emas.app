@@ -237,7 +237,6 @@ class Confirm(grok.View):
         fullname=member.getProperty('fullname')
         sitename=state.navigation_root_title()
         items = order.order_items()
-        orderitems=[i.related_item.to_object.Title() for i in items]
         totalcost=order.total()
         username=member.getId()
         email=self.settings.order_email_address
@@ -247,12 +246,13 @@ class Confirm(grok.View):
         message = self.ordertemplate(
             fullname=fullname,
             sitename=sitename,
-            orderitems=orderitems,
+            orderitems=self.display_items,
             totalcost=totalcost,
             username=username,
             ordernumber=self.ordernumber,
             email=email,
-            phone=phone
+            phone=phone,
+            payment=self.prod_payment(),
         )
 
         portal.MailHost.send(message, send_to_address, send_from_address,
@@ -265,13 +265,14 @@ class Confirm(grok.View):
         message = self.ordernotification(
             fullname=fullname,
             sitename=sitename,
-            orderitems=orderitems,
+            orderitems=self.display_items,
             totalcost=totalcost,
             orderurl=order.absolute_url(),
             username=username,
             ordernumber=self.ordernumber,
             email=email,
-            phone=phone
+            phone=phone,
+            payment=self.prod_payment(),
         )
 
         # Siyavula's copy
