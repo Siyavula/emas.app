@@ -58,7 +58,8 @@ def onOrderPaid(order, event):
         now = datetime.datetime.now().date()
         # grab the services from the orderitems
         for item in order.order_items():
-            # try to find the memberservices based on the orderitem related services.
+            # try to find the memberservices based on the orderitem
+            # related services.
             service = item.related_item.to_object
             uuid = IUUID(service)
             query['serviceuid'] = uuid
@@ -67,13 +68,14 @@ def onOrderPaid(order, event):
 
             # create new memberservices if not found
             if brains is None or len(brains) < 1:
-                msid = 'Memberservice:%s' %item.Title()
+                mstitle = '%s for %s' % (service.title, userid)
+
                 related_service = create_relation(service.getPhysicalPath())
-                props = {'id'              :msid,
-                         'title'           :msid,
-                         'userid'          :userid,
-                         'related_service' :related_service,
-                         'service_type'    : service.service_type,}
+                props = {'title': mstitle,
+                         'userid': userid,
+                         'related_service': related_service,
+                         'service_type': service.service_type
+                         }
 
                 ms = createContentInContainer(
                     memberservices,
