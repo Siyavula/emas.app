@@ -117,7 +117,7 @@ class Order(dexterity.Container):
             This is done in order to stop the spoofing of successful payment
             responses.
         """
-        stored_vcs_hash = get_annotation('vcs_hash')
+        stored_vcs_hash = get_annotation(self, 'vcs_hash')
         original_hash = request.get('Hash', '')
         return original_hash == stored_vcs_hash
 
