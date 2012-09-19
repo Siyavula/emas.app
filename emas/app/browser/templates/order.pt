@@ -30,7 +30,7 @@
                         tal:define="login_url string:${context/absolute_url}/login;
                                     register_url string:${context/absolute_url}/@@register-from-orderform">
                         <legend id='loginrequest'>
-                            You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
+                            You are not logged in, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
                         </legend>
                     </fieldset>
 
@@ -180,7 +180,7 @@
                         tal:define="login_url string:${context/absolute_url}/login;
                                     register_url string:${context/absolute_url}/@@register-from-orderform">
                         <legend id='loginrequest'>
-                            You are not logged in, for Intelligent Practice you need an account on the site. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
+                            You are not logged in, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
                         </legend>
                     </fieldset>
 
