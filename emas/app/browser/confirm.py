@@ -13,6 +13,7 @@ from plone.dexterity.utils import createContentInContainer
 from plone.registry.interfaces import IRegistry
 
 from emas.theme.interfaces import IEmasSettings
+from emas.app.browser.utils import annotate
 
 grok.templatedir('templates')
 
@@ -136,6 +137,8 @@ class Confirm(grok.View):
         self.md5hash = vcs_hash(self.vcs_terminal_id + self.tid + 
                                 self.description + str(self.cost) +
                                 self.returnurl + self.md5key)
+
+        annotate(self.order, 'vcs_hash', self.md5hash)
 
     def _display_items(self):
         display_items = {}
