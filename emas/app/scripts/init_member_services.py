@@ -88,7 +88,6 @@ for member in members:
             )
             ms.expiry_date = practice_expirydate
             pms.setLocalRoles(ms, [member.getId()], 'Owner')
-            ms.changeOwnership(member.getUser())
             ms.reindexObject()
 
     if count % 10 == 0:
