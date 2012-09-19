@@ -5,6 +5,7 @@ from plone.registry.interfaces import IRegistry
 
 from zope.interface import Interface
 from zope.component import queryUtility
+from AccessControl.SecurityManagement import newSecurityManager
 
 from Products.CMFCore.utils import getToolByName
 
@@ -35,10 +36,13 @@ class PaymentApproved(grok.View):
     
     def update(self):
         self.pps = self.context.restrictedTraverse('@@plone_portal_state')
+        pms = getToolByName(self.context, 'portal_membership')
         # on the first pass after VCS the request will have a 'p2' var
         # then we do the rest. Otherwise, just render the template.
         if self.request.has_key('p2'):
             self.order = getOrder(self.context, self.request)
+            member = pms.getMemberById(self.order.userid)
+            newSecurityManager(self.request, member)
             wf = getToolByName(self.context, 'portal_workflow')
             status = wf.getStatusOf('order_workflow', self.order)
             if status['review_state'] != 'paid':
