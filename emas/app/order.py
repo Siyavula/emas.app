@@ -23,6 +23,7 @@ from plone.formwidget.contenttree import ObjPathSourceBinder
 from emas.theme.interfaces import IEmasSettings
 
 from emas.app.browser.paymentdetails import vcs_hash
+from emas.app.browser.utils import get_annotation
 from emas.app import MessageFactory as _
 
 
