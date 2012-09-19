@@ -6,6 +6,7 @@ from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 from zope.interface import invariant, Invalid
+from zope.component import queryUtility
 
 from z3c.form import group, field
 
