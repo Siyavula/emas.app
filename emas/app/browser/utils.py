@@ -1,3 +1,4 @@
+import hashlib
 from datetime import date
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
@@ -148,7 +149,7 @@ def get_annotation(obj, key):
     key = '%s.%s' %(KEY_BASE, key)
     return annotations.get(key, '')
 
-def compute_vcs_response_hash(self, props, md5key):
+def compute_vcs_response_hash(props, md5key):
     keys = ("p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11",
             "p12", "pam", "m_1", "m_2", "m_3", "m_4", "m_5", "m_6", "m_7",
             "m_8", "m_9", "m_10", "CardHolderIpAddr", "MaskedCardNumber",
