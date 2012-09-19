@@ -12,6 +12,7 @@ from z3c.form import group, field
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 
+from plone.registry.interfaces import IRegistry
 from plone.namedfile.field import NamedImage, NamedFile
 from plone.namedfile.field import NamedBlobImage, NamedBlobFile
 
@@ -22,8 +23,7 @@ from plone.formwidget.contenttree import ObjPathSourceBinder
 
 from emas.theme.interfaces import IEmasSettings
 
-from emas.app.browser.paymentdetails import vcs_hash
-from emas.app.browser.utils import get_annotation
+from emas.app.browser.utils import compute_vcs_response_hash
 from emas.app import MessageFactory as _
 
 
@@ -117,9 +117,12 @@ class Order(dexterity.Container):
             This is done in order to stop the spoofing of successful payment
             responses.
         """
-        stored_vcs_hash = get_annotation(self, 'vcs_hash')
-        original_hash = self.REQUEST.get('Hash', '')
-        return original_hash == stored_vcs_hash
+        registry = queryUtility(IRegistry)
+        settings = registry.forInterface(IEmasSettings)
+        md5key = settings.vcs_md5_key
+        our_hash = compute_vcs_response_hash(self.REQUEST.form, md5key)
+        vcs_returned_hash = self.REQUEST.get('Hash', '')
+        return our_hash == vcs_returned_hash
 
 
 class SampleView(grok.View):
