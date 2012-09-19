@@ -81,7 +81,7 @@
                             type="hidden" checked="checked">
 
                         <div class="ordertotal">
-                            <button id="confirmsubmit" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirmsubmit" value="make payment">Make payment</button>
+                            <button id="makepayment" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="makepayment" value="make payment">Make payment</button>
                         </div>
                             
                     </fieldset>

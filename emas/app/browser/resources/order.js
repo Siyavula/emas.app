@@ -100,7 +100,7 @@ $(function($) {
     ordertotal();
 
     $(".selectpackage input[type='radio']").change(ordertotal);
-    $(".selectpackage button[type='submit']").click(validate);
+    $(".selectpackage button[name='submitorder']").click(validate);
 
     $("#school-order-form-link").click(function() {
         hideForms();
@@ -230,7 +230,7 @@ function validate() {
 
 function togglePayment() {
     payment = $('input[name="prod_payment"]:checked').val();
-    button_selector = 'button#confirmsubmit';
+    button_selector = 'button#makepayment';
     button = $(button_selector);
     if (payment == 'creditcard') {
         $(button).show();
