@@ -118,7 +118,7 @@ class Order(dexterity.Container):
             responses.
         """
         stored_vcs_hash = get_annotation(self, 'vcs_hash')
-        original_hash = request.get('Hash', '')
+        original_hash = self.REQUEST.get('Hash', '')
         return original_hash == stored_vcs_hash
 
 

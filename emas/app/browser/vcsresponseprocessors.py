@@ -46,7 +46,7 @@ class PaymentApproved(grok.View):
             wf = getToolByName(self.context, 'portal_workflow')
             status = wf.getStatusOf('order_workflow', self.order)
             if status['review_state'] != 'paid':
-                wf.doActionFor(self.order, 'pay', request=self.request)
+                wf.doActionFor(self.order, 'pay')
                 self.order.reindexObject()
 
         # we put 'm_1', the absolute_url of the context, in as parameter to the
