@@ -1,5 +1,5 @@
 import hashlib
-from datetime import date
+from datetime import date, datetime, timedelta
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
@@ -95,10 +95,11 @@ def practice_service_uuids(context):
 def member_services(context, service_uids):
     pmt = getToolByName(context, 'portal_membership')
     member = pmt.getAuthenticatedMember()
+    yesterday = datetime.now() - timedelta(days=1)
     query = {'portal_type': 'emas.app.memberservice',
              'userid': member.getId(),
              'serviceuid': service_uids,
-             'sort_on': 'expiry_date'
+             'expiry_date': {'query':yesterday, 'range':'min'}
             }
     pc = getToolByName(context, 'portal_catalog')
     memberservices = [b.getObject() for b in pc(query)]
