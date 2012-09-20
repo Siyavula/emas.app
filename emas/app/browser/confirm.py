@@ -190,9 +190,6 @@ class Confirm(grok.View):
 
         return discount_items
 
-    def _applyDiscount(self, selected_items):
-        return True    
-
     def ordersubmitted(self):
         return self.request.has_key('order.form.submitted')
 
