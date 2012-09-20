@@ -12,6 +12,7 @@ from Products.CMFCore.utils import getToolByName
 from emas.theme.interfaces import IEmasSettings
 
 from emas.app.browser.utils import practice_service_uuids, member_services
+from emas.app.browser.utils import get_display_items_from_order
 
 grok.templatedir('templates')
 
@@ -59,9 +60,7 @@ class PaymentApproved(grok.View):
             self.request.response.redirect(url)
     
     def memberservices(self):
-        uids = practice_service_uuids(self.context)
-        memberservices = member_services(self.context, uids)
-        return memberservices
+        return get_display_items_from_order(self.order)
     
     def service_url(self, service):
         portal_url = self.pps.portal().absolute_url()

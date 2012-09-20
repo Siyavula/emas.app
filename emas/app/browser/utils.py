@@ -34,6 +34,16 @@ service_mapping = {
 }
 
 
+SERVICE_IDS = [
+    'maths-grade10-practice',
+    'science-grade10-practice',
+    'maths-grade11-practice',
+    'science-grade11-practice',
+    'maths-grade12-practice',
+    'science-grade12-practice',
+]
+
+
 def qaservice_paths():
     return service_mapping.get('qaservices')
 
@@ -163,3 +173,84 @@ def compute_vcs_response_hash(props, md5key):
     m = hashlib.md5()
     m.update(tmpstr)
     return m.hexdigest()
+
+
+def get_discount_items(context, selected_items): 
+    pps = context.restrictedTraverse('@@plone_portal_state')
+    portal = pps.portal()
+    products_and_services = portal.products_and_services
+
+    discount_items = {}
+    deals = {'maths-grade10-discount'   :['maths-grade10-practice',
+                                          'maths-grade10-textbook'],
+             'science-grade10-discount' :['science-grade10-practice',
+                                          'science-grade10-textbook'],
+             'maths-grade11-discount'   :['maths-grade11-practice',
+                                          'maths-grade11-textbook'],
+             'science-grade11-discount' :['science-grade11-practice',
+                                          'science-grade11-textbook'],
+             'maths-grade12-discount'   :['maths-grade12-practice',
+                                          'maths-grade12-textbook'],
+             'science-grade12-discount' :['science-grade12-practice',
+                                          'science-grade12-textbook'], }
+    
+    selected_items = set(selected_items.keys())
+    for discount_id, items in deals.items():
+        deal_items = \
+            set([products_and_services._getOb(item) for item in items])
+
+        common_items = selected_items.intersection(deal_items)
+        if len(common_items) == len(deal_items):
+            discount_service = products_and_services._getOb(discount_id)
+            quantity = discount_items.get(discount_service.getId(), 0) +1
+            discount_items[discount_service] = quantity
+
+    return discount_items
+
+
+def get_display_items_from_request(context):
+    """
+    The submitted form data looks like this:
+        {'order.form.submitted': 'true',
+        'prod_practice_book': 'Practice,Textbook',
+        'practice_subjects': 'Maths,Science',
+        'submit': '1',
+        'practice_grade': 'Grade 10'}
+    """
+    request = context.get('request', context.REQUEST)
+    display_items = {}
+    
+    grade = request.form.get('grade', '')
+    prod_practice_book = request.form.get('prod_practice_book', '')
+    subjects = request.form.get('subjects', '')
+    for subject in subjects.split(','):
+        for item in prod_practice_book.split(','):
+            # e.g. subject-grade-[practice | questions | textbook]
+            sid = '%s-%s-%s' %(subject, grade, item)
+            sid = sid.replace(' ', '-').lower()
+            quantity = display_items.get(sid, 0) +1
+            service = products_and_services._getOb(sid)
+            display_items[service] = quantity
+            
+    return display_items
+
+
+def get_display_items_from_order(order):
+    display_items = []
+    # it is a LazyMap, we slice it to get the full objects
+    orderitems = order.order_items()
+    orderitems = dict(
+        (item.related_item.to_object, item.quantity)
+        for item in orderitems
+    )
+    discount_items = get_discount_items(order, orderitems)
+
+    discount_items = set(discount_items.keys())
+    orderitems = set(orderitems.keys())
+    
+    items = orderitems.difference(discount_items)
+    uuids = [IUUID(item) for item in items]
+    items = member_services(order, uuids)
+    display_items = [i for i in items \
+                     if i.related_service.to_object.getId() in SERVICE_IDS]
+    return display_items 
