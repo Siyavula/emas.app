@@ -9,10 +9,10 @@ from AccessControl.SecurityManagement import newSecurityManager
 
 from Products.CMFCore.utils import getToolByName
 
-from emas.theme.interfaces import IEmasSettings
-
-from emas.app.browser.utils import practice_service_uuids, member_services
 from emas.app.browser.utils import get_display_items_from_order
+from emas.app.browser.utils import member_services
+from emas.app.browser.utils import practice_service_uuids
+from emas.app.browser.utils import service_url as get_service_url
 
 grok.templatedir('templates')
 
@@ -63,9 +63,7 @@ class PaymentApproved(grok.View):
         return get_display_items_from_order(self.order)
     
     def service_url(self, service):
-        portal_url = self.pps.portal().absolute_url()
-        grade = service.related_service.to_object.grade
-        return '%s/@@practice/%s' %(portal_url, grade)
+        return get_service_url(service)
 
 
 class PaymentDeclined(grok.View):
