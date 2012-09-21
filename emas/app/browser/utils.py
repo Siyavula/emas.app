@@ -95,11 +95,11 @@ def practice_service_uuids(context):
 def member_services(context, service_uids):
     pmt = getToolByName(context, 'portal_membership')
     member = pmt.getAuthenticatedMember()
-    yesterday = datetime.now() - timedelta(days=1)
+    today = datetime.today().date()
     query = {'portal_type': 'emas.app.memberservice',
              'userid': member.getId(),
              'serviceuid': service_uids,
-             'expiry_date': {'query':yesterday, 'range':'min'}
+             'expiry_date': {'query':today, 'range':'min'}
             }
     pc = getToolByName(context, 'portal_catalog')
     memberservices = [b.getObject() for b in pc(query)]
