@@ -3,26 +3,24 @@ from Acquisition import aq_inner
 
 from zope.interface import Interface
 
+from emas.app.browser.utils import practice_service_uuids
+from emas.app.browser.utils import member_services
+from emas.app.browser.utils import service_url as get_service_url
     
 grok.templatedir('templates')
     
     
 class MemberServices(grok.View):
-    """
-        Returns all the current authenticated member's services
+    """ Returns all the authenticated member's services
     """
     
     grok.context(Interface)
     grok.require('zope2.View')
     grok.name('member-services')
 
-    def render(self):
-        return ''
-    
-    def list_services(self):
-        portal_state = self.context.restrictedTraverse('@@plone_portal_state')
-        # get the services and products folder
-        items_folder = portal_state.portal()._getOb('products_and_services')
-        if items_folder is None:
-            raise AttributeError('No products_and_services folder found.')
-        return items_folder.getFolderContents(full_objects=True)
+    def update(self):
+        uids = practice_service_uuids(self.context)
+        self.memberservices =  member_services(self.context, uids)
+
+    def service_url(self, service):
+        return get_service_url(service)
