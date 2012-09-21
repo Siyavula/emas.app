@@ -106,6 +106,13 @@ def member_services(context, service_uids):
     return memberservices
 
 
+def service_url(service):
+    # XXX: fix urls to point to appropriate site hosting the service
+    portal_url = service.restrictedTraverse('@@plone_portal_state').portal_url()
+    grade = service.related_service.to_object.grade
+    return '%s/@@practice/%s' %(portal_url, grade)
+
+
 def member_credits(context):
     credits = 0
 
