@@ -1,21 +1,14 @@
 Changelog
 =========
 
+1.1
+---
+
+Fix calculation of active member service
+
+Add memberservices view to list active member services
+
 1.0
 ---
 
-- Initial release
-
-- Create content types
-
-- Add VCS integration
-
-- Add custom orderfolder listing
-
-- Add custom order view
-
-- Add custom order form
-
-- Add popup registration to order view
-
-- Add popup login to order view
+Initial release
