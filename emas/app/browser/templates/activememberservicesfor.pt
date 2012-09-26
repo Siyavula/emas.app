@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emas.theme">
+<body>
+
+    <metal:core fill-slot="main">
+    <h1 class="documentFirstHeading">Find active services for user</h1>
+
+    <div id="content-core"
+        tal:define="services view/memberservices;
+                    userid view/userid | request/userid | nothing">
+
+        <div> 
+            <form action="." method="POST"
+                tal:attributes="action string:${context/absolute_url}/@@active-memberservices-for"> 
+                <input name="userid" value="" tal:attributes="value userid"/>
+                <input type="submit" name="submit.active_memberservicesfor" value="Find active services"/>
+            </form> 
+        </div> 
+        
+        <br/>
+
+        <div tal:condition="services">
+            Active member services for <span tal:replace="view/userid">userid</span>:
+            <ul>
+                <li tal:repeat="service services">
+                    <a href="#" tal:attributes="href service/absolute_url">
+                        <span tal:replace="service/title">Service link</span>
+                    </a> (expires on <span tal:content="python:service.expiry_date.strftime('%d %B %Y')">1 January 2012</span>)
+                </li>
+            </ul>
+        </div>
+        
+        <div tal:condition="not:services">
+            No member services found.
+        </div>
+    </div>
+
+    </metal:core>
+
+</body>
+</html>
+
