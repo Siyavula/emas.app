@@ -40,8 +40,9 @@ class PaymentApproved(grok.View):
         pms = getToolByName(self.context, 'portal_membership')
 
         oid = self.request.get('p2')
+        self.order = getOrder(self.context, self.request)
+
         if self.request.has_key('m_1'):
-            self.order = getOrder(self.context, self.request)
             member = pms.getMemberById(self.order.userid)
             newSecurityManager(self.request, member)
             wf = getToolByName(self.context, 'portal_workflow')
