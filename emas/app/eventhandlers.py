@@ -54,7 +54,6 @@ def onOrderPaid(order, event):
                  'userid'   : userid,
                  'path'       : ms_path}
         
-        tmpservices = []
         now = datetime.datetime.now().date()
         # grab the services from the orderitems
         for item in order.order_items():
@@ -64,10 +63,10 @@ def onOrderPaid(order, event):
             uuid = IUUID(service)
             query['serviceuid'] = uuid
             brains = pc(query)
-            tmpservices.extend([b.getObject() for b in brains])
+            tmpservices = [b.getObject() for b in brains]
 
-            # create new memberservices if not found
-            if brains is None or len(brains) < 1:
+            # create a new memberservice if it doesn't exisst
+            if len(brains) == 0:
                 mstitle = '%s for %s' % (service.title, userid)
 
                 related_service = create_relation(service.getPhysicalPath())
@@ -88,8 +87,6 @@ def onOrderPaid(order, event):
                 # we wont' be able to find the memberservices for this user
                 ms.manage_setLocalRoles(order.userid, ('Owner',))
                 tmpservices.append(ms)
-            else:
-                tmpservices.extend([brain.getObject() for brain in brains])
 
             # update the memberservices with info from the orderitem
             for ms in tmpservices:
