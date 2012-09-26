@@ -316,6 +316,76 @@ def setupProductsAndServices(portal):
             'subscription_period': 365,
             'amount_of_credits': 0,
             'subject': u'science'},
+
+        'maths-grade10-papers'   : {
+            'title': 'Maths Grade 10 Papers',
+            'type': 'emas.app.service',
+            'price': 2.00,
+            'grade': u'grade-10',
+            'service_type': 'subscription',
+            'subscription_period': 365,
+            'amount_of_credits': 0,
+            'amount_of_moola': 200,
+            'subject': u'maths'},
+
+        'maths-grade11-papers'   : {
+            'title': 'Maths Grade 11 Papers',
+            'type': 'emas.app.service',
+            'price': 2.00,
+            'grade': u'grade-11',
+            'service_type': 'subscription',
+            'subscription_period': 365,
+            'amount_of_credits': 0,
+            'amount_of_moola': 200,
+            'subject': u'maths'},
+
+        'maths-grade12-papers'   : {
+            'title': 'Maths Grade 12 Papers',
+            'type': 'emas.app.service',
+            'price': 2.00,
+            'grade': u'grade-12',
+            'service_type': 'subscription',
+            'subscription_period': 365,
+            'channels': ['mxit', 'web', 'mobile'], 
+            'access_group': 'PastMathsExamPapers',
+            'amount_of_credits': 0,
+            'amount_of_moola': 200,
+            'subject': u'maths'},
+
+        'science-grade10-papers' : {
+            'title': 'Science Grade 10 Papers',
+            'type': 'emas.app.service',
+            'price': 2.00,
+            'grade': u'grade-10',
+            'service_type': 'subscription',
+            'subscription_period': 365,
+            'amount_of_credits': 0,
+            'amount_of_moola': 200,
+            'subject': u'science'},
+
+        'science-grade11-papers' : {
+            'title': 'Science Grade 11 Papers',
+            'type': 'emas.app.service',
+            'price': 2.00,
+            'grade': u'grade-11',
+            'service_type': 'subscription',
+            'subscription_period': 365,
+            'amount_of_credits': 0,
+            'amount_of_moola': 200,
+            'subject': u'science'},
+
+        'science-grade12-papers' : {
+            'title': 'Science Grade 12 Papers',
+            'type': 'emas.app.service',
+            'price': 2.00,
+            'grade': u'grade-12',
+            'service_type': 'subscription',
+            'subscription_period': 365,
+            'channels': ['mxit', 'web', 'mobile'], 
+            'access_group': 'PastScienceExamPapers',
+            'amount_of_credits': 0,
+            'amount_of_moola': 200,
+            'subject': u'science'},
     }
 
     wf = getToolByName(portal, 'portal_workflow')
