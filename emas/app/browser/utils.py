@@ -106,6 +106,18 @@ def member_services(context, service_uids):
     return memberservices
 
 
+def member_services_for(context, service_uids, userid):
+    today = datetime.today().date()
+    query = {'portal_type': 'emas.app.memberservice',
+             'userid': userid,
+             'serviceuid': service_uids,
+             'expiry_date': {'query':today, 'range':'min'}
+            }
+    pc = getToolByName(context, 'portal_catalog')
+    memberservices = [b.getObject() for b in pc(query)]
+    return memberservices
+
+
 def service_url(service):
     # XXX: fix urls to point to appropriate site hosting the service
     portal_url = service.restrictedTraverse('@@plone_portal_state').portal_url()
