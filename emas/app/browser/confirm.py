@@ -141,6 +141,8 @@ class Confirm(grok.View):
         annotate(self.order, 'vcs_hash', self.md5hash)
 
     def _display_items(self):
+        """ TODO: move to utils.display_items ASAP
+        """
         display_items = {}
         # the submitted form data looks like this:
         #{'order.form.submitted': 'true',
