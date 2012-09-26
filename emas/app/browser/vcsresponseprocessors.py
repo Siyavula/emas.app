@@ -40,14 +40,15 @@ class PaymentApproved(grok.View):
         pms = getToolByName(self.context, 'portal_membership')
 
         oid = self.request.get('p2')
-        self.order = getOrder(self.context, self.request)
-        member = pms.getMemberById(self.order.userid)
-        newSecurityManager(self.request, member)
-        wf = getToolByName(self.context, 'portal_workflow')
-        status = wf.getStatusOf('order_workflow', self.order)
-        if status['review_state'] != 'paid':
-            wf.doActionFor(self.order, 'pay')
-            self.order.reindexObject()
+        if self.request.has_key('m_1'):
+            self.order = getOrder(self.context, self.request)
+            member = pms.getMemberById(self.order.userid)
+            newSecurityManager(self.request, member)
+            wf = getToolByName(self.context, 'portal_workflow')
+            status = wf.getStatusOf('order_workflow', self.order)
+            if status['review_state'] != 'paid':
+                wf.doActionFor(self.order, 'pay')
+                self.order.reindexObject()
 
         # we put 'm_1', the absolute_url of the context, in as parameter to the
         # initial VCS call.  If it is returned we want to show the approved page
