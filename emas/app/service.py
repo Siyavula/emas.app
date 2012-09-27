@@ -106,10 +106,16 @@ class IService(IProduct):
     )
 
     access_group = schema.Choice(
-        title = _(u"Access groups"),
+        title = _(u"Access group"),
         required = False,
         source = get_vocab_groups,
         default = 'Members',
+    )
+
+    access_path = schema.TextLine(
+        title = _(u"Access path"),
+        description = _(u"Used to render links to the service."),
+        required = False,
     )
 
 
