@@ -114,7 +114,7 @@ class IService(IProduct):
 
     access_path = schema.TextLine(
         title = _(u"Access path"),
-        description = _(u"Used to render links to the service."),
+        description = _(u"Used to render links to the service. No leading '/' please."),
         required = False,
     )
 
