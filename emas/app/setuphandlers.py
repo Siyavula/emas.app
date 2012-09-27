@@ -17,6 +17,325 @@ log = logging.getLogger('emas.app-setuphandlers')
 
 DEFAULT_TYPES = ['Folder', 'Document']
 
+ITEMS = {
+    'maths-grade10-practice'   : {
+        'title': 'Maths Grade 10 Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 150.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-10',
+        'subject': u'maths'},
+
+    'maths-grade11-practice'   : {
+        'title': 'Maths Grade 11 Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 150.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-11',
+        'subject': u'maths'},
+
+    'maths-grade12-practice'   : {
+        'title': 'Maths Grade 12 Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 150.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-12',
+        'subject': u'maths'},
+
+    'science-grade10-practice' : {
+        'title': 'Science Grade 10 Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 150.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-10',
+        'subject': u'science'},
+
+    'science-grade11-practice' : {
+        'title': 'Science Grade 11 Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 150.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-11',
+        'subject': u'science'},
+
+    'science-grade12-practice' : {
+        'title': 'Science Grade 12 Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 150.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-12',
+        'subject': u'science'},
+
+    'maths-grade10-questions'  : {
+        'title': 'Maths Grade 10 Expert Answer Service',
+        'type': 'emas.app.service',
+        'price': 10.00,
+        'grade': u'grade-10',
+        'service_type': 'credit',
+        'amount_of_credits': 10,
+        'access_path'  :'',
+        'subject': u'maths'},
+
+    'maths-grade11-questions'  : {
+        'title': 'Maths Grade 11 Expert Answer Service',
+        'type': 'emas.app.service',
+        'price': 10.00,
+        'grade': u'grade-11',
+        'service_type': 'credit',
+        'amount_of_credits': 10,
+        'access_path'  :'',
+        'subject': u'maths'},
+
+    'maths-grade12-questions'  : {
+        'title': 'Maths Grade 12 Expert Answer Service',
+        'type': 'emas.app.service',
+        'price': 10.00,
+        'grade': u'grade-12',
+        'service_type': 'credit',
+        'amount_of_credits': 10,
+        'access_path'  :'',
+        'subject': u'maths'},
+
+    'science-grade10-questions': {
+        'title': 'Science Grade 10 Expert Answer Service',
+        'type': 'emas.app.service',
+        'price': 10.00,
+        'grade': u'grade-10',
+        'service_type': 'credit',
+        'amount_of_credits': 10,
+        'access_path'  :'',
+        'subject': u'science'},
+
+    'science-grade11-questions': {
+        'title': 'Science Grade 11 Expert Answer Service',
+        'type': 'emas.app.service',
+        'price': 10.00,
+        'grade': u'grade-11',
+        'service_type': 'credit',
+        'amount_of_credits': 10,
+        'access_path'  :'',
+        'subject': u'science'},
+
+    'science-grade12-questions': {
+        'title': 'Science Grade 12 Expert Answer Service',
+        'type': 'emas.app.service',
+        'price': 10.00,
+        'grade': u'grade-12',
+        'service_type': 'credit',
+        'amount_of_credits': 10,
+        'access_path'  :'',
+        'subject': u'science'},
+
+    'maths-grade10-textbook'  : {
+        'title': 'Maths Grade 10 Textbook',
+        'type': 'emas.app.service',
+        'price': 95.00,
+        'grade': u'grade-10',
+        'service_type': 'credit',
+        'amount_of_credits': 100,
+        'subject': u'maths'},
+
+    'maths-grade11-textbook'  : {
+        'title': 'Maths Grade 11 Textbook',
+        'type': 'emas.app.service',
+        'price': 95.00,
+        'grade': u'grade-11',
+        'service_type': 'credit',
+        'amount_of_credits': 100,
+        'subject': u'maths'},
+
+    'maths-grade12-textbook'  : {
+        'title': 'Maths Grade 12 Textbook',
+        'type': 'emas.app.service',
+        'price': 95.00,
+        'grade': u'grade-12',
+        'service_type': 'credit',
+        'amount_of_credits': 100,
+        'subject': u'maths'},
+
+    'science-grade10-textbook': {
+        'title': 'Science Grade 10 Textbook',
+        'type': 'emas.app.service',
+        'price': 95.00,
+        'grade': u'grade-10',
+        'service_type': 'credit',
+        'amount_of_credits': 100,
+        'subject': u'science'},
+
+    'science-grade11-textbook': {
+        'title': 'Science Grade 11 Textbook',
+        'type': 'emas.app.service',
+        'price': 95.00,
+        'grade': u'grade-11',
+        'service_type': 'credit',
+        'amount_of_credits': 100,
+        'subject': u'science'},
+
+    'science-grade12-textbook': {
+        'title': 'Science Grade 12 Textbook',
+        'type': 'emas.app.service',
+        'price': 95.00,
+        'grade': u'grade-12',
+        'service_type': 'credit',
+        'amount_of_credits': 100,
+        'subject': u'science'},
+
+    'maths-grade10-discount'   : {
+        'title': 'Maths Grade 10 Discount',
+        'type': 'emas.app.service',
+        'price': -45.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'subject': u'maths'},
+
+    'maths-grade11-discount'   : {
+        'title': 'Maths Grade 11 Discount',
+        'type': 'emas.app.service',
+        'price': -45.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'subject': u'maths'},
+
+    'maths-grade12-discount'   : {
+        'title': 'Maths Grade 12 Discount',
+        'type': 'emas.app.service',
+        'price': -45.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'subject': u'maths'},
+
+    'science-grade10-discount' : {
+        'title': 'Science Grade 10 Discount',
+        'type': 'emas.app.service',
+        'price': -45.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'subject': u'science'},
+
+    'science-grade11-discount' : {
+        'title': 'Science Grade 11 Discount',
+        'type': 'emas.app.service',
+        'price': -45.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'subject': u'science'},
+
+    'science-grade12-discount' : {
+        'title': 'Science Grade 12 Discount',
+        'type': 'emas.app.service',
+        'price': -45.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'subject': u'science'},
+
+    'maths-grade10-papers'   : {
+        'title': 'Maths Grade 10 Papers',
+        'type': 'emas.app.service',
+        'price': 2.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'amount_of_moola': 200,
+        'access_path'  :'maths/past-exam-papers',
+        'subject': u'maths'},
+
+    'maths-grade11-papers'   : {
+        'title': 'Maths Grade 11 Papers',
+        'type': 'emas.app.service',
+        'price': 2.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'amount_of_moola': 200,
+        'access_path'  :'maths/past-exam-papers',
+        'subject': u'maths'},
+
+    'maths-grade12-papers'   : {
+        'title': 'Maths Grade 12 Papers',
+        'type': 'emas.app.service',
+        'price': 2.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'channels': ['mxit', 'web', 'mobile'], 
+        'access_group': 'PastMathsExamPapers',
+        'amount_of_credits': 0,
+        'amount_of_moola': 200,
+        'access_path'  :'maths/past-exam-papers',
+        'subject': u'maths'},
+
+    'science-grade10-papers' : {
+        'title': 'Science Grade 10 Papers',
+        'type': 'emas.app.service',
+        'price': 2.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'amount_of_moola': 200,
+        'access_path'  :'science/past-exam-papers',
+        'subject': u'science'},
+
+    'science-grade11-papers' : {
+        'title': 'Science Grade 11 Papers',
+        'type': 'emas.app.service',
+        'price': 2.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'amount_of_credits': 0,
+        'amount_of_moola': 200,
+        'access_path'  :'science/past-exam-papers',
+        'subject': u'science'},
+
+    'science-grade12-papers' : {
+        'title': 'Science Grade 12 Papers',
+        'type': 'emas.app.service',
+        'price': 2.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 365,
+        'channels': ['mxit', 'web', 'mobile'], 
+        'access_group': 'PastScienceExamPapers',
+        'amount_of_credits': 0,
+        'amount_of_moola': 200,
+        'access_path'  :'science/past-exam-papers',
+        'subject': u'science'},
+}
+
+
 def setupPortalContent(portal):
     """
         We don't specify workflows for the emas.app containers, since there
@@ -87,329 +406,10 @@ def setupCatalogIndexes(portal):
 
 
 def setupProductsAndServices(portal):
-
-    items = {
-        'maths-grade10-practice'   : {
-            'title': 'Maths Grade 10 Intelligent Practice',
-            'type': 'emas.app.service',
-            'price': 150.00,
-            'grade': u'grade-10',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'access_path'  :'@@practice/grade-10',
-            'subject': u'maths'},
-
-        'maths-grade11-practice'   : {
-            'title': 'Maths Grade 11 Intelligent Practice',
-            'type': 'emas.app.service',
-            'price': 150.00,
-            'grade': u'grade-11',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'access_path'  :'@@practice/grade-11',
-            'subject': u'maths'},
-
-        'maths-grade12-practice'   : {
-            'title': 'Maths Grade 12 Intelligent Practice',
-            'type': 'emas.app.service',
-            'price': 150.00,
-            'grade': u'grade-12',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'access_path'  :'@@practice/grade-12',
-            'subject': u'maths'},
-
-        'science-grade10-practice' : {
-            'title': 'Science Grade 10 Intelligent Practice',
-            'type': 'emas.app.service',
-            'price': 150.00,
-            'grade': u'grade-10',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'access_path'  :'@@practice/grade-10',
-            'subject': u'science'},
-
-        'science-grade11-practice' : {
-            'title': 'Science Grade 11 Intelligent Practice',
-            'type': 'emas.app.service',
-            'price': 150.00,
-            'grade': u'grade-11',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'access_path'  :'@@practice/grade-11',
-            'subject': u'science'},
-
-        'science-grade12-practice' : {
-            'title': 'Science Grade 12 Intelligent Practice',
-            'type': 'emas.app.service',
-            'price': 150.00,
-            'grade': u'grade-12',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'access_path'  :'@@practice/grade-12',
-            'subject': u'science'},
-
-        'maths-grade10-questions'  : {
-            'title': 'Maths Grade 10 Expert Answer Service',
-            'type': 'emas.app.service',
-            'price': 10.00,
-            'grade': u'grade-10',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
-            'access_path'  :'',
-            'subject': u'maths'},
-
-        'maths-grade11-questions'  : {
-            'title': 'Maths Grade 11 Expert Answer Service',
-            'type': 'emas.app.service',
-            'price': 10.00,
-            'grade': u'grade-11',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
-            'access_path'  :'',
-            'subject': u'maths'},
-
-        'maths-grade12-questions'  : {
-            'title': 'Maths Grade 12 Expert Answer Service',
-            'type': 'emas.app.service',
-            'price': 10.00,
-            'grade': u'grade-12',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
-            'access_path'  :'',
-            'subject': u'maths'},
-
-        'science-grade10-questions': {
-            'title': 'Science Grade 10 Expert Answer Service',
-            'type': 'emas.app.service',
-            'price': 10.00,
-            'grade': u'grade-10',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
-            'access_path'  :'',
-            'subject': u'science'},
-
-        'science-grade11-questions': {
-            'title': 'Science Grade 11 Expert Answer Service',
-            'type': 'emas.app.service',
-            'price': 10.00,
-            'grade': u'grade-11',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
-            'access_path'  :'',
-            'subject': u'science'},
-
-        'science-grade12-questions': {
-            'title': 'Science Grade 12 Expert Answer Service',
-            'type': 'emas.app.service',
-            'price': 10.00,
-            'grade': u'grade-12',
-            'service_type': 'credit',
-            'amount_of_credits': 10,
-            'access_path'  :'',
-            'subject': u'science'},
-
-        'maths-grade10-textbook'  : {
-            'title': 'Maths Grade 10 Textbook',
-            'type': 'emas.app.service',
-            'price': 95.00,
-            'grade': u'grade-10',
-            'service_type': 'credit',
-            'amount_of_credits': 100,
-            'subject': u'maths'},
-
-        'maths-grade11-textbook'  : {
-            'title': 'Maths Grade 11 Textbook',
-            'type': 'emas.app.service',
-            'price': 95.00,
-            'grade': u'grade-11',
-            'service_type': 'credit',
-            'amount_of_credits': 100,
-            'subject': u'maths'},
-
-        'maths-grade12-textbook'  : {
-            'title': 'Maths Grade 12 Textbook',
-            'type': 'emas.app.service',
-            'price': 95.00,
-            'grade': u'grade-12',
-            'service_type': 'credit',
-            'amount_of_credits': 100,
-            'subject': u'maths'},
-
-        'science-grade10-textbook': {
-            'title': 'Science Grade 10 Textbook',
-            'type': 'emas.app.service',
-            'price': 95.00,
-            'grade': u'grade-10',
-            'service_type': 'credit',
-            'amount_of_credits': 100,
-            'subject': u'science'},
-
-        'science-grade11-textbook': {
-            'title': 'Science Grade 11 Textbook',
-            'type': 'emas.app.service',
-            'price': 95.00,
-            'grade': u'grade-11',
-            'service_type': 'credit',
-            'amount_of_credits': 100,
-            'subject': u'science'},
-
-        'science-grade12-textbook': {
-            'title': 'Science Grade 12 Textbook',
-            'type': 'emas.app.service',
-            'price': 95.00,
-            'grade': u'grade-12',
-            'service_type': 'credit',
-            'amount_of_credits': 100,
-            'subject': u'science'},
-
-        'maths-grade10-discount'   : {
-            'title': 'Maths Grade 10 Discount',
-            'type': 'emas.app.service',
-            'price': -45.00,
-            'grade': u'grade-10',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'subject': u'maths'},
-
-        'maths-grade11-discount'   : {
-            'title': 'Maths Grade 11 Discount',
-            'type': 'emas.app.service',
-            'price': -45.00,
-            'grade': u'grade-11',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'subject': u'maths'},
-
-        'maths-grade12-discount'   : {
-            'title': 'Maths Grade 12 Discount',
-            'type': 'emas.app.service',
-            'price': -45.00,
-            'grade': u'grade-12',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'subject': u'maths'},
-
-        'science-grade10-discount' : {
-            'title': 'Science Grade 10 Discount',
-            'type': 'emas.app.service',
-            'price': -45.00,
-            'grade': u'grade-10',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'subject': u'science'},
-
-        'science-grade11-discount' : {
-            'title': 'Science Grade 11 Discount',
-            'type': 'emas.app.service',
-            'price': -45.00,
-            'grade': u'grade-11',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'subject': u'science'},
-
-        'science-grade12-discount' : {
-            'title': 'Science Grade 12 Discount',
-            'type': 'emas.app.service',
-            'price': -45.00,
-            'grade': u'grade-12',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'subject': u'science'},
-
-        'maths-grade10-papers'   : {
-            'title': 'Maths Grade 10 Papers',
-            'type': 'emas.app.service',
-            'price': 2.00,
-            'grade': u'grade-10',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'amount_of_moola': 200,
-            'access_path'  :'maths/past-exam-papers',
-            'subject': u'maths'},
-
-        'maths-grade11-papers'   : {
-            'title': 'Maths Grade 11 Papers',
-            'type': 'emas.app.service',
-            'price': 2.00,
-            'grade': u'grade-11',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'amount_of_moola': 200,
-            'access_path'  :'maths/past-exam-papers',
-            'subject': u'maths'},
-
-        'maths-grade12-papers'   : {
-            'title': 'Maths Grade 12 Papers',
-            'type': 'emas.app.service',
-            'price': 2.00,
-            'grade': u'grade-12',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'channels': ['mxit', 'web', 'mobile'], 
-            'access_group': 'PastMathsExamPapers',
-            'amount_of_credits': 0,
-            'amount_of_moola': 200,
-            'access_path'  :'maths/past-exam-papers',
-            'subject': u'maths'},
-
-        'science-grade10-papers' : {
-            'title': 'Science Grade 10 Papers',
-            'type': 'emas.app.service',
-            'price': 2.00,
-            'grade': u'grade-10',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'amount_of_moola': 200,
-            'access_path'  :'science/past-exam-papers',
-            'subject': u'science'},
-
-        'science-grade11-papers' : {
-            'title': 'Science Grade 11 Papers',
-            'type': 'emas.app.service',
-            'price': 2.00,
-            'grade': u'grade-11',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'amount_of_credits': 0,
-            'amount_of_moola': 200,
-            'access_path'  :'science/past-exam-papers',
-            'subject': u'science'},
-
-        'science-grade12-papers' : {
-            'title': 'Science Grade 12 Papers',
-            'type': 'emas.app.service',
-            'price': 2.00,
-            'grade': u'grade-12',
-            'service_type': 'subscription',
-            'subscription_period': 365,
-            'channels': ['mxit', 'web', 'mobile'], 
-            'access_group': 'PastScienceExamPapers',
-            'amount_of_credits': 0,
-            'amount_of_moola': 200,
-            'access_path'  :'science/past-exam-papers',
-            'subject': u'science'},
-    }
-
     wf = getToolByName(portal, 'portal_workflow')
     products_and_services = portal._getOb('products_and_services')
     ids = products_and_services.objectIds()
-    for key, values in items.items():
+    for key, values in ITEMS.items():
         if key in ids:
             continue
         
