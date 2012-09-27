@@ -97,6 +97,7 @@ def setupProductsAndServices(portal):
             'service_type': 'subscription',
             'subscription_period': 365,
             'amount_of_credits': 0,
+            'access_path'  :'@@practice/grade-10',
             'subject': u'maths'},
 
         'maths-grade11-practice'   : {
@@ -107,6 +108,7 @@ def setupProductsAndServices(portal):
             'service_type': 'subscription',
             'subscription_period': 365,
             'amount_of_credits': 0,
+            'access_path'  :'@@practice/grade-11',
             'subject': u'maths'},
 
         'maths-grade12-practice'   : {
@@ -117,6 +119,7 @@ def setupProductsAndServices(portal):
             'service_type': 'subscription',
             'subscription_period': 365,
             'amount_of_credits': 0,
+            'access_path'  :'@@practice/grade-12',
             'subject': u'maths'},
 
         'science-grade10-practice' : {
@@ -127,6 +130,7 @@ def setupProductsAndServices(portal):
             'service_type': 'subscription',
             'subscription_period': 365,
             'amount_of_credits': 0,
+            'access_path'  :'@@practice/grade-10',
             'subject': u'science'},
 
         'science-grade11-practice' : {
@@ -137,6 +141,7 @@ def setupProductsAndServices(portal):
             'service_type': 'subscription',
             'subscription_period': 365,
             'amount_of_credits': 0,
+            'access_path'  :'@@practice/grade-11',
             'subject': u'science'},
 
         'science-grade12-practice' : {
@@ -147,6 +152,7 @@ def setupProductsAndServices(portal):
             'service_type': 'subscription',
             'subscription_period': 365,
             'amount_of_credits': 0,
+            'access_path'  :'@@practice/grade-12',
             'subject': u'science'},
 
         'maths-grade10-questions'  : {
@@ -156,6 +162,7 @@ def setupProductsAndServices(portal):
             'grade': u'grade-10',
             'service_type': 'credit',
             'amount_of_credits': 10,
+            'access_path'  :'',
             'subject': u'maths'},
 
         'maths-grade11-questions'  : {
@@ -165,6 +172,7 @@ def setupProductsAndServices(portal):
             'grade': u'grade-11',
             'service_type': 'credit',
             'amount_of_credits': 10,
+            'access_path'  :'',
             'subject': u'maths'},
 
         'maths-grade12-questions'  : {
@@ -174,6 +182,7 @@ def setupProductsAndServices(portal):
             'grade': u'grade-12',
             'service_type': 'credit',
             'amount_of_credits': 10,
+            'access_path'  :'',
             'subject': u'maths'},
 
         'science-grade10-questions': {
@@ -183,6 +192,7 @@ def setupProductsAndServices(portal):
             'grade': u'grade-10',
             'service_type': 'credit',
             'amount_of_credits': 10,
+            'access_path'  :'',
             'subject': u'science'},
 
         'science-grade11-questions': {
@@ -192,6 +202,7 @@ def setupProductsAndServices(portal):
             'grade': u'grade-11',
             'service_type': 'credit',
             'amount_of_credits': 10,
+            'access_path'  :'',
             'subject': u'science'},
 
         'science-grade12-questions': {
@@ -201,6 +212,7 @@ def setupProductsAndServices(portal):
             'grade': u'grade-12',
             'service_type': 'credit',
             'amount_of_credits': 10,
+            'access_path'  :'',
             'subject': u'science'},
 
         'maths-grade10-textbook'  : {
@@ -326,6 +338,7 @@ def setupProductsAndServices(portal):
             'subscription_period': 365,
             'amount_of_credits': 0,
             'amount_of_moola': 200,
+            'access_path'  :'maths/past-exam-papers',
             'subject': u'maths'},
 
         'maths-grade11-papers'   : {
@@ -337,6 +350,7 @@ def setupProductsAndServices(portal):
             'subscription_period': 365,
             'amount_of_credits': 0,
             'amount_of_moola': 200,
+            'access_path'  :'maths/past-exam-papers',
             'subject': u'maths'},
 
         'maths-grade12-papers'   : {
@@ -350,6 +364,7 @@ def setupProductsAndServices(portal):
             'access_group': 'PastMathsExamPapers',
             'amount_of_credits': 0,
             'amount_of_moola': 200,
+            'access_path'  :'maths/past-exam-papers',
             'subject': u'maths'},
 
         'science-grade10-papers' : {
@@ -361,6 +376,7 @@ def setupProductsAndServices(portal):
             'subscription_period': 365,
             'amount_of_credits': 0,
             'amount_of_moola': 200,
+            'access_path'  :'science/past-exam-papers',
             'subject': u'science'},
 
         'science-grade11-papers' : {
@@ -372,6 +388,7 @@ def setupProductsAndServices(portal):
             'subscription_period': 365,
             'amount_of_credits': 0,
             'amount_of_moola': 200,
+            'access_path'  :'science/past-exam-papers',
             'subject': u'science'},
 
         'science-grade12-papers' : {
@@ -385,6 +402,7 @@ def setupProductsAndServices(portal):
             'access_group': 'PastScienceExamPapers',
             'amount_of_credits': 0,
             'amount_of_moola': 200,
+            'access_path'  :'science/past-exam-papers',
             'subject': u'science'},
     }
 
