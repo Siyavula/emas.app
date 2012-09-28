@@ -267,7 +267,7 @@ ITEMS = {
         'subscription_period': 365,
         'amount_of_credits': 0,
         'amount_of_moola': 200,
-        'access_path'  :'maths/past-exam-papers',
+        'access_path'  :'maths/past-exam-papers/maths',
         'subject': u'maths'},
 
     'maths-grade11-papers'   : {
@@ -279,7 +279,7 @@ ITEMS = {
         'subscription_period': 365,
         'amount_of_credits': 0,
         'amount_of_moola': 200,
-        'access_path'  :'maths/past-exam-papers',
+        'access_path'  :'maths/past-exam-papers/maths',
         'subject': u'maths'},
 
     'maths-grade12-papers'   : {
@@ -293,7 +293,7 @@ ITEMS = {
         'access_group': 'PastMathsExamPapers',
         'amount_of_credits': 0,
         'amount_of_moola': 200,
-        'access_path'  :'maths/past-exam-papers',
+        'access_path'  :'maths/past-exam-papers/maths',
         'subject': u'maths'},
 
     'science-grade10-papers' : {
@@ -305,7 +305,7 @@ ITEMS = {
         'subscription_period': 365,
         'amount_of_credits': 0,
         'amount_of_moola': 200,
-        'access_path'  :'science/past-exam-papers',
+        'access_path'  :'science/past-exam-papers/science',
         'subject': u'science'},
 
     'science-grade11-papers' : {
@@ -317,7 +317,7 @@ ITEMS = {
         'subscription_period': 365,
         'amount_of_credits': 0,
         'amount_of_moola': 200,
-        'access_path'  :'science/past-exam-papers',
+        'access_path'  :'science/past-exam-papers/science',
         'subject': u'science'},
 
     'science-grade12-papers' : {
@@ -331,7 +331,7 @@ ITEMS = {
         'access_group': 'PastScienceExamPapers',
         'amount_of_credits': 0,
         'amount_of_moola': 200,
-        'access_path'  :'science/past-exam-papers',
+        'access_path'  :'science/past-exam-papers/science',
         'subject': u'science'},
 }
 
