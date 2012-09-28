@@ -98,6 +98,18 @@ def practice_service_uuids(context):
     return paths_to_uuids(service_paths, context)
 
 
+def practice_service_uuids_for_subject(context, subject):
+    mapping = service_mapping.get('practice_services')
+    paths = mapping.get('general')
+    uuids = []
+    for path in paths:
+        obj = context.restrictedTraverse(path)
+        if obj and obj.subject == subject:
+            uuids.append(IUUID(obj))
+
+    return uuids
+
+
 def member_services(context, service_uids):
     pmt = getToolByName(context, 'portal_membership')
     member = pmt.getAuthenticatedMember()
@@ -117,6 +129,19 @@ def member_services_for(context, service_uids, userid):
     query = {'portal_type': 'emas.app.memberservice',
              'userid': userid,
              'serviceuid': service_uids,
+             'expiry_date': {'query':today, 'range':'min'}
+            }
+    pc = getToolByName(context, 'portal_catalog')
+    memberservices = [b.getObject() for b in pc(query)]
+    return memberservices
+
+
+def member_services_for_subject(context, service_uids, userid, subject):
+    today = datetime.today().date()
+    query = {'portal_type': 'emas.app.memberservice',
+             'userid': userid,
+             'serviceuid': service_uids,
+             'subject': subject,
              'expiry_date': {'query':today, 'range':'min'}
             }
     pc = getToolByName(context, 'portal_catalog')
