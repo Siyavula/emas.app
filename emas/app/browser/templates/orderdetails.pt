@@ -18,11 +18,15 @@
             id="InvoiceHeader"
             width="100%" tal:define="mode string:view">
             <tr>
-                <td class="datefield">
+                <td class="datefield"
+                    tal:define="date_ordered context/date_ordered | nothing">
                     <label for="date-ordered">Date ordered</label>: 
-                    <div id="date-ordered"
-                        tal:content="python:toLocalizedTime(context.date_ordered)">
+                    <div id="date-ordered" tal:condition="date_ordered"
+                        tal:content="python:toLocalizedTime(context.date_ordered.isoformat())">
                         12/04/2012
+                    </div>
+                    <div id="date-ordered" tal:condition="not:date_ordered">
+                        Undefined
                     </div>
                 </td>
                 <td>
