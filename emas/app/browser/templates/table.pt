@@ -140,7 +140,7 @@
 
               <tal:order tal:define="order python:item['brain'].getObject();
                                      toLocalizedTime nocall:order/@@plone/toLocalizedTime;">
-              <td id="orderdate" tal:content="python:toLocalizedTime(order.date_ordered)">12/14/2012</td>
+              <td id="orderdate" tal:content="python:toLocalizedTime(order.date_ordered.isoformat())">12/14/2012</td>
               <td id="userid" tal:content="order/userid">user001</td>
               <td id="state" tal:content="item/wf_state">paid</td>
               <td id="total" tal:content="order/total">R120</td>
