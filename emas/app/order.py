@@ -2,25 +2,10 @@ from five import grok
 from plone.directives import dexterity, form
 
 from zope import schema
-from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-
-from zope.interface import invariant, Invalid
 from zope.component import queryUtility
 
-from z3c.form import group, field
-
-from Products.CMFCore.permissions import ManagePortal
-from Products.CMFCore.utils import getToolByName
-
 from plone.registry.interfaces import IRegistry
-from plone.namedfile.field import NamedImage, NamedFile
-from plone.namedfile.field import NamedBlobImage, NamedBlobFile
-
-from plone.app.textfield import RichText
-
-from z3c.relationfield.schema import RelationList, RelationChoice
-from plone.formwidget.contenttree import ObjPathSourceBinder
 
 from emas.theme.interfaces import IEmasSettings
 
@@ -42,11 +27,6 @@ class IOrder(form.Schema):
     """
     Container for orderable items like products and services
     """
-    date_ordered = schema.Date(
-        title=_(u"Date ordered"),
-        required=False,
-    )
-
     shipping_address = schema.Text(
         title=_(u"Shipping address"),
         required=False,
@@ -105,15 +85,9 @@ class Order(dexterity.Container):
         return self.objectValues()
     
     def may_transition_to_paid(self, **kwargs):
-        """ This method expects a dictionary like object as part of the 
-            keyword args. The 'wf.doActionFor' call from 
-            emas.app.browser.vcsresponseprocessor currently supplies this and
-            we access it as 'request' in this method.
-
-            We try to get the 'Hash' key from this dictionary. It will be
+        """ We try to get the 'Hash' key from the request. It will be
             supplied by VCS on the return call. This is compared to the hash
-            we stored in an annotation on the order object just before passing
-            payment control to VCS.
+            we compute from the data returned.
 
             This is done in order to stop the spoofing of successful payment
             responses.

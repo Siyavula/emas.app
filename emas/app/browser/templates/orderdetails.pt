@@ -19,13 +19,13 @@
             width="100%" tal:define="mode string:view">
             <tr>
                 <td class="datefield"
-                    tal:define="date_ordered context/date_ordered | nothing">
+                    tal:define="creation_date context/creation_date | nothing">
                     <label for="date-ordered">Date ordered</label>: 
-                    <div id="date-ordered" tal:condition="date_ordered"
-                        tal:content="python:toLocalizedTime(context.date_ordered.isoformat())">
+                    <div id="date-ordered" tal:condition="creation_date"
+                        tal:content="python:toLocalizedTime(creation_date)">
                         12/04/2012
                     </div>
-                    <div id="date-ordered" tal:condition="not:date_ordered">
+                    <div id="date-ordered" tal:condition="not:creation_date">
                         Undefined
                     </div>
                 </td>

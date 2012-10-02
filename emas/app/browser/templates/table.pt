@@ -140,12 +140,12 @@
 
               <tal:order tal:define="order python:item['brain'].getObject();
                                      toLocalizedTime nocall:order/@@plone/toLocalizedTime;
-                                     date_ordered order/date_ordered | nothing">
-              <td id="orderdate" tal:condition="date_ordered"
-                  tal:content="python:toLocalizedTime(date_ordered.isoformat())">
+                                     creation_date order/creation_date | nothing">
+              <td id="orderdate" tal:condition="creation_date"
+                  tal:content="python:toLocalizedTime(creation_date)">
                   12/14/2012
               </td>
-              <td id="orderdate" tal:condition="not:date_ordered">
+              <td id="orderdate" tal:condition="not:creation_date">
                   Undefined 
               </td>
               <td id="userid" tal:content="order/userid">user001</td>
