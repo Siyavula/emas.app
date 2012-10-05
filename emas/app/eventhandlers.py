@@ -167,6 +167,13 @@ def memberServiceAdded(obj, event):
             '%s.' %(obj.userid, service.Title())
         )
 
+    # fix up ownership (if manager created member service)
+    if obj.userid not in obj.users_with_local_role('Owner'):
+        pms = getToolByName(obj, 'portal_membership')
+        pms.setLocalRoles(obj, [obj.userid], 'Owner')
+        obj.reindexObject()
+
+
 
 def onMemberJoined(obj, event):
     memberid = obj.getId()
