@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.2
+---
+
+Fix up ownership of memberservice after adding
+
 1.1
 ---
 
