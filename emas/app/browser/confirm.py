@@ -103,7 +103,7 @@ class Confirm(grok.View):
             
             # Now we do the payment bit. Since it can be one of several ways we
             # wrap the lot in a seperate method.
-            self.prepPaymentDetails(order, self.request)
+            self.prepPaymentDetails(self.order, self.request)
 
             self.send_invoice(self.order)
 
