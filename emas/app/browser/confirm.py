@@ -158,7 +158,13 @@ class Confirm(grok.View):
         annotate(order, 'vcs_hash', self.md5hash)
 
     def prepSMS(self, order, request):
-        pass
+        # generate payment verification code
+        m = hashlib.md5()
+        m.update(
+            self.memberid + self.order.getId() + self.settings.bulksms_password)
+        verification_code = m.hexdigest()[:6]
+        order.verification_code = verification_code
+        order.reindexObject(idxs=['verification_code'])
 
     def _display_items(self):
         """ TODO: move to utils.display_items ASAP
