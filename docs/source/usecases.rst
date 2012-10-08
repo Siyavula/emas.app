@@ -35,15 +35,13 @@ Steps
 
    this includes the order number and the BulkSMS password set in the registry.
 
-#. The system instructs BulkSMS to send a verification SMS including:
+#. The system displays the confirmation details including:
 
    the order number.
 
    the payment verification code.
 
    instructions on how to proceed.
-
-#. The system informs the user that a verification SMS was sent.
 
 ############################################
 Handle payment approved message from BulkSMS
@@ -61,13 +59,11 @@ Steps
 #. The system validates the password sent by BulkSMS against the one set in the
    registry.
 
-#. The system finds the order by querying for it with the supplied order number.
+#. The system finds the order by querying for it with the supplied payement
+   verification number.
    
    BulkSMS must return this as one of the GET parameters.
 
-#. The system checks that the supplied payment verification code matches that
-   sent by BulkSMS by comparing it to the one on the order annotations.
-    
 #. The system triggers a workflow transition to 'paid' on this order.
 
 #. The system sends an SMS notification to the user, informing them that the

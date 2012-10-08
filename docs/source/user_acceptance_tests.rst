@@ -33,17 +33,13 @@ Steps
 
    textbook for maths grade 10.
 
-#. Verify that you receive and SMS with the following details:
-
-   the newly created order number.
-
    a payment verification code.
 
    instructions on how to proceed.
 
-#. Reply to the SMS with the payment verification code.
+#. Send and SMS with the payment verification code to the supplied number.
 
-#. Verify that you receive a second SMS acknowledging the payment.
+#. Verify that you receive an SMS acknowledging the payment.
 
 #. Log in to the test instance.
 
