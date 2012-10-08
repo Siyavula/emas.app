@@ -25,7 +25,6 @@ class SMSPaymentApproved(grok.View):
         self.order = self.getOrder(self.context, self.request)
 
     def render(self):
-        import pdb;pdb.set_trace()
         if self.validated:
             # do the transition
             self.transitionToPaid(self.context, self.request, self.order)
@@ -37,7 +36,6 @@ class SMSPaymentApproved(grok.View):
             raise Unauthorized()
     
     def getOrder(self, context, request):
-        import pdb;pdb.set_trace()
         verification_code = request.get('verification_code')
         if not verification_code:
             return None
