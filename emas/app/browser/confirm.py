@@ -14,11 +14,9 @@ from plone.registry.interfaces import IRegistry
 
 from emas.theme.interfaces import IEmasSettings
 from emas.app.browser.utils import annotate
+from emas.app.order import CREDITCARD, SMS, EFT
 
 grok.templatedir('templates')
-
-CREDITCARD = 'creditcard'
-SMS = 'sms'
 
 def vcs_hash(s):
     m = hashlib.md5()
@@ -84,6 +82,7 @@ class Confirm(grok.View):
             self.order.fullname = self.request.get('fullname', '')
             self.order.phone= self.request.get('phone', '')
             self.order.shipping_address = self.request.get('shipping_address', '')
+            self.order.payment_method = self.prod_payment()
 
             for service, quantity in self.selected_items.items():
                 item_id = 'orderitem.%s' %service.getId()
@@ -116,10 +115,9 @@ class Confirm(grok.View):
             Lookup the correct utility, based on the selected payment method.
             Tell it do to the transaction.
         """
-        payment_method = self.prod_payment()
-        if payment_method == CREDITCARD:
+        if order.payment_method == CREDITCARD:
             self.prepVCS(order, request)
-        elif payment_method == SMS:
+        elif order.payment_method == SMS:
             self.prepSMS(order, request)
 
     def prepVCS(self, order, request):
@@ -230,7 +228,7 @@ class Confirm(grok.View):
 
     def eft_selected(self):
         payment = self.request.get('prod_payment', '')
-        return payment == 'eft' and 'checked' or ''
+        return payment == EFT and 'checked' or ''
 
     def fullname(self):
         return self.request.get('fullname', '')
