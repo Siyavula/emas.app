@@ -26,9 +26,11 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = self.settings.bulksms_password
         view.request['verification_code'] = order.verification_code
-        result = view()
+        view()
         
-        self.assertEqual(result, 'OK')
+        self.assertEqual(view.request.response.getStatus(),
+                         200,
+                         'Wrong status code was returned.')
 
         self.assertEqual(order, view.order, 'We found the wrong order!')
 
