@@ -395,6 +395,7 @@ def setupCatalogIndexes(portal):
         'subject': 'FieldIndex',
         'expiry_date': 'DateIndex',
         'channels': 'FieldIndex',
+        'verification_code': 'FieldIndex',
     }
 
     catalog = getToolByName(portal, 'portal_catalog')
