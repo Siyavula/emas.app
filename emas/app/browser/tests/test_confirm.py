@@ -10,6 +10,17 @@ from emas.app.tests.layer import Layer
 
 from emas.app.order import IOrder
 
+POST_DATA = {
+    'prod_payment': 'eft',
+    'grade': 'grade10',
+    'prod_practice_book': 'Practice,Textbook',
+    'subjects': 'maths',
+    'order.form.submitted': 'submitted',
+    'fullname': 'Test user',
+    'phone': '+27218888888',
+    'shipping_address': '111 1st Avenue, Townsville, 9999',
+}
+
 class TestConfirmView(PloneTestCase):
     
     layer = Layer
@@ -39,18 +50,8 @@ class TestConfirmView(PloneTestCase):
         member = pps.member()
         member.setProperties(email='tester@example.com')
 
-        post_data = {
-            'grade': 'grade10',
-            'prod_practice_book': 'Practice,Textbook',
-            'subjects': 'maths',
-            'order.form.submitted': 'submitted',
-            'fullname': 'Test user',
-            'phone': '+27218888888',
-            'shipping_address': '111 1st Avenue, Townsville, 9999',
-        }
-
         view = self.portal.restrictedTraverse('@@confirm')
-        view.request.form.update(post_data)
+        view.request.form.update(POST_DATA)
         view.update()
 
         # verify the display items
@@ -61,6 +62,21 @@ class TestConfirmView(PloneTestCase):
     
         # verify the selected items
         self.verify_selected_items(view)
+
+    def test_practice_and_textbook_bought_via_sms(self):
+        """ Buy textbook and practice service.
+            Pay via SMS.
+        """
+        pps = self.portal.restrictedTraverse('@@plone_portal_state')
+        member = pps.member()
+        member.setProperties(email='tester@example.com')
+
+        post_data = POST_DATA
+        post_data['prod_payment'] = 'sms'
+
+        view = self.portal.restrictedTraverse('@@confirm')
+        view.request.form.update(post_data)
+        view.update()
 
     def verify_display_items(self, view):
         practice = self.portal.products_and_services['maths-grade10-practice']
