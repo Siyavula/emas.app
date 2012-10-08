@@ -59,6 +59,10 @@ class IOrder(form.Schema):
         default=False,
     )
 
+    verification_code = schema.TextLine(
+        title=_(u"Verification code"),
+        required=False,
+    )
 
 class Order(dexterity.Container):
     grok.implements(IOrder)
