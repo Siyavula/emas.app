@@ -17,6 +17,8 @@ from emas.app.browser.utils import annotate
 
 grok.templatedir('templates')
 
+CREDITCARD = 'creditcard'
+SMS = 'sms'
 
 def vcs_hash(s):
     m = hashlib.md5()
@@ -65,7 +67,6 @@ class Confirm(grok.View):
                 self.order = self.orders._getOb(self.ordernumber)
                 self.order.manage_delObjects(self.order.objectIds()) 
             else:
-                # create member service objects
                 tmpnumber = self.settings.order_sequence_number + 1
                 self.settings.order_sequence_number = tmpnumber
                 self.ordernumber = '%04d' % tmpnumber
@@ -80,7 +81,6 @@ class Confirm(grok.View):
                 )
                 self.order = self.orders._getOb(self.ordernumber)
 
-            # set the shipping address if we have one
             self.order.fullname = self.request.get('fullname', '')
             self.order.phone= self.request.get('phone', '')
             self.order.shipping_address = self.request.get('shipping_address', '')
@@ -100,12 +100,29 @@ class Confirm(grok.View):
                 )
 
             self.totalcost = "R %.2f" % self.order.total()
-
-            self.prepVCS()
+            
+            # Now we do the payment bit. Since it can be one of several ways we
+            # wrap the lot in a seperate method.
+            self.prepPaymentDetails(order, self.request)
 
             self.send_invoice(self.order)
 
-    def prepVCS(self):
+    def prepPaymentDetails(self, order, request):
+        """ TODO:
+            Discuss adding payment processors as utilities.
+            Mark them with interface IPaymentProcessor.
+            Mark them with specific payment type interfaces too, eg.
+            - IVCSPaymentProcessor, ISMSPaymentProcessor, IEFTPaymentProcessor.
+            Lookup the correct utility, based on the selected payment method.
+            Tell it do to the transaction.
+        """
+        payment_method = self.prod_payment()
+        if payment_method == CREDITCARD:
+            self.prepVCS(order, request)
+        elif payment_method == SMS:
+            self.prepSMS(order, request)
+
+    def prepVCS(self, order, request):
         # when debugging you can use this action to return to the approved
         # page immediately.
         # self.action = '%s/@@paymentapproved' %self.context.absolute_url()
@@ -118,15 +135,15 @@ class Confirm(grok.View):
 
         # no orderid, no processing possible. So we raise an error.
         # becomes p2 in the template
-        self.tid = self.order.getId() 
+        self.tid = order.getId() 
         if self.tid == None or len(self.tid) < 1:
             raise AttributeError('No orderid supplied')
 
         # becomes p3 in the template
-        self.description = 'Siyavula EMAS %s' %self.order.Title()
+        self.description = 'Siyavula EMAS %s' % order.Title()
         
         # becomes p4 in the template
-        self.cost = self.order.total()
+        self.cost = order.total()
         self.quantity = 1
 
         # the return url passed as m_1 in the template
@@ -138,7 +155,10 @@ class Confirm(grok.View):
                                 self.description + str(self.cost) +
                                 self.returnurl + self.md5key)
 
-        annotate(self.order, 'vcs_hash', self.md5hash)
+        annotate(order, 'vcs_hash', self.md5hash)
+
+    def prepSMS(self, order, request):
+        pass
 
     def _display_items(self):
         """ TODO: move to utils.display_items ASAP
@@ -200,7 +220,7 @@ class Confirm(grok.View):
 
     def creditcard_selected(self):
         payment = self.request.get('prod_payment', '')
-        return payment == 'creditcard' and 'checked' or ''
+        return payment == CREDITCARD and 'checked' or ''
 
     def eft_selected(self):
         payment = self.request.get('prod_payment', '')
