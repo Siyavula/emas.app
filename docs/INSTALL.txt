@@ -15,3 +15,17 @@ recipe to manage your project, you can do this:
 * Re-run buildout, e.g. with:
 
     $ ./bin/buildout
+
+Installing version 1.2
+----------------------
+
+Reinstall the emas.app product.
+
+Verify that all services and products where created correctly.
+
+For mxit services, edit the service:
+
+- add mxit as a channel.
+
+- be sure to select an access group and double-check that the selected group
+  has view rights on the relevant content.
