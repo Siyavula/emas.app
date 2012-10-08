@@ -8,8 +8,6 @@ from plone.dexterity.interfaces import IDexterityFTI
 from Products.PloneTestCase.ptc import PloneTestCase
 from emas.app.tests.layer import Layer
 
-from emas.app.order import IOrder
-
 POST_DATA = {
     'prod_payment': 'eft',
     'grade': 'grade10',
