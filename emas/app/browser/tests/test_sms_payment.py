@@ -1,5 +1,6 @@
 import unittest
 
+from ZPublisher import NotFound
 from AccessControl import Unauthorized 
 from zope.component import queryUtility
 from plone.registry.interfaces import IRegistry
@@ -21,11 +22,12 @@ class TestSMSPaymentApprovedView(PloneTestCase):
 
     def test_purchase_approved(self):
         order = self.createOrder()
-        registry = queryUtility(IRegistry)
-        self.settings = registry.forInterface(IEmasSettings)
-        self.settings.bulksms_password = u'12345'
+
+        settings = self.getSettings()
+        settings.bulksms_password = u'12345'
+    
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
-        view.request['password'] = self.settings.bulksms_password
+        view.request['password'] = settings.bulksms_password
         view.request['verification_code'] = order.verification_code
         view()
         
@@ -40,9 +42,9 @@ class TestSMSPaymentApprovedView(PloneTestCase):
 
     def test_purchase_approved_incorrect_password(self):
         order = self.createOrder()
-        registry = queryUtility(IRegistry)
-        self.settings = registry.forInterface(IEmasSettings)
-        self.settings.bulksms_password = u'12345'
+
+        settings = self.getSettings()
+        settings.bulksms_password = u'12345'
 
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = u''
@@ -56,6 +58,23 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         wfs = self.getWorkflowState(view, view.order)
         self.assertEqual(wfs, 'ordered', 'Order should be in "ordered" state.')
 
+    def test_purchase_approved_incorrect_verification_code(self):
+        order = self.createOrder()
+
+        settings = self.getSettings()
+        settings.bulksms_password = u'12345'
+
+        view = self.portal.restrictedTraverse('@@smspaymentapproved')
+        view.request['password'] = settings.bulksms_password
+        view.request['verification_code'] = ''
+
+        with self.assertRaises(NotFound) as context_manager:
+            view()
+        assert (isinstance(context_manager.exception, NotFound),
+                'NotFound exception expected.')
+
+        assert view.order == None, 'We should not find an order at all.'
+
     def createOrder(self):
         pps = self.portal.restrictedTraverse('@@plone_portal_state')
         member = pps.member()
@@ -66,6 +85,11 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view.request.form.update(post_data)
         view.update()
         return view.order
+
+    def getSettings(self):
+        registry = queryUtility(IRegistry)
+        settings = registry.forInterface(IEmasSettings)
+        return settings
 
     def getWorkflowState(self, context, order):
         wf = getToolByName(context, 'portal_workflow')
