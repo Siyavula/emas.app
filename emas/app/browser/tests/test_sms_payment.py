@@ -2,12 +2,12 @@ import unittest
 
 from zope.component import queryUtility
 from plone.registry.interfaces import IRegistry
-from emas.theme.interfaces import IEmasSettings
 
 from Products.PloneTestCase.ptc import PloneTestCase
+from Products.CMFCore.utils import getToolByName
 
+from emas.theme.interfaces import IEmasSettings
 from emas.app.tests.layer import Layer
-
 from emas.app.browser.tests.test_confirm import POST_DATA
 
 class TestSMSPaymentApprovedView(PloneTestCase):
@@ -33,6 +33,9 @@ class TestSMSPaymentApprovedView(PloneTestCase):
                          'Wrong status code was returned.')
 
         self.assertEqual(order, view.order, 'We found the wrong order!')
+        
+        wfs = self.getWorkflowState(view, view.order)
+        self.assertEqual(wfs, 'paid', 'Order should be "paid" now.')
 
     def createOrder(self):
         pps = self.portal.restrictedTraverse('@@plone_portal_state')
@@ -44,6 +47,11 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view.request.form.update(post_data)
         view.update()
         return view.order
+
+    def getWorkflowState(self, context, order):
+        wf = getToolByName(context, 'portal_workflow')
+        status = wf.getStatusOf('order_workflow', order)
+        return status['review_state']
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
