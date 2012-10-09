@@ -1,3 +1,4 @@
+import urllib
 from five import grok
 from logging import getLogger
 from AccessControl import Unauthorized 
@@ -68,7 +69,7 @@ class SMSPaymentApproved(grok.View):
 
     def validateSender(self, request, settings):
         password = request.get('password')
-        return password == settings.bulksms_password
+        return password == settings.bulksms_receive_password
 
     def transitionToPaid(self, context, request, order):
         pms = getToolByName(context, 'portal_membership')
@@ -81,4 +82,25 @@ class SMSPaymentApproved(grok.View):
             order.reindexObject()
 
     def sendNotification(self, request, context, order, settings):
-        return
+        username = settings.bulksms_send_username
+        password = settings.bulksms_send_password
+        url = settings.bulksms_send_url
+        message = 'Payment received for order:%s.' % self.order.getId()
+        msisdn = '27848051301'
+        params = urllib.urlencode({'username' : username,
+                                   'password' : password,
+                                   'message'  : message,
+                                   'msisdn'   : msisdn})
+
+        f = urllib.urlopen(url, params)
+        s = f.read()
+        f.close()
+
+        result = s.split('|')
+        statusCode = result[0]
+        statusString = result[1]
+        if statusCode != '0':
+                message = "Error: " + statusCode + ": " + statusString
+                raise Unauthorized(message)
+        else:
+                LOGGER.info('Message sent: batch ID %s' % result[2])

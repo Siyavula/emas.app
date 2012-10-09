@@ -116,11 +116,11 @@ class Confirm(grok.View):
             Tell it do to the transaction.
         """
         if order.payment_method == CREDITCARD:
-            self.prepVCS(order, request)
+            self.prepVCSPayment(order, request)
         elif order.payment_method == SMS:
-            self.prepSMS(order, request)
+            self.prepSMSPayment(order, request)
 
-    def prepVCS(self, order, request):
+    def prepVCSPayment(self, order, request):
         # when debugging you can use this action to return to the approved
         # page immediately.
         # self.action = '%s/@@paymentapproved' %self.context.absolute_url()
@@ -155,11 +155,13 @@ class Confirm(grok.View):
 
         annotate(order, 'vcs_hash', self.md5hash)
 
-    def prepSMS(self, order, request):
+    def prepSMSPayment(self, order, request):
         # generate payment verification code
         m = hashlib.md5()
         m.update(
-            self.memberid + self.order.getId() + self.settings.bulksms_password)
+            self.memberid + 
+            self.order.getId() + 
+            self.settings.bulksms_send_password)
         verification_code = m.hexdigest()[:6]
         order.verification_code = verification_code
         order.reindexObject(idxs=['verification_code'])

@@ -24,10 +24,12 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         order = self.createOrder()
 
         settings = self.getSettings()
-        settings.bulksms_password = u'12345'
+        settings.bulksms_receive_password = u'12345'
+        settings.bulksms_send_username = u'upfronttest'
+        settings.bulksms_send_password = u'upfr0nt'
     
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
-        view.request['password'] = settings.bulksms_password
+        view.request['password'] = settings.bulksms_receive_password
         view.request['verification_code'] = order.verification_code
         view()
         
@@ -44,7 +46,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         order = self.createOrder()
 
         settings = self.getSettings()
-        settings.bulksms_password = u'12345'
+        settings.bulksms_receive_password = u'12345'
 
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = u''
@@ -62,10 +64,10 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         order = self.createOrder()
 
         settings = self.getSettings()
-        settings.bulksms_password = u'12345'
+        settings.bulksms_receive_password = u'12345'
 
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
-        view.request['password'] = settings.bulksms_password
+        view.request['password'] = settings.bulksms_receive_password
         view.request['verification_code'] = ''
 
         with self.assertRaises(NotFound) as context_manager:
@@ -74,6 +76,23 @@ class TestSMSPaymentApprovedView(PloneTestCase):
                 'NotFound exception expected.')
 
         assert view.order == None, 'We should not find an order at all.'
+
+    def test_purchase_approved_incorrect_sms_credentials(self):
+        order = self.createOrder()
+
+        settings = self.getSettings()
+        settings.bulksms_send_username = u'test'
+        settings.bulksms_send_password = u'12345'
+        settings.bulksms_receive_password = u'12345'
+
+        view = self.portal.restrictedTraverse('@@smspaymentapproved')
+        view.request['password'] = settings.bulksms_receive_password
+        view.request['verification_code'] = order.verification_code
+
+        with self.assertRaises(Unauthorized) as context_manager:
+            view()
+        assert (isinstance(context_manager.exception, Unauthorized),
+                'Unauthorized exception expected.')
 
     def createOrder(self):
         pps = self.portal.restrictedTraverse('@@plone_portal_state')
