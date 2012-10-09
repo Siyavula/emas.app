@@ -1,5 +1,5 @@
 from five import grok
-
+from logging import getLogger
 from AccessControl import Unauthorized 
 
 from zope.interface import Interface
@@ -11,6 +11,7 @@ from AccessControl.SecurityManagement import newSecurityManager
 
 from emas.theme.interfaces import IEmasSettings
 
+LOGGER = getLogger('emas.app:smspaymentprocessor')
 
 class SMSPaymentApproved(grok.View):
     """ Reverse tunnel from siyavula:
@@ -21,19 +22,30 @@ class SMSPaymentApproved(grok.View):
     grok.require('zope2.View')
     
     def update(self):
-        self.validated = self.validateSender(self.context, self.request)
         self.order = self.getOrder(self.context, self.request)
 
-    def render(self):
-        if self.validated:
+        registry = queryUtility(IRegistry)
+        self.settings = registry.forInterface(IEmasSettings)
+        self.validated = self.validateSender(self.request, self.settings)
+
+        if self.order and self.validated:
             # do the transition
             self.transitionToPaid(self.context, self.request, self.order)
 
             # send notification
-            
-            return
+            self.sendNotification(self.request,
+                                  self.context,
+                                  self.order,
+                                  self.settings)
+
+    def render(self):
+        if self.order:
+            if self.validated:
+                return 'Order %s is now paid.' % self.order.getId()
+            else:
+                raise Unauthorized()
         else:
-            raise Unauthorized()
+            return 'Could not find order.'
     
     def getOrder(self, context, request):
         verification_code = request.get('verification_code')
@@ -47,15 +59,16 @@ class SMSPaymentApproved(grok.View):
                  'memberid':          member.getId()}
         brains = pc(query)
         if not brains or len(brains) < 1:
+            LOGGER.info(
+                'Could not find order with verification code:'
+                '%s' % verification_code)
             return None
         
         return brains[0].getObject()
 
-    def validateSender(self, context, request):
-        registry = queryUtility(IRegistry)
-        self.settings = registry.forInterface(IEmasSettings)
+    def validateSender(self, request, settings):
         password = request.get('password')
-        return password == self.settings.bulksms_password
+        return password == settings.bulksms_password
 
     def transitionToPaid(self, context, request, order):
         pms = getToolByName(context, 'portal_membership')
@@ -67,5 +80,5 @@ class SMSPaymentApproved(grok.View):
             wf.doActionFor(order, 'pay')
             order.reindexObject()
 
-    def setNotification(self, request, context):
+    def sendNotification(self, request, context, order, settings):
         return
