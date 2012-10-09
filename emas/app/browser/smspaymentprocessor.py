@@ -82,11 +82,15 @@ class SMSPaymentApproved(grok.View):
             order.reindexObject()
 
     def sendNotification(self, request, context, order, settings):
+        msisdn = self.request.get('sender', '')
+        if not msisdn:
+            LOGGER.warn('No recipient msisdn specified')
+            return
+
         username = settings.bulksms_send_username
         password = settings.bulksms_send_password
         url = settings.bulksms_send_url
         message = 'Payment received for order:%s.' % self.order.getId()
-        msisdn = '27848051301'
         params = urllib.urlencode({'username' : username,
                                    'password' : password,
                                    'message'  : message,

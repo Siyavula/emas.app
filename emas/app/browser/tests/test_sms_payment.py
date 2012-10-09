@@ -31,6 +31,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = settings.bulksms_receive_password
         view.request['verification_code'] = order.verification_code
+        view.request['sender'] = '27848051301'
         view()
         
         self.assertEqual(view.request.response.getStatus(),
@@ -42,6 +43,9 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         wfs = self.getWorkflowState(view, view.order)
         self.assertEqual(wfs, 'paid', 'Order should be "paid" now.')
 
+        # validate that we can now access the services with the current creds
+        practice = self.portal.restrictedTraverse('@@practice')
+
     def test_purchase_approved_incorrect_password(self):
         order = self.createOrder()
 
@@ -51,6 +55,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = u''
         view.request['verification_code'] = order.verification_code
+        view.request['sender'] = '27848051301'
 
         with self.assertRaises(Unauthorized) as context_manager:
             view()
@@ -69,6 +74,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = settings.bulksms_receive_password
         view.request['verification_code'] = ''
+        view.request['sender'] = '27848051301'
 
         with self.assertRaises(NotFound) as context_manager:
             view()
@@ -88,6 +94,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = settings.bulksms_receive_password
         view.request['verification_code'] = order.verification_code
+        view.request['sender'] = '27848051301'
 
         with self.assertRaises(Unauthorized) as context_manager:
             view()
