@@ -1,5 +1,6 @@
 import unittest
 
+from AccessControl import Unauthorized 
 from zope.component import queryUtility
 from plone.registry.interfaces import IRegistry
 
@@ -36,6 +37,24 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         
         wfs = self.getWorkflowState(view, view.order)
         self.assertEqual(wfs, 'paid', 'Order should be "paid" now.')
+
+    def test_purchase_approved_incorrect_password(self):
+        order = self.createOrder()
+        registry = queryUtility(IRegistry)
+        self.settings = registry.forInterface(IEmasSettings)
+        self.settings.bulksms_password = u'12345'
+
+        view = self.portal.restrictedTraverse('@@smspaymentapproved')
+        view.request['password'] = u''
+        view.request['verification_code'] = order.verification_code
+
+        with self.assertRaises(Unauthorized) as context_manager:
+            view()
+        assert (isinstance(context_manager.exception, Unauthorized),
+                'Unauthorized exception expected.')
+        
+        wfs = self.getWorkflowState(view, view.order)
+        self.assertEqual(wfs, 'ordered', 'Order should be in "ordered" state.')
 
     def createOrder(self):
         pps = self.portal.restrictedTraverse('@@plone_portal_state')
