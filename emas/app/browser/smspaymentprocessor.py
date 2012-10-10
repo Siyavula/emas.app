@@ -104,7 +104,7 @@ class SMSPaymentApproved(grok.View):
         statusCode = result[0]
         statusString = result[1]
         if statusCode != '0':
-                message = "Error: " + statusCode + ": " + statusString
-                raise Unauthorized(message)
+            message = "Error: " + statusCode + ": " + statusString
+            raise Unauthorized(message)
         else:
-                LOGGER.info('Message sent: batch ID %s' % result[2])
+            LOGGER.info('Message sent: batch ID %s' % result[2])
