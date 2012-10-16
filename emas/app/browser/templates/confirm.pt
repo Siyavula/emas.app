@@ -50,6 +50,13 @@
                     </pre>
                 </tal:eft>
 
+                <tal:sms tal:condition="view/sms_selected">
+                    In order to complete this transaction and pay, please
+                    SMS '<span tal:replace="view/verification_code">verification
+                    code</span>' to <span tal:replace="view/premium_number">
+                    premium number</span>.
+                </tal:sms>
+
                 <form id="payment-form" method="POST" action="."
                     tal:attributes="action view/action"
                     tal:condition="view/creditcard_selected">

@@ -232,6 +232,16 @@ class Confirm(grok.View):
         payment = self.request.get('prod_payment', '')
         return payment == EFT and 'checked' or ''
 
+    def sms_selected(self):
+        payment = self.request.get('prod_payment', '')
+        return payment == SMS and 'checked' or ''
+
+    def premium_number(self):
+        return self.settings.bulksms_premium_number 
+
+    def verification_code(self):
+        return self.order.verification_code
+
     def fullname(self):
         return self.request.get('fullname', '')
 
