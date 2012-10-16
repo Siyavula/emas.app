@@ -46,7 +46,7 @@ class SMSPaymentApproved(grok.View):
             else:
                 raise Unauthorized()
         else:
-            return self.request.response.notFoundError('Order')
+            return 'You must supply order and verification numbers.'
     
     def getOrder(self, context, request):
         verification_code = request.get('verification_code')
