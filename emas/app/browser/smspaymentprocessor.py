@@ -32,12 +32,16 @@ class SMSPaymentApproved(grok.View):
         if self.order and self.validated:
             # do the transition
             self.transitionToPaid(self.context, self.request, self.order)
+            LOGGER.info('Order:%s transitioned to paid' % self.order.getId())
 
             # send notification
             self.sendNotification(self.request,
                                   self.context,
                                   self.order,
                                   self.settings)
+            LOGGER.info('Notification sent')
+        else:
+            LOGGER.warn('Validation:%s' % self.validated)
 
     def render(self):
         if self.order:
@@ -45,8 +49,8 @@ class SMSPaymentApproved(grok.View):
                 return 'Order %s is now paid.' % self.order.getId()
             else:
                 raise Unauthorized()
-        else:
-            return 'You must supply order and verification numbers.'
+        self.request.response.setStatus(200, 'OK')
+        return 'OK'
     
     def getOrder(self, context, request):
         verification_code = request.get('verification_code')
