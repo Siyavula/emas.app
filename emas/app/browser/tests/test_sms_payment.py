@@ -30,7 +30,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
     
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = settings.bulksms_receive_password
-        view.request['verification_code'] = order.verification_code
+        view.request['message'] = order.verification_code
         view.request['sender'] = '27848051301'
         view()
         
@@ -54,7 +54,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
 
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = u''
-        view.request['verification_code'] = order.verification_code
+        view.request['message'] = order.verification_code
         view.request['sender'] = '27848051301'
 
         with self.assertRaises(Unauthorized) as context_manager:
@@ -73,13 +73,9 @@ class TestSMSPaymentApprovedView(PloneTestCase):
 
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = settings.bulksms_receive_password
-        view.request['verification_code'] = ''
+        view.request['message'] = ''
         view.request['sender'] = '27848051301'
-
-        with self.assertRaises(NotFound) as context_manager:
-            view()
-        assert (isinstance(context_manager.exception, NotFound),
-                'NotFound exception expected.')
+        view()
 
         assert view.order == None, 'We should not find an order at all.'
 
@@ -93,7 +89,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
 
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = settings.bulksms_receive_password
-        view.request['verification_code'] = order.verification_code
+        view.request['message'] = order.verification_code
         view.request['sender'] = '27848051301'
 
         with self.assertRaises(Unauthorized) as context_manager:

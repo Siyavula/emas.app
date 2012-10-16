@@ -44,16 +44,32 @@ class SMSPaymentApproved(grok.View):
             LOGGER.warn('Validation:%s' % self.validated)
 
     def render(self):
+        """ We tell BulkSMS all is OK, unless something bad happens, like the
+            Unauthorized we raise.  You will notice that we do this even if we
+            cannot find the order or the validation of the auth tokens fails.
+            This is necessary, because when one configures the MO delivery URL
+            through the BulkSMS webpage, they check the URL immediately. If we
+            don't return '200 OK' the config fails and the URL is rejected.
+
+            You will also notice that we always return some text even if the 
+            order is not found. This is again due to the fact that BulkSMS
+            wants at least some text (204 is not acceptable).
+
+            For more information see:
+                https://bulksms.2way.co.za/docs/eapi/reception/http_push/
+        """
+        self.request.response.setStatus(200, 'OK')
+
         if self.order:
             if self.validated:
                 return 'Order %s is now paid.' % self.order.getId()
             else:
                 raise Unauthorized()
-        self.request.response.setStatus(200, 'OK')
-        return 'OK'
+        else:
+            return 'OK'
     
     def getOrder(self, context, request):
-        verification_code = request.get('verification_code')
+        verification_code = request.get('message')
         if not verification_code:
             return None
 

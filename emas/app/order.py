@@ -122,7 +122,7 @@ class Order(dexterity.Container):
             vcs_returned_hash = self.REQUEST.get('Hash', '')
             return our_hash == vcs_returned_hash
         elif self.payment_method == SMS:
-            return self.verification_code == self.REQUEST.get('verification_code')
+            return self.verification_code == self.REQUEST.get('message')
 
 class SampleView(grok.View):
     grok.context(IOrder)
