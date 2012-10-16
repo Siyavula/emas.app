@@ -82,6 +82,11 @@ class SMSPaymentApproved(grok.View):
             order.reindexObject()
 
     def sendNotification(self, request, context, order, settings):
+        """ Sender msisdn must be in international dialing format.
+            eg. for traditional CellC numbers: 2784nnnnnnn or
+            +2784nnnnnnn.
+            The '+' is optional for BulkSMS.
+        """
         msisdn = self.request.get('sender', '')
         if not msisdn:
             LOGGER.warn('No recipient msisdn specified')
