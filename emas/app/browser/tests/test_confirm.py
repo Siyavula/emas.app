@@ -4,6 +4,7 @@ from zope.component import createObject
 from zope.component import queryUtility
 
 from plone.dexterity.interfaces import IDexterityFTI
+from Products.CMFCore.utils import getToolByName
 
 from Products.PloneTestCase.ptc import PloneTestCase
 from emas.app.tests.layer import Layer
@@ -46,8 +47,22 @@ class TestConfirmView(PloneTestCase):
         view = self.new_confirm_view()
         vcode = view.order.verification_code
 
-        self.assertEqual(view.is_unique_verification_code(vcode), True,
+        pc = getToolByName(self.portal, 'portal_catalog')
+        query = {'portal_type':       'emas.app.order',
+                 'verification_code': vcode}
+        brains = pc.unrestrictedSearchResults(query)
+
+        self.assertEqual(len(brains), 1,
                          'The verification code SHOULD be unique.')
+
+    def test_generate_verification_code_retries_exceeded(self):
+        view = self.new_confirm_view()
+        view.retries = 0
+
+        with self.assertRaises(Exception) as context_manager:
+            view.generate_verification_code(view.order)
+        assert (isinstance(context_manager.exception, Exception),
+                'Expected and error to occur when retry count is exceeded.')
 
     def test_nothing_bought(self):
         """ This tests what happens in update when the view is called the 

@@ -1,3 +1,4 @@
+import random
 import hashlib
 from itertools import chain
 from email.Utils import formataddr
@@ -35,6 +36,10 @@ class Confirm(grok.View):
     ordertemplate = ViewPageTemplateFile('templates/ordermailtemplate.pt')
     ordernotification = ViewPageTemplateFile('templates/ordernotification.pt')
     
+    retries = 1000
+    lower = 9999
+    upper = 100000
+
     def update(self):
         self.portal_state = self.context.restrictedTraverse(
             '@@plone_portal_state'
@@ -163,13 +168,22 @@ class Confirm(grok.View):
         order.reindexObject(idxs=['verification_code'])
 
     def generate_verification_code(self, order):
-        return 12345
+        rnumber = random.randint(self.lower, self.upper)
+        count = 0
+        while not self.is_unique_verification_code(rnumber) and count < self.retries:
+            count += 1
+            rnumber = random.randint(self.lower, self.upper)
+
+        if count > self.retries - 1:
+            raise Exception('Could not find unique verification code.')
+
+        return rnumber
 
     def is_unique_verification_code(self, verification_code):
         pc = getToolByName(self.context, 'portal_catalog')
         query = {'portal_type':       'emas.app.order',
                  'verification_code': verification_code}
-        brains = pc(query)
+        brains = pc.unrestrictedSearchResults(query)
         if len(brains) > 0:
             return False
         return True
