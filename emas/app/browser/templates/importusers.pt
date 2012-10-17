@@ -21,7 +21,7 @@
         </div>
 
         <form action="." method="POST" enctype="multipart/form-data"
-            tal:condition="not:view/new_users"
+            tal:condition="not:view/imported_users"
             tal:attributes="action string:${context/absolute_url}/@@import-users">
             <h2>Import file</h2>
             <div>
@@ -32,7 +32,7 @@
             </div>
         </form>
 
-        <div tal:condition="view/existing_users">
+        <div tal:condition="view/not_imported_users">
             <h2>Existing users (not imported)</h2>
             <ul>
                 <li tal:repeat="id view/not_imported_users">
@@ -41,7 +41,7 @@
             </ul>
         </div>
 
-        <div tal:condition="view/new_users">
+        <div tal:condition="view/imported_users">
             <h2>New users (imported)</h2>
             <ul>
                 <li tal:repeat="id view/imported_users">
