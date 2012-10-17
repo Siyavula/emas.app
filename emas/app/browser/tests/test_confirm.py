@@ -1,4 +1,5 @@
 import unittest
+from types import StringType
 
 from zope.component import createObject
 from zope.component import queryUtility
@@ -31,8 +32,12 @@ class TestConfirmView(PloneTestCase):
     def test_generate_verification_code(self):
         view = self.new_confirm_view()
 
-        self.assertEqual(len(str(view.order.verification_code)), 5,
+        self.assertEqual(len(view.order.verification_code), 5,
                          'Verification code is too long.')
+
+        assert(isinstance(view.order.verification_code, StringType),
+               'Verification code must be a string.')
+
 
     def test_validate_non_unique_verification_code(self):
         view = self.new_confirm_view()
