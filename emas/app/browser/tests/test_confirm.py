@@ -31,7 +31,7 @@ class TestConfirmView(PloneTestCase):
     def test_generate_verification_code(self):
         view = self.new_confirm_view()
 
-        self.assertEqual(len(view.order.verification_code), 5,
+        self.assertEqual(len(str(view.order.verification_code)), 5,
                          'Verification code is too long.')
 
     def test_validate_non_unique_verification_code(self):
@@ -63,17 +63,6 @@ class TestConfirmView(PloneTestCase):
             view.generate_verification_code(view.order)
         assert (isinstance(context_manager.exception, Exception),
                 'Expected and error to occur when retry count is exceeded.')
-
-    def test_nothing_bought(self):
-        """ This tests what happens in update when the view is called the 
-            first time. At that point nothing is submitted as POST data to the
-            view and the result should really just be a empte confirmation
-            page.
-
-            In reality this should not even happen.
-        """
-        view = self.portal.restrictedTraverse('@@confirm')
-        view.update()
 
     def test_practice_and_textbook_bought(self):
         """ This tests what happens in when the correct data is submitted as
