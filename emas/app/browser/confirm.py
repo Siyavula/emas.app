@@ -177,7 +177,7 @@ class Confirm(grok.View):
         if count > self.retries - 1:
             raise Exception('Could not find unique verification code.')
 
-        return rnumber
+        return str(rnumber)
 
     def is_unique_verification_code(self, verification_code):
         pc = getToolByName(self.context, 'portal_catalog')
