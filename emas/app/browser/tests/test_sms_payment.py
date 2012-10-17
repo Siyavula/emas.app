@@ -1,6 +1,5 @@
 import unittest
 
-from ZPublisher import NotFound
 from AccessControl import Unauthorized 
 from zope.component import queryUtility
 from plone.registry.interfaces import IRegistry
@@ -16,10 +15,6 @@ class TestSMSPaymentApprovedView(PloneTestCase):
     
     layer = Layer
 
-    def test_confirm_view_exists(self):
-        view = self.portal.restrictedTraverse('@@smspaymentapproved')
-        assert view is not None, '@@smspaymentapproved view is missing.'
-
     def test_purchase_approved(self):
         order = self.createOrder()
 
@@ -28,18 +23,24 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         settings.bulksms_send_username = u'upfronttest'
         settings.bulksms_send_password = u'upfr0nt'
     
+        pps = self.portal.restrictedTraverse('@@plone_portal_state')
+        memberid = pps.member().getId()
+
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = settings.bulksms_receive_password
         view.request['message'] = order.verification_code
         view.request['sender'] = '27848051301'
+
+        self.logout()
         view()
-        
+
+        self.assertEqual(order, view.order, 'We found the wrong order!')
+
         self.assertEqual(view.request.response.getStatus(),
                          200,
                          'Wrong status code was returned.')
-
-        self.assertEqual(order, view.order, 'We found the wrong order!')
         
+        self.login(memberid)
         wfs = self.getWorkflowState(view, view.order)
         self.assertEqual(wfs, 'paid', 'Order should be "paid" now.')
 
@@ -52,21 +53,29 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         settings = self.getSettings()
         settings.bulksms_receive_password = u'12345'
 
+        pps = self.portal.restrictedTraverse('@@plone_portal_state')
+        memberid = pps.member().getId()
+
         view = self.portal.restrictedTraverse('@@smspaymentapproved')
         view.request['password'] = u''
         view.request['message'] = order.verification_code
         view.request['sender'] = '27848051301'
+        self.logout()
 
         with self.assertRaises(Unauthorized) as context_manager:
             view()
         assert (isinstance(context_manager.exception, Unauthorized),
                 'Unauthorized exception expected.')
         
+        self.login(memberid)
         wfs = self.getWorkflowState(view, view.order)
         self.assertEqual(wfs, 'ordered', 'Order should be in "ordered" state.')
 
     def test_purchase_approved_incorrect_verification_code(self):
         order = self.createOrder()
+
+        pps = self.portal.restrictedTraverse('@@plone_portal_state')
+        memberid = pps.member().getId()
 
         settings = self.getSettings()
         settings.bulksms_receive_password = u'12345'
@@ -75,8 +84,10 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view.request['password'] = settings.bulksms_receive_password
         view.request['message'] = ''
         view.request['sender'] = '27848051301'
+        self.logout()
         view()
 
+        self.login(memberid)
         assert view.order == None, 'We should not find an order at all.'
 
     def test_purchase_approved_incorrect_sms_credentials(self):
@@ -91,6 +102,7 @@ class TestSMSPaymentApprovedView(PloneTestCase):
         view.request['password'] = settings.bulksms_receive_password
         view.request['message'] = order.verification_code
         view.request['sender'] = '27848051301'
+        self.logout()
 
         with self.assertRaises(Unauthorized) as context_manager:
             view()

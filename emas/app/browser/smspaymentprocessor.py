@@ -8,7 +8,9 @@ from zope.component import queryUtility
 
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
+from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
+from AccessControl.SecurityManagement import setSecurityManager
 
 from emas.theme.interfaces import IEmasSettings
 
@@ -69,23 +71,32 @@ class SMSPaymentApproved(grok.View):
             return 'OK'
     
     def getOrder(self, context, request):
+        """ This turns a little complex, because the call from BulkSMS is 
+            unauthenticated in the plone sense. Thus this code essentially runs
+            as 'Anonymous'. We do an unrestrictedSearchResults to get the brain.
+            Then we switch users to the owner of that object. This means we
+            never give the user more rights on this object than they should
+            have.
+        """
         verification_code = request.get('message')
         if not verification_code:
             return None
-
-        member = context.restrictedTraverse('@@plone_portal_state').member()
+        
         pc = getToolByName(self.context, 'portal_catalog')
         query = {'portal_type':       'emas.app.order',
-                 'verification_code': verification_code,
-                 'memberid':          member.getId()}
-        brains = pc(query)
+                 'verification_code': verification_code}
+        brains = pc.unrestrictedSearchResults(query)
         if not brains or len(brains) < 1:
-            LOGGER.info(
+            LOGGER.debug(
                 'Could not find order with verification code:'
                 '%s' % verification_code)
             return None
         
-        return brains[0].getObject()
+        brain = brains[0]
+        pmt = getToolByName(self.context, 'portal_membership')
+        user = pmt.getMemberById(brain.Creator)
+        newSecurityManager(request, user)
+        return brain.getObject()
 
     def validateSender(self, request, settings):
         password = request.get('password')
