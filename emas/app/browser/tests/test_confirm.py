@@ -35,11 +35,19 @@ class TestConfirmView(PloneTestCase):
 
     def test_validate_non_unique_verification_code(self):
         view = self.new_confirm_view()
-        view.order.verification_code = '12345'
+        vcode = '12345'
+        view.order.verification_code = vcode
         view.order.reindexObject(idxs=['verification_code'])
 
-        self.assertEqual(view.is_unique_verification_code(view.order), False,
-                         'The verification code is already in use.')
+        self.assertEqual(view.is_unique_verification_code(vcode), False,
+                         'The verification code CANNOT be unique.')
+
+    def test_validate_unique_verification_code(self):
+        view = self.new_confirm_view()
+        vcode = view.order.verification_code
+
+        self.assertEqual(view.is_unique_verification_code(vcode), True,
+                         'The verification code SHOULD be unique.')
 
     def test_nothing_bought(self):
         """ This tests what happens in update when the view is called the 
