@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emas.app">
+<body>
+
+    <metal:core fill-slot="main">
+    <h1 class="documentFirstHeading">Import users</h1>
+
+    <div id="content-core">
+        <div tal:condition="view/errors">
+            <h2>Errors</h2>
+            <ul>
+                <li tal:repeat="error view/errors">
+                    <span tal:content="error">error</span>
+                </li>
+            </ul>
+        </div>
+
+        <form action="." method="POST" enctype="multipart/form-data"
+            tal:condition="not:view/new_users"
+            tal:attributes="action string:${context/absolute_url}/@@import-users">
+            <h2>Import file</h2>
+            <div>
+                <input type="file" name="userdata"/>
+            </div>
+            <div>
+                <input type="submit" name="submit.userimport" value="upload"/>
+            </div>
+        </form>
+
+        <div tal:condition="view/existing_users">
+            <h2>Existing users (not imported)</h2>
+            <ul>
+                <li tal:repeat="id view/not_imported_users">
+                    <span tal:content="id">user id</span>
+                </li>
+            </ul>
+        </div>
+
+        <div tal:condition="view/new_users">
+            <h2>New users (imported)</h2>
+            <ul>
+                <li tal:repeat="id view/imported_users">
+                    <span tal:content="id">user id</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    </metal:core>
+
+</body>
+</html>

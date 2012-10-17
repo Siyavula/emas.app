@@ -71,23 +71,28 @@ class TestImportUsersView(PloneTestCase):
         pmt = getToolByName(view.context, 'portal_membership')
         with open(os.path.join(dirname, 'empty.csv'), 'rb') as raw_data:
             reader = csv.DictReader(raw_data)
-            ids = view.import_users(reader, pmt)
+            existing_users, new_users = view.import_users(reader, pmt)
 
-        self.assertEqual(ids, [],
+        self.assertEqual(existing_users, [],
+                         'No users should have been found.')
+        self.assertEqual(new_users, [],
                          'No users should have been created.')
 
     def test_import_users(self):
-        import pdb;pdb.set_trace()
         view = self.portal.restrictedTraverse('@@import-users')
         pmt = getToolByName(view.context, 'portal_membership')
         with open(os.path.join(dirname, 'userimport.csv'), 'rb') as raw_data:
             reader = csv.DictReader(raw_data)
-            ids = view.import_users(reader, pmt)
+            reader = csv.DictReader(raw_data)
+            existing_users, new_users = view.import_users(reader, pmt)
 
-        self.assertEqual(len(ids), 17,
+        self.assertEqual(len(existing_users), 0,
+                         'None or the users should exist yet.')
+
+        self.assertEqual(len(new_users), 17,
                          '17 users should have been created.')
         
-        for userid in ids:
+        for userid in new_users:
             user = pmt.getMemberById(userid)
             
             self.assertNotEqual(user, None,
