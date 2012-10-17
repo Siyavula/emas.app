@@ -10,6 +10,7 @@ from z3c.relationfield.relation import create_relation
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.dexterity.utils import createContentInContainer
 
+from Products.CMFCore.utils import getToolByName
 from plone.registry.interfaces import IRegistry
 
 from emas.theme.interfaces import IEmasSettings
@@ -157,14 +158,21 @@ class Confirm(grok.View):
 
     def prepSMSPayment(self, order, request):
         # generate payment verification code
-        m = hashlib.md5()
-        m.update(
-            self.memberid + 
-            self.order.getId() + 
-            self.settings.bulksms_send_password)
-        verification_code = m.hexdigest()[:6]
+        verification_code = self.generate_verification_code(order)
         order.verification_code = verification_code
         order.reindexObject(idxs=['verification_code'])
+
+    def generate_verification_code(self, order):
+        return 12345
+
+    def is_unique_verification_code(self, verification_code):
+        pc = getToolByName(self.context, 'portal_catalog')
+        query = {'portal_type':       'emas.app.order',
+                 'verification_code': verification_code}
+        brains = pc(query)
+        if len(brains) > 0:
+            return False
+        return True
 
     def _display_items(self):
         """ TODO: move to utils.display_items ASAP

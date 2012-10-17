@@ -27,6 +27,20 @@ class TestConfirmView(PloneTestCase):
         view = self.portal.restrictedTraverse('@@confirm')
         assert view is not None, '@@confirm view is missing.'
 
+    def test_generate_verification_code(self):
+        view = self.new_confirm_view()
+
+        self.assertEqual(len(view.order.verification_code), 5,
+                         'Verification code is too long.')
+
+    def test_validate_non_unique_verification_code(self):
+        view = self.new_confirm_view()
+        view.order.verification_code = '12345'
+        view.order.reindexObject(idxs=['verification_code'])
+
+        self.assertEqual(view.is_unique_verification_code(view.order), False,
+                         'The verification code is already in use.')
+
     def test_nothing_bought(self):
         """ This tests what happens in update when the view is called the 
             first time. At that point nothing is submitted as POST data to the
@@ -115,6 +129,27 @@ class TestConfirmView(PloneTestCase):
 
         # verify payment details
 
+    def createOrder(self):
+        pps = self.portal.restrictedTraverse('@@plone_portal_state')
+        member = pps.member()
+        member.setProperties(email='tester@example.com')
+        view = self.portal.restrictedTraverse('@@confirm')
+        post_data = POST_DATA
+        post_data['prod_payment'] = 'sms'
+        view.request.form.update(post_data)
+        view.update()
+        return view.order
+    
+    def new_confirm_view(self):
+        pps = self.portal.restrictedTraverse('@@plone_portal_state')
+        member = pps.member()
+        member.setProperties(email='tester@example.com')
+        view = self.portal.restrictedTraverse('@@confirm')
+        post_data = POST_DATA
+        post_data['prod_payment'] = 'sms'
+        view.request.form.update(post_data)
+        view.update()
+        return view
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
