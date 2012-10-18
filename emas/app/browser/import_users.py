@@ -65,7 +65,7 @@ class ImportUsers(grok.View):
                 not_imported_users.append(userid)
             else:
                 imported_users.append(userid)
-                password = userid
+                password = line.get('password', userid)
                 roles = line.get('roles', ['Member',])
                 membershiptool.addMember(userid, password, roles, [], line)
 
