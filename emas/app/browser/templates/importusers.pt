@@ -19,18 +19,20 @@
                 </li>
             </ul>
         </div>
-
-        <form action="." method="POST" enctype="multipart/form-data"
-            tal:condition="not:view/imported_users"
-            tal:attributes="action string:${context/absolute_url}/@@import-users">
-            <h2>Import file</h2>
-            <div>
-                <input type="file" name="userdata"/>
-            </div>
-            <div>
-                <input type="submit" name="submit.userimport" value="upload"/>
-            </div>
-        </form>
+        
+        <fieldset class="formPanel">
+            <form action="." method="POST" enctype="multipart/form-data"
+                tal:condition="not:view/imported_users"
+                tal:attributes="action string:${context/absolute_url}/@@import-users">
+                <label for="userdata">Import file</label>
+                <div class="field">
+                    <input type="file" name="userdata"/>
+                </div>
+                <div class="formControls">
+                    <input class="context" type="submit" name="submit.userimport" value="Import">
+                </div>
+            </form>
+        </fieldset>
 
         <div tal:condition="view/not_imported_users">
             <h2>Existing users (not imported)</h2>
