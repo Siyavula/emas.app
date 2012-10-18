@@ -32,7 +32,7 @@ class ImportUsers(grok.View):
         self.imported_users = []
         self.not_imported_users = []
 
-        if self.request.get('submit.userimport', '') == 'upload':
+        if self.request.get('submit.userimport', '') == 'Import':
             self.errors, self.data = self.extractData(self.request)
             if self.errors:
                 return
