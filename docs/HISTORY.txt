@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3
+---
+
+Browser view to import users from csv file
+
 1.2
 ---
 
