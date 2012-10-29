@@ -78,6 +78,21 @@ class TestImportUsersView(PloneTestCase):
         self.assertEqual(new_users, [],
                          'No users should have been created.')
 
+    def test_import_users_some_empty_lines(self):
+        view = self.portal.restrictedTraverse('@@import-users')
+        pmt = getToolByName(view.context, 'portal_membership')
+        filename = os.path.join(dirname, 'userimport_some_empty_lines.csv')
+        with open(filename, 'rb') as raw_data:
+            reader = csv.DictReader(raw_data)
+            reader = csv.DictReader(raw_data)
+            errors, existing_users, new_users = view.import_users(reader, pmt)
+
+        self.assertEqual(len(new_users), 5,
+                         '5 users should have been created.')
+
+        self.assertEqual(len(errors), 1,
+                         'There should be at least one error.')
+
     def test_import_users(self):
         view = self.portal.restrictedTraverse('@@import-users')
         pmt = getToolByName(view.context, 'portal_membership')
