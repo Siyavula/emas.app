@@ -1,15 +1,8 @@
 import datetime
-
-from zope.component import createObject
 from z3c.relationfield.relation import create_relation
 
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.permissions import ModifyPortalContent
-from Products.ATContentTypes.permission import ModifyConstrainTypes
-from Products.ATContentTypes.permission import ModifyViewTemplate
-from Products.ATContentTypes.content.folder import ATFolder
-from Products.ATContentTypes.lib.constraintypes import ENABLED
 from plone.dexterity.utils import createContentInContainer
 
 from emas.theme.browser.views import is_expert
