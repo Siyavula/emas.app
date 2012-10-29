@@ -382,7 +382,7 @@ def setupPortalContent(portal):
             wf = getToolByName(portal, 'portal_workflow')
             wfid = folder_dict['workflowid']
             status = wf.getStatusOf(wfid, folder)
-            if status['review_state'] != 'published':
+            if status and status['review_state'] != 'published':
                 wf.doActionFor(folder, 'publish')
                 folder.reindexObject()
 
@@ -421,7 +421,7 @@ def setupProductsAndServices(portal):
         item.subject = values['subject']
         wf = getToolByName(portal, 'portal_workflow')
         status = wf.getStatusOf('simple_publication_workflow', item)
-        if status['review_state'] != 'published':
+        if status and status['review_state'] != 'published':
             wf.doActionFor(item, 'publish')
             item.reindexObject()
 
