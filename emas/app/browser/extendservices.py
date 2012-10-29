@@ -40,7 +40,7 @@ class ExtendMemberServicesForm(form.SchemaForm):
     """ 
     """
     grok.name('extend-member-services')
-    grok.require('zope2.View')
+    grok.require('cmf.ManagePortal')
     grok.context(ISiteRoot)
 
     schema = IExtendMemberServices
