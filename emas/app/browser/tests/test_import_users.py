@@ -71,12 +71,27 @@ class TestImportUsersView(PloneTestCase):
         pmt = getToolByName(view.context, 'portal_membership')
         with open(os.path.join(dirname, 'empty.csv'), 'rb') as raw_data:
             reader = csv.DictReader(raw_data)
-            existing_users, new_users = view.import_users(reader, pmt)
+            errors, existing_users, new_users = view.import_users(reader, pmt)
 
         self.assertEqual(existing_users, [],
                          'No users should have been found.')
         self.assertEqual(new_users, [],
                          'No users should have been created.')
+
+    def test_import_users_some_empty_lines(self):
+        view = self.portal.restrictedTraverse('@@import-users')
+        pmt = getToolByName(view.context, 'portal_membership')
+        filename = os.path.join(dirname, 'userimport_some_empty_lines.csv')
+        with open(filename, 'rb') as raw_data:
+            reader = csv.DictReader(raw_data)
+            reader = csv.DictReader(raw_data)
+            errors, existing_users, new_users = view.import_users(reader, pmt)
+
+        self.assertEqual(len(new_users), 5,
+                         '5 users should have been created.')
+
+        self.assertEqual(len(errors), 1,
+                         'There should be at least one error.')
 
     def test_import_users(self):
         view = self.portal.restrictedTraverse('@@import-users')
@@ -84,7 +99,7 @@ class TestImportUsersView(PloneTestCase):
         with open(os.path.join(dirname, 'userimport.csv'), 'rb') as raw_data:
             reader = csv.DictReader(raw_data)
             reader = csv.DictReader(raw_data)
-            existing_users, new_users = view.import_users(reader, pmt)
+            errors, existing_users, new_users = view.import_users(reader, pmt)
 
         self.assertEqual(len(existing_users), 0,
                          'None or the users should exist yet.')

@@ -1,5 +1,6 @@
 import csv
 from cStringIO import StringIO
+import logging
 
 from email.Utils import formataddr
 
@@ -8,6 +9,8 @@ from zope.interface import Interface
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+LOG = logging.getLogger('import-users:')
 
 grok.templatedir('templates')
 
@@ -38,8 +41,12 @@ class ImportUsers(grok.View):
                 return
 
             reader = csv.DictReader(self.data)
-            self.not_imported_users, self.imported_users = \
+            errors, self.not_imported_users, self.imported_users = \
                 self.import_users(reader, pmt)
+
+            if errors:
+                self.errors.extend(errors)
+                LOG.info('\n'.join(self.errors))
 
     def extractData(self, request):
         data = self.request.form['userdata']
@@ -59,14 +66,21 @@ class ImportUsers(grok.View):
         existing_users = membershiptool.listMemberIds()
         imported_users = []
         not_imported_users = []
+        errors = []
+        linenum = 0
         for line in reader:
+            linenum += 1
             userid = line['userid']
-            if userid in existing_users:
-                not_imported_users.append(userid)
+            LOG.info('Importing user:%s' % userid)
+            if userid:
+                if userid in existing_users:
+                    not_imported_users.append(userid)
+                else:
+                    imported_users.append(userid)
+                    password = line.get('password', userid)
+                    roles = line.get('roles', ['Member',])
+                    membershiptool.addMember(userid, password, roles, [], line)
             else:
-                imported_users.append(userid)
-                password = line.get('password', userid)
-                roles = line.get('roles', ['Member',])
-                membershiptool.addMember(userid, password, roles, [], line)
+                errors.append('Error on line:%s (%s)' % (linenum, line))
 
-        return not_imported_users, imported_users
+        return errors, not_imported_users, imported_users
