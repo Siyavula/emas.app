@@ -26,14 +26,10 @@ service_mapping = {
         'general' : ['products_and_services/maths-grade10-practice',
                      'products_and_services/maths-grade11-practice',
                      'products_and_services/maths-grade12-practice',
-                     'products_and_services/maths-grade10-papers',
-                     'products_and_services/maths-grade11-papers',
                      'products_and_services/maths-grade12-papers',
                      'products_and_services/science-grade10-practice',
                      'products_and_services/science-grade11-practice',
                      'products_and_services/science-grade12-practice',
-                     'products_and_services/science-grade10-papers',
-                     'products_and_services/science-grade11-papers',
                      'products_and_services/science-grade12-papers',
                     ]
     }
