@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.4
+---
+
+Practice service expiry warning
+
+New logos
+
 1.3
 ---
 
