@@ -1,4 +1,5 @@
 import hashlib
+from urlparse import urlparse
 from datetime import date, datetime, timedelta
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
@@ -35,7 +36,6 @@ service_mapping = {
     }
 }
 
-
 SERVICE_IDS = [
     'maths-grade10-practice',
     'science-grade10-practice',
@@ -44,6 +44,54 @@ SERVICE_IDS = [
     'maths-grade12-practice',
     'science-grade12-practice',
 ]
+
+"""
+TODO: Move to a vocabulary or registry instead of hard coding here.
+"""
+SUBJECTS = [
+    'maths',
+    'science',
+]
+
+
+def get_subjects():
+    return SUBJECTS
+
+
+def get_subject_from_context(context):
+    pps = context.restrictedTraverse('@@plone_portal_state')
+    subject = pps.navigation_root().getId()
+    return subject
+
+
+def get_subject_from_path(path):
+    """ We assume the path will start with the subject, since that is the way
+        EMAS is configured.
+        We can expect something like:
+        /emas/maths/@@practice/grade-10
+    """
+    subject = None
+    path = path.split('/')
+    if len(path) > 1:
+        if path[2] in get_subjects():
+            subject = path[2]
+    return subject
+
+
+def get_grade_from_path(path):
+    """ The path will might have a grade, because that is the way the EMAS foder
+        structure works.
+        We could have something like:
+        /emas/maths/@@practice/grade-10
+    """
+    grade = None
+    parts = path.split('/')
+    token = '@@practice'
+    if token in parts:
+        startpos = parts.index(token)
+        if startpos and len(parts) > startpos + 1:
+            grade = parts[startpos+1]
+    return grade
 
 
 def qaservice_paths():
