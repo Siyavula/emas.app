@@ -4,14 +4,15 @@ import sys
 import datetime
 import transaction
 from Testing import makerequest
-from Products.CMFCore.utils import getToolByName
-from AccessControl.SecurityManagement import getSecurityManager
+
 from AccessControl.SecurityManagement import newSecurityManager
 from z3c.relationfield.relation import create_relation
+from zope.app.component.hooks import setSite
+
+from Products.CMFCore.utils import getToolByName
 from plone.dexterity.utils import createContentInContainer
 from plone.uuid.interfaces import IUUID
 
-from zope.app.component.hooks import setSite
 
 def _getServices(portal, subject):
     products_and_services = portal._getOb('products_and_services')
@@ -55,19 +56,27 @@ subject_group_map = {'maths': 'PastMathsExamPapers',
                      'science': 'PastScienceExamPapers'}
 
 for subject, groupid in subject_group_map.items():
+    count = 0
+    print('Update group:%s' % groupid)
+    
     services = _getServices(portal, subject)
 
     # get all users from group
     memberids = pg.getGroupMembers(groupid)
-    for memberid in memberids:
-        query['userid'] = memberid
-        for service in services:
-            uuid = IUUID(service)
-            query['serviceuid'] = uuid
-            brains = pc(query)
-            tmpservices = [b.getObject() for b in brains]
+    totalmembers = len(memberids)
 
-            if len(brains) == 0:
+    for memberid in memberids:
+        count += 1 
+        print('Update member:%s (%s of %s)' % (memberid, count, totalmembers))
+
+        query['userid'] = memberid
+        uuids = [IUUID(service) for service in services]
+        query['serviceuid'] = uuids
+        brains = pc(query)
+        tmpservices = [b.getObject() for b in brains]
+
+        if len(tmpservices) == 0:
+            for service in services:
                 mstitle = '%s for %s' % (service.title, memberid)
                 related_service = create_relation(service.getPhysicalPath())
                 props = {'title': mstitle,
@@ -86,18 +95,18 @@ for subject, groupid in subject_group_map.items():
                 ms.manage_setLocalRoles(memberid, ('Owner',))
                 tmpservices.append(ms)
 
-            for ms in tmpservices:
-                if service.service_type == 'credit':
-                    credits = ms.credits
-                    credits += service.amount_of_credits
-                    ms.credits = credits
-                elif service.service_type == 'subscription':
-                    if now > ms.expiry_date:
-                        ms.expiry_date = now
-                    expiry_date = ms.expiry_date + datetime.timedelta(
-                        service.subscription_period
-                    )
-                    ms.expiry_date = expiry_date
-                ms.reindexObject()
+        for ms in tmpservices:
+            if service.service_type == 'credit':
+                credits = ms.credits
+                credits += service.amount_of_credits
+                ms.credits = credits
+            elif service.service_type == 'subscription':
+                if now > ms.expiry_date:
+                    ms.expiry_date = now
+                expiry_date = ms.expiry_date + datetime.timedelta(
+                    service.subscription_period
+                )
+                ms.expiry_date = expiry_date
+            ms.reindexObject()
 
 transaction.commit()
