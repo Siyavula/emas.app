@@ -84,7 +84,8 @@ for subject, groupid in subject_group_map.items():
                          'related_service': related_service,
                          'service_type': service.service_type
                          }
-
+                
+                print('Creating memberservice:%s' % mstitle)
                 ms = createContentInContainer(
                     memberservices,
                     'emas.app.memberservice',
@@ -96,6 +97,7 @@ for subject, groupid in subject_group_map.items():
                 tmpservices.append(ms)
 
         for ms in tmpservices:
+            print('Updating memberservice:%s' % ms.Title())
             if service.service_type == 'credit':
                 credits = ms.credits
                 credits += service.amount_of_credits
@@ -108,5 +110,10 @@ for subject, groupid in subject_group_map.items():
                 )
                 ms.expiry_date = expiry_date
             ms.reindexObject()
+        
+        # commit periodically
+        if count % 100 == 0:
+            print('Commiting transaction...')
+            transaction.commit()
 
 transaction.commit()
