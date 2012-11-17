@@ -30,20 +30,21 @@ class TestExtendMemberServicesView(PloneTestCase):
         self.portal.REQUEST["form.buttons.Submit"] = u"Submit"
         view = self.portal.restrictedTraverse('@@extend-member-services')
 
-        view.process_form()
-        print view.form.render()
-
         errors = view.errors
         self.assertEqual(len(errors), 0, "Got errors:" + str(errors))
 
     def test_update_nonexistent_memberservices(self):
         self.setRoles('Manager')
-        # grab some test data
+
+        products_and_services = self.portal['products_and_services']
+        service = products_and_services['maths-grade10-practice']
+        self.portal.REQUEST["form.widgets.services"] = [service]
+
         data = self._get_csv_data('nonexistentservices.csv')
         self.portal.REQUEST["form.widgets.csvfile"] = data
-        self.portal.REQUEST["form.widgets.services"] = [
-            'maths-grade10-practice',]
+
         self.portal.REQUEST["form.buttons.Submit"] = u"Submit"
+
         view = self.portal.restrictedTraverse('@@extend-member-services')
     
     def _get_csv_data(self, filename):

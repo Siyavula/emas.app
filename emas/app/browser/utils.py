@@ -180,6 +180,17 @@ def member_services_for(context, service_uids, userid):
     return memberservices
 
 
+def all_member_services_for(context, path, service_uids, userid):
+    query = {'portal_type': 'emas.app.memberservice',
+             'userid': userid,
+             'path': path,
+             'serviceuid': service_uids,
+            }
+    pc = getToolByName(context, 'portal_catalog')
+    memberservices = [b.getObject() for b in pc(query)]
+    return memberservices
+
+
 def member_services_for_subject(context, service_uids, userid, subject):
     today = datetime.today().date()
     query = {'portal_type': 'emas.app.memberservice',
