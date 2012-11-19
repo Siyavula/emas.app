@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.6
+---
+
+Extend member services browser view now create services for users if
+they don't find them
+
 1.5
 ---
 
