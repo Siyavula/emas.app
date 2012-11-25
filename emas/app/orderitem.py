@@ -8,6 +8,7 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from z3c.form import group, field
 from z3c.relationfield.schema import RelationList, RelationChoice
 
+from plone.uuid.interfaces import IUUID
 from plone.formwidget.contenttree import ObjPathSourceBinder
 from plone.app.textfield import RichText
 
@@ -49,6 +50,27 @@ class IOrderItem(form.Schema):
 
 class OrderItem(dexterity.Item):
     grok.implements(IOrderItem)
+    
+    def __eq__(self, other):
+        return self == other
+    
+    def __cmp__(self, other):
+        return self.__eq__(other)
+
+    def _get_state_tuple(self):
+        """ Returns the current state of this object as a tuple.
+            *WARNING*
+            This does not take any schemaextender or dexterity behaviour fields
+            into account.
+            *WARNING*
+        """
+        return (IUUID(self.related_item.to_object),
+                self.quantity,
+                self.price,
+                self.total)
+
+    def _get_state_string(self):
+        return '||'.join([str(e) for e in self._get_state_tuple()])
 
 
 class SampleView(grok.View):

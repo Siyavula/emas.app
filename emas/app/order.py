@@ -1,3 +1,5 @@
+import hashlib
+
 from five import grok
 from plone.directives import dexterity, form
 
@@ -6,6 +8,7 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope.component import queryUtility
 
 from plone.registry.interfaces import IRegistry
+from plone.indexer import indexer
 
 from emas.theme.interfaces import IEmasSettings
 
@@ -60,6 +63,12 @@ class IOrder(form.Schema):
     )
 
 
+@indexer(IOrder)
+def statehash(obj):
+    return obj.__hash__()
+grok.global_adapter(statehash, name="statehash")
+
+
 class Order(dexterity.Container):
     grok.implements(IOrder)
     
@@ -98,7 +107,55 @@ class Order(dexterity.Container):
         our_hash = compute_vcs_response_hash(self.REQUEST.form, md5key)
         vcs_returned_hash = self.REQUEST.get('Hash', '')
         return our_hash == vcs_returned_hash
+    
+    def __hash__(self):
+        state = self._get_state_string()
+        h = hashlib.new('ripemd160')
+        h.update(state)
+        return h.hexdigest()
 
+    def __eq__(self, other):
+        return self._get_state_tuple() == other._get_state_tuple()
+    
+    def __neq__(self, other):
+        return self._get_state_tuple() != other._get_state_tuple()
+
+    def __lt__(self, other):
+        return self._get_state_tuple() < other._get_state_tuple()
+
+    def __le__(self, other):
+        return self._get_state_tuple() <= other._get_state_tuple()
+
+    def __gt__(self, other):
+        return self._get_state_tuple() > other._get_state_tuple()
+
+    def __ge__(self, other):
+        return self._get_state_tuple() >= other._get_state_tuple()
+
+    def __cmp__(self, other):
+        return self.__eq__(other)
+
+    def _get_state_tuple(self):
+        """ Returns the current state of this object as a tuple.
+            *WARNING*
+            This does not take any schemaextender or dexterity behaviour fields
+            into account.
+            *WARNING*
+        """
+        order_items = ''.join(
+            [item._get_state_string() for item in self.order_items()])
+
+        return (self.shipping_address,
+                self.shipping_method,
+                self.userid,
+                self.fullname,
+                self.phone,
+                self.addvat,
+                order_items)
+
+    def _get_state_string(self):
+        return '|'.join([str(e) for e in self._get_state_tuple()])
+    
 
 class SampleView(grok.View):
     grok.context(IOrder)

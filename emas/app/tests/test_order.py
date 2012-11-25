@@ -48,6 +48,14 @@ class TestOrderIntegration(PloneTestCase):
         order1 = self.folder['order']
         view = order1.restrictedTraverse('@@view')
     
+    def test_equals(self):
+        self.folder.invokeFactory('emas.app.order', 'order1')
+        order1 = self.folder['order1']
+        self.folder.invokeFactory('emas.app.order', 'order2')
+        order2 = self.folder['order2']
+        print order1 == order2
+        self.assertEqual(order1, order2)
+    
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
