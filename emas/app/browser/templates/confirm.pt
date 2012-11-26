@@ -65,13 +65,7 @@
                             <button type="submit" tal:condition="warnings"
                                 class="button generic no-icon small-caps allowMultiSubmit"
                                 name="continue" value="1">
-                                I understand
-                            </button>
-
-                            <button type="submit" tal:condition="warnings"
-                                class="button generic no-icon small-caps allowMultiSubmit"
-                                name="cancelorder" value="1">
-                                Cancel order
+                                Continue
                             </button>
                         </form>
                     </div>
@@ -128,7 +122,7 @@
                 </form>
                 
                 <form class="backbutton" action="." method="POST"
-                    tal:attributes="action string:${context/absolute_url}/@@order" tal:condition="view/creditcard_selected">
+                    tal:attributes="action string:${context/absolute_url}/@@order">
 
                     <!-- all the values from the order form, in case we 
                          want to go back to it.
@@ -157,7 +151,7 @@
                     <input name="shipping_address" value="" type="hidden"
                         tal:attributes="value view/shipping_address" >
                         
-                    <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Back</button>
+                    <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Change order</button>
                 </form>
 
             </div>
