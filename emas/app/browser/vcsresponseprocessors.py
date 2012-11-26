@@ -1,3 +1,5 @@
+import logging
+
 from five import grok
 from Acquisition import aq_inner
 
@@ -13,6 +15,8 @@ from emas.app.browser.utils import get_display_items_from_order
 from emas.app.browser.utils import member_services
 from emas.app.browser.utils import practice_service_uuids
 from emas.app.browser.utils import service_url as get_service_url
+
+LOGGER = logging.getLogger(__name__)
 
 grok.templatedir('templates')
 
@@ -36,6 +40,7 @@ class PaymentApproved(grok.View):
 
     
     def update(self):
+        LOGGER.info(self.request)
         self.pps = self.context.restrictedTraverse('@@plone_portal_state')
         pms = getToolByName(self.context, 'portal_membership')
 
