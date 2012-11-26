@@ -14,7 +14,9 @@ from plone.dexterity.utils import createContentInContainer
 from plone.registry.interfaces import IRegistry
 
 from emas.theme.interfaces import IEmasSettings
-from emas.app.browser.utils import annotate
+from emas.app.service import IService
+from emas.app.browser.utils import annotate, get_paid_orders_for_member
+from emas.app.browser.utils import member_services, practice_service_uuids
 
 LOGGER = logging.getLogger(__name__)
 
@@ -103,12 +105,55 @@ class Confirm(grok.View):
                 )
 
             self.totalcost = "R %.2f" % self.order.total()
-
+            
             self.prepVCS()
 
             self.send_invoice(self.order)
 
             self.logDetails()
+    
+    def warnings(self):
+        """ Find all the current member's active memberservices.
+            Use that to compute the related services.
+            Compare that to the current order's services.
+            If there are matches, return a list of those that match.
+
+            We do this in order to warn the user that he might be ordering and
+            paying for a service or product again.
+        """
+        ordered_services = []
+        ordered_products = []
+        for oi in self.order.order_items():
+            r_item = oi.related_item.to_object
+            if IService.providedBy(r_item):
+                ordered_services.append(r_item)
+            else:
+                ordered_products.append(r_item)
+        ordered_services = set(ordered_services)
+        ordered_products = set(ordered_products)
+            
+        pps = self.context.restrictedTraverse('@@plone_portal_state')
+        memberid = pps.member().getId()
+        orders = get_paid_orders_for_member(self.context, memberid)
+        paid_products = []
+        paid_services = []
+        for order in orders:
+            for item in order.order_items():
+                r_item = item.related_item.to_object
+                if 'discount' in r_item.title.lower():
+                    continue
+
+                if IService.providedBy(r_item):
+                    paid_services.append(r_item)
+                else:
+                    paid_products.append(r_item)
+
+        paid_services = set(paid_services)
+        paid_products = set(paid_products)
+        
+        matching_products = paid_products.intersection(ordered_products)
+        matching_services = paid_services.intersection(ordered_services)
+        return matching_products.union(matching_services)
 
     def prepVCS(self):
         # when debugging you can use this action to return to the approved
