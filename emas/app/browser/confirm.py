@@ -1,4 +1,5 @@
 import hashlib
+import logging
 from itertools import chain
 from email.Utils import formataddr
 
@@ -14,6 +15,8 @@ from plone.registry.interfaces import IRegistry
 
 from emas.theme.interfaces import IEmasSettings
 from emas.app.browser.utils import annotate
+
+LOGGER = logging.getLogger(__name__)
 
 grok.templatedir('templates')
 
@@ -105,6 +108,8 @@ class Confirm(grok.View):
 
             self.send_invoice(self.order)
 
+            self.logDetails()
+
     def prepVCS(self):
         # when debugging you can use this action to return to the approved
         # page immediately.
@@ -139,6 +144,21 @@ class Confirm(grok.View):
                                 self.returnurl + self.md5key)
 
         annotate(self.order, 'vcs_hash', self.md5hash)
+
+    def logDetails(self):
+        details = {'OrderNumber': self.ordernumber,
+                   'Action': self.action,
+                   'CreditCardSelected': self.creditcard_selected(),
+                   'orderid': self.order.getId(),
+                   'p1': self.vcs_terminal_id,
+                   'p2': self.tid,
+                   'p3': self.description,
+                   'p4': self.cost,
+                   'm_1': self.returnurl,
+                   'hash': self.md5hash,
+                   'prod_payment': self.creditcard_selected(),
+                  }
+        LOGGER.info(details)
 
     def _display_items(self):
         """ TODO: move to utils.display_items ASAP
