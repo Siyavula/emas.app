@@ -68,7 +68,8 @@ class PaymentApproved(grok.View):
                 self.request.response.redirect(url)
         except Exception, ex:
             LOGGER.warn(ex)
-            self.context.restrictedTraverse('@@member-services')()
+            self.request['errors'] = self.request.get('errors', []).append(ex)
+            self.context.restrictedTraverse('@@warnings')()
     
     def memberservices(self):
         return get_display_items_from_order(self.order)
