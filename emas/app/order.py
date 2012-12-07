@@ -19,6 +19,17 @@ vocab_shipping_methods = SimpleVocabulary(
     ]
 )
 
+CREDITCARD = u'creditcard'
+SMS = u'sms'
+EFT = u'eft'
+
+vocab_payment_methods = SimpleVocabulary(
+    [SimpleTerm(value=CREDITCARD, title=_(u'Credit card')),
+     SimpleTerm(value=EFT, title=_(u'Electronic funds transfer')),
+     SimpleTerm(value=SMS, title=_(u'Premium SMS')),
+    ]
+)
+
 # TODO: make this a portal property
 VAT = 0.14
 
@@ -59,6 +70,16 @@ class IOrder(form.Schema):
         default=False,
     )
 
+    verification_code = schema.TextLine(
+        title=_(u"Verification code"),
+        required=False,
+    )
+
+    payment_method = schema.Choice(
+        title=_(u"Payment method"),
+        vocabulary=vocab_payment_methods,
+        required=True,
+    )
 
 class Order(dexterity.Container):
     grok.implements(IOrder)
@@ -94,11 +115,14 @@ class Order(dexterity.Container):
         """
         registry = queryUtility(IRegistry)
         settings = registry.forInterface(IEmasSettings)
-        md5key = settings.vcs_md5_key
-        our_hash = compute_vcs_response_hash(self.REQUEST.form, md5key)
-        vcs_returned_hash = self.REQUEST.get('Hash', '')
-        return our_hash == vcs_returned_hash
 
+        if self.payment_method == CREDITCARD:
+            md5key = settings.vcs_md5_key
+            our_hash = compute_vcs_response_hash(self.REQUEST.form, md5key)
+            vcs_returned_hash = self.REQUEST.get('Hash', '')
+            return our_hash == vcs_returned_hash
+        elif self.payment_method == SMS:
+            return self.verification_code == self.REQUEST.get('message')
 
 class SampleView(grok.View):
     grok.context(IOrder)

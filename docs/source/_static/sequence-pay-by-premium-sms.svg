@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Bouml (http://bouml.free.fr/) -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="731" height="501" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<g>
+	<line stroke="black" stroke-dasharray="18,6"  stroke-opacity="1" x1="631" y1="45" x2="631" y2="501" />
+</g>
+<g>
+	<ellipse fill="none" stroke="black" stroke-width="1" stroke-opacity="1" cx="58" cy="7" rx="3" ry="3" />
+	<line stroke="black" stroke-opacity="1" x1="53" y1="13" x2="64" y2="13" />
+	<line stroke="black" stroke-opacity="1" x1="58" y1="10" x2="58" y2="18" />
+	<line stroke="black" stroke-opacity="1" x1="58" y1="18" x2="53" y2="23" />
+	<line stroke="black" stroke-opacity="1" x1="58" y1="18" x2="63" y2="23" />
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" text-anchor="middle" x="59" y="38">:User</text>
+</g>
+<g>
+	<line stroke="black" stroke-dasharray="18,6"  stroke-opacity="1" x1="356" y1="45" x2="356" y2="501" />
+</g>
+<g>
+	<line stroke="black" stroke-dasharray="18,6"  stroke-opacity="1" x1="59" y1="45" x2="59" y2="501" />
+</g>
+<g>
+	<rect fill="#808080" stroke="none" stroke-opacity="1" x="659" y="8" width="3" height="22" />
+	<rect fill="#808080" stroke="none" stroke-opacity="1" x="603" y="27" width="59" height="3" />
+	<rect fill="#ffffc0" stroke="black" stroke-width="1" stroke-opacity="1" x="599" y="4" width="60" height="23" />
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" text-decoration="underline" text-anchor="middle" x="629" y="20">:BulkSMS</text>
+</g>
+<g>
+	<rect fill="#808080" stroke="none" stroke-opacity="1" x="377" y="8" width="3" height="22" />
+	<rect fill="#808080" stroke="none" stroke-opacity="1" x="336" y="27" width="44" height="3" />
+	<rect fill="#ffffc0" stroke="black" stroke-width="1" stroke-opacity="1" x="332" y="4" width="45" height="23" />
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" text-decoration="underline" text-anchor="middle" x="355" y="20">:EMAS</text>
+</g>
+<g>
+	<polygon fill="#ffffff" stroke="black" stroke-opacity="1" points="3,221 35,221 35,232 23,244 3,244 3,221" />
+	<rect fill="none" stroke="black" stroke-width="1" stroke-opacity="1" x="3" y="221" width="716" height="268" />
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" text-anchor="middle" x="13" y="237">alt</text>
+	<line stroke="black" stroke-opacity="1" x1="3" y1="244" x2="23" y2="244" />
+	<line stroke="black" stroke-opacity="1" x1="23" y1="244" x2="35" y2="232" />
+	<line stroke="black" stroke-opacity="1" x1="35" y1="232" x2="35" y2="221" />
+</g>
+<g>
+	<rect fill="none" stroke="black" stroke-width="1" stroke-opacity="1" x="351" y="67" width="10" height="116" />
+</g>
+<g>
+	<rect fill="none" stroke="black" stroke-width="1" stroke-opacity="1" x="54" y="68" width="10" height="115" />
+</g>
+<g>
+	<rect fill="none" stroke="black" stroke-width="1" stroke-opacity="1" x="626" y="73" width="10" height="89" />
+</g>
+<g>
+	<line stroke="black" stroke-opacity="1" x1="65" y1="74" x2="351" y2="74" />
+	<polygon fill="#000000" stroke="none" points="351,74 347,70 347,78" />
+</g>
+<g>
+	<line stroke="black" stroke-opacity="1" x1="362" y1="93" x2="626" y2="93" />
+	<polygon fill="#000000" stroke="none" points="626,93 622,89 622,97" />
+</g>
+<g>
+	<line stroke="black" stroke-opacity="1" stroke-dasharray="4,4" x1="362" y1="153" x2="626" y2="153" />
+	<path fill="none" stroke="black" stroke-opacity="1" d="M 366 149 L 362 153 L 366 157" />
+</g>
+<g>
+	<line stroke="black" stroke-opacity="1" stroke-dasharray="4,4" x1="65" y1="178" x2="351" y2="178" />
+	<path fill="none" stroke="black" stroke-opacity="1" d="M 69 174 L 65 178 L 69 182" />
+</g>
+<g>
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" x="169" y="166">Message sent</text>
+</g>
+<g>
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" x="168" y="62">order services</text>
+</g>
+<g>
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" x="434" y="81">send verification SMS</text>
+</g>
+<g>
+	<text font-family="Helvetica" font-size="9" fill="#000000" xml:space="preserve" x="483" y="141">OK</text>
+</g>
+</svg>
