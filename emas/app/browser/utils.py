@@ -360,3 +360,13 @@ def get_display_items_from_order(order):
     display_items = [i for i in items \
                      if i.related_service.to_object.getId() in SERVICE_IDS]
     return display_items 
+
+def get_paid_orders_for_member(context, memberid):
+    query = {'portal_type': 'emas.app.order',
+             'userid': memberid,
+             'review_state': 'paid'
+            }
+    pc = getToolByName(context, 'portal_catalog')
+    brains = pc(query)
+    return [b.getObject() for b in brains]
+

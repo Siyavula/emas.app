@@ -11,10 +11,12 @@
         <h1 class="documentFirstHeading">Order confirmation</h1>
 
         <div id="content-core"
-            tal:define="isAnon context/@@plone_portal_state/anonymous;">
+            tal:define="isAnon context/@@plone_portal_state/anonymous;
+                        warnings view/warnings | nothing;">
 
             <div id="payment-form-container" class="selectpackage">
                 <h3>Order Number: <span tal:replace="view/ordernumber">1000</span></h3>
+
                 <p>Thank you for your order!</p>
 
                 <p>You have ordered the following:
@@ -27,6 +29,15 @@
                 <p>
                 The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong>
                 </p>
+
+                <tal:warnings condition="warnings">
+                You have already paid for the following: <br/>
+                <ul>
+                    <li tal:repeat="warning warnings" tal:content="warning/title">
+                        warning
+                    </li>
+                </ul>
+                </tal:warnings>
 
                 <tal:eft tal:condition="view/eft_selected">
                     <p>You will receive an email to confirm your order. The
@@ -48,6 +59,17 @@
     Branch code:    198765
     Reference:      <tal:username tal:replace="view/ordernumber"/>
                     </pre>
+
+                    <div class="ordertotal">
+                        <form method="POST" action=".">
+                            <button type="submit" tal:condition="warnings"
+                                class="button generic no-icon small-caps allowMultiSubmit"
+                                name="continue" value="1">
+                                Continue
+                            </button>
+                        </form>
+                    </div>
+                    
                 </tal:eft>
 
                 <tal:sms tal:condition="view/sms_selected">
@@ -88,14 +110,26 @@
                             type="hidden" checked="checked">
 
                         <div class="ordertotal">
-                            <button id="makepayment" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="makepayment" value="make payment">Make payment</button>
+                            <button tal:condition="not:warnings"
+                                id="makepayment"
+                                type="submit" 
+                                class="button generic no-icon small-caps allowMultiSubmit"
+                                name="makepayment" value="make payment">
+                                Make payment
+                            </button>
+
+                            <button type="submit" tal:condition="warnings"
+                                class="button generic no-icon small-caps allowMultiSubmit"
+                                name="continue" value="1">
+                                I understand, make payment
+                            </button>
                         </div>
                             
                     </fieldset>
                 </form>
-
+                
                 <form class="backbutton" action="." method="POST"
-                    tal:attributes="action string:${context/absolute_url}/@@order" tal:condition="view/creditcard_selected">
+                    tal:attributes="action string:${context/absolute_url}/@@order">
 
                     <!-- all the values from the order form, in case we 
                          want to go back to it.
@@ -124,7 +158,7 @@
                     <input name="shipping_address" value="" type="hidden"
                         tal:attributes="value view/shipping_address" >
                         
-                    <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Back</button>
+                    <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Change order</button>
                 </form>
 
             </div>
