@@ -29,7 +29,7 @@ class SMSPaymentApproved(grok.View):
 
         registry = queryUtility(IRegistry)
         self.settings = registry.forInterface(IEmasSettings)
-		self.logRequest(self.request)
+        self.logRequest(self.request)
         self.validated = self.validateSender(self.request, self.settings)
 
         if self.order and self.validated:
