@@ -147,18 +147,18 @@ class SMSPaymentApproved(grok.View):
             LOGGER.info('Message sent: batch ID %s' % result[2])
 
     def logRequest(self, request):
-	keys = ['msisdn',
-		'sender',
-		'message',
-		'dca',
-		'msg_id',
-		'source_id',
-		'referring_batch_id',
-		'referring_msg_id',
-		'network_id',
-		'concat_reference',
-		'concat_num_segments',
-		'concat_seq_num',
-		'received_time',]
-	for key in keys:
-	    LOGGER.info('Request:%s=%s' % (key, request.get(key)))
+        keys = ['msisdn',
+                'sender',
+                'message',
+                'dca',
+                'msg_id',
+                'source_id',
+                'referring_batch_id',
+                'referring_msg_id',
+                'network_id',
+                'concat_reference',
+                'concat_num_segments',
+                'concat_seq_num',
+                'received_time',]
+        for key in keys:
+            LOGGER.info('Request:%s=%s' % (key, request.get(key)))
