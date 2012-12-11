@@ -32,6 +32,12 @@ service_mapping = {
                      'products_and_services/science-grade11-practice',
                      'products_and_services/science-grade12-practice',
                      'products_and_services/science-grade12-papers',
+                     'products_and_services/maths-grade10-monthly-practice',
+                     'products_and_services/maths-grade11-monthly-practice',
+                     'products_and_services/maths-grade12-monthly-practice',
+                     'products_and_services/science-grade10-monthly-practice',
+                     'products_and_services/science-grade11-monthly-practice',
+                     'products_and_services/science-grade12-monthly-practice',
                     ]
     }
 }
@@ -43,6 +49,12 @@ SERVICE_IDS = [
     'science-grade11-practice',
     'maths-grade12-practice',
     'science-grade12-practice',
+    'maths-grade10-monthly-practice',
+    'maths-grade11-monthly-practice',
+    'maths-grade12-monthly-practice',
+    'science-grade10-monthly-practice',
+    'science-grade11-monthly-practice',
+    'science-grade12-monthly-practice',
 ]
 
 """
