@@ -333,6 +333,73 @@ ITEMS = {
         'amount_of_moola': 200,
         'access_path'  :'science/past-exam-papers/science',
         'subject': u'science'},
+
+    'maths-grade10-monthly-practice'   : {
+        'title': 'Maths Grade 10 Monthly Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 15.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 30,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-10',
+        'subject': u'maths'},
+
+    'maths-grade11-monthly-practice'   : {
+        'title': 'Maths Grade 11 Monthly Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 15.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 30,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-11',
+        'subject': u'maths'},
+
+    'maths-grade12-monthly-practice'   : {
+        'title': 'Maths Grade 12 Monthly Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 15.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 30,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-12',
+        'subject': u'maths'},
+
+    'science-grade10-monthly-practice' : {
+        'title': 'Science Grade 10 Monthly Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 15.00,
+        'grade': u'grade-10',
+        'service_type': 'subscription',
+        'subscription_period': 30,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-10',
+        'subject': u'science'},
+
+    'science-grade11-monthly-practice' : {
+        'title': 'Science Grade 11 Monthly Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 15.00,
+        'grade': u'grade-11',
+        'service_type': 'subscription',
+        'subscription_period': 30,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-11',
+        'subject': u'science'},
+
+    'science-grade12-monthly-practice' : {
+        'title': 'Science Grade 12 Monthly Intelligent Practice',
+        'type': 'emas.app.service',
+        'price': 15.00,
+        'grade': u'grade-12',
+        'service_type': 'subscription',
+        'subscription_period': 30,
+        'amount_of_credits': 0,
+        'access_path'  :'@@practice/grade-12',
+        'subject': u'science'},
+
 }
 
 
