@@ -157,7 +157,11 @@
                         
                     <input name="shipping_address" value="" type="hidden"
                         tal:attributes="value view/shipping_address" >
-                        
+
+                    <div>
+                        Once your SMS payment has been confirmed, you can <a href="#" tal:attributes="href string:${context/absolute_url}/@@practice">click here to go to Intelligent Practice.</a>
+                    </div>
+
                     <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Change order</button>
                 </form>
 
