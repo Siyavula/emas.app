@@ -179,12 +179,12 @@ def onMemberJoined(obj, event):
     today = datetime.date.today()
     trialend = today + datetime.timedelta(days=30)
     intelligent_practice_services = (
-        'maths-grade10-practice',
-        'maths-grade11-practice',
-        'maths-grade12-practice',
-        'science-grade10-practice',
-        'science-grade11-practice',
-        'science-grade12-practice',
+        'maths-grade10-monthly-practice',
+        'maths-grade11-monthly-practice',
+        'maths-grade12-monthly-practice',
+        'science-grade10-monthly-practice',
+        'science-grade11-monthly-practice',
+        'science-grade12-monthly-practice',
     )
 
     for sid in intelligent_practice_services:
