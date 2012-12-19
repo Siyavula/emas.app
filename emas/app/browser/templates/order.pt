@@ -88,7 +88,7 @@
                         tal:define="selected view/prod_practice_book">
 
                         <legend>
-                            Select your product:
+                            Select your product (printed textbooks unavailable at this time):
                         </legend>
 
                         <fieldset>
@@ -98,6 +98,7 @@
                                    tal:attributes="checked python:view.prod_practice_book_selected('Practice,Textbook', selected)"
                                    class="textbook add-textbook"
                                    value="Practice,Textbook" 
+				   disabled="1"
                                    type="radio" 
                                    price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
                             </p>
@@ -120,6 +121,7 @@
                                    tal:attributes="checked python:view.prod_practice_book_selected('Textbook', selected)"
                                    class="add-textbook"
                                    value="Textbook"
+				   disabled="1"
                                    type="radio"
                                    price="95"> Textbook only (no Intelligent Practice) [per subject: <strong>R95</strong>]
                             </p>
