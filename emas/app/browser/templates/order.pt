@@ -141,13 +141,6 @@
                         <p>
                             <input name="prod_payment"
                                 checked=""
-                                tal:attributes="checked python:view.prod_payment_selected('sms', selected)"
-                                value="sms"
-                                type="radio"> Premium SMS <br />
-                        </p>
-                        <p>
-                            <input name="prod_payment"
-                                checked=""
                                 tal:attributes="checked python:view.prod_payment_selected('eft', selected)"
                                 value="eft"
                                 type="radio"> Electronic Funds Transfer (EFT)<br />
