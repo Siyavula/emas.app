@@ -2,8 +2,8 @@ Changelog
 =========
 
 =======
-1.7 (unreleased)
-----
+1.7
+---
 
 Add BulkSMS premium SMS payment functionality.
 
