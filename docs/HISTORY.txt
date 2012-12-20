@@ -2,10 +2,12 @@ Changelog
 =========
 
 =======
-1.20 (unreleased)
+1.7 (unreleased)
 ----
 
 Add BulkSMS premium SMS payment functionality.
+
+Various mobile practice and order fixes.
 
 1.6
 ---
