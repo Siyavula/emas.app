@@ -1,3 +1,4 @@
+import random
 import hashlib
 from urlparse import urlparse
 from datetime import date, datetime, timedelta
@@ -6,6 +7,10 @@ from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 
 KEY_BASE = 'emas.app'
+RETRIES = 1000
+LOWER = 9999
+UPPER = 100000
+
 
 service_mapping = {
     'qaservices' : {
@@ -381,4 +386,25 @@ def get_paid_orders_for_member(context, memberid):
     pc = getToolByName(context, 'portal_catalog')
     brains = pc(query)
     return [b.getObject() for b in brains]
+
+def generate_verification_code(order):
+    rnumber = random.randint(LOWER, UPPER)
+    count = 0
+    while not is_unique_verification_code(order, rnumber) and count < RETRIES:
+        count += 1
+        rnumber = random.randint(LOWER, UPPER)
+
+    if count > RETRIES - 1:
+        raise Exception('Could not find unique verification code.')
+
+    return str(rnumber)
+
+def is_unique_verification_code(context, verification_code):
+    pc = getToolByName(context, 'portal_catalog')
+    query = {'portal_type':       'emas.app.order',
+             'verification_code': verification_code}
+    brains = pc.unrestrictedSearchResults(query)
+    if len(brains) > 0:
+        return False
+    return True
 

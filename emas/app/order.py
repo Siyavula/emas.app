@@ -22,11 +22,13 @@ vocab_shipping_methods = SimpleVocabulary(
 CREDITCARD = u'creditcard'
 SMS = u'sms'
 EFT = u'eft'
+MOOLA = u'moola'
 
 vocab_payment_methods = SimpleVocabulary(
     [SimpleTerm(value=CREDITCARD, title=_(u'Credit card')),
      SimpleTerm(value=EFT, title=_(u'Electronic funds transfer')),
      SimpleTerm(value=SMS, title=_(u'Premium SMS')),
+     SimpleTerm(value=MOOLA, title=_(u'Moola')),
     ]
 )
 
@@ -106,23 +108,39 @@ class Order(dexterity.Container):
         return self.objectValues()
     
     def may_transition_to_paid(self, **kwargs):
-        """ We try to get the 'Hash' key from the request. It will be
+        """ This work is done in order to stop the spoofing of successful
+            payment responses.
+
+            For credit card transactions:
+            We try to get the 'Hash' key from the request. It will be
             supplied by VCS on the return call. This is compared to the hash
             we compute from the data returned.
+            
+            For VCS transactions:
+            The verification code is in the 'Hash' field.
 
-            This is done in order to stop the spoofing of successful payment
-            responses.
+            For Mxit Moola transactions:
+            The verification code is in the 'verification_code' field.
+
+            TODO:
+            Generalise this and make it pluggable.
         """
         registry = queryUtility(IRegistry)
         settings = registry.forInterface(IEmasSettings)
 
+        # VCS returns our verification code in the 'Hash' field
         if self.payment_method == CREDITCARD:
             md5key = settings.vcs_md5_key
             our_hash = compute_vcs_response_hash(self.REQUEST.form, md5key)
             vcs_returned_hash = self.REQUEST.get('Hash', '')
             return our_hash == vcs_returned_hash
+        # BulkSMS returns our verification code in the message field
         elif self.payment_method == SMS:
             return self.verification_code == self.REQUEST.get('message')
+        # Mxit returns the verification code in the verification_code field
+        elif self.payment_method == MOOLA:
+            returned_code = self.REQUEST.get('verification_code')
+            return self.verification_code == returned_code
 
 class SampleView(grok.View):
     grok.context(IOrder)
