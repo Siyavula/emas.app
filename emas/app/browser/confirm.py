@@ -221,9 +221,6 @@ class Confirm(grok.View):
         order.verification_code = verification_code
         order.reindexObject(idxs=['verification_code'])
 
-        # write all the details to the log for debugging, etc.
-        self.logDetails()
-
     def generate_verification_code(self, order):
         rnumber = random.randint(self.lower, self.upper)
         count = 0
