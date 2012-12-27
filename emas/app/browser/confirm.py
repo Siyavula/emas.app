@@ -127,8 +127,12 @@ class Confirm(grok.View):
         """
         if order.payment_method == CREDITCARD:
             self.prepVCSPayment(order, request)
+            # write all the details to the log for debugging, etc.
+            self.logVCSDetails()
         elif order.payment_method == SMS:
             self.prepSMSPayment(order, request)
+            # write all the details to the log for debugging, etc.
+            self.logSMSDetails()
 
     def warnings(self):
         """ Find all the current member's active memberservices.
@@ -174,8 +178,6 @@ class Confirm(grok.View):
         return matching_products.union(matching_services)
 
     def prepVCSPayment(self, order, request):
-        self.logDetails()
-    
         # when debugging you can use this action to return to the approved
         # page immediately.
         # self.action = '%s/@@paymentapproved' %self.context.absolute_url()
@@ -211,10 +213,16 @@ class Confirm(grok.View):
         annotate(order, 'vcs_hash', self.md5hash)
 
     def prepSMSPayment(self, order, request):
+        # used in template as the action to which the form is submitted.
+        self.action = '.'
+
         # generate payment verification code
         verification_code = self.generate_verification_code(order)
         order.verification_code = verification_code
         order.reindexObject(idxs=['verification_code'])
+
+        # write all the details to the log for debugging, etc.
+        self.logDetails()
 
     def generate_verification_code(self, order):
         rnumber = random.randint(self.lower, self.upper)
@@ -237,7 +245,7 @@ class Confirm(grok.View):
             return False
         return True
 
-    def logDetails(self):
+    def logVCSDetails(self):
         details = {'OrderNumber': self.ordernumber,
                    'Action': self.action,
                    'CreditCardSelected': self.creditcard_selected(),
@@ -249,6 +257,14 @@ class Confirm(grok.View):
                    'm_1': self.returnurl,
                    'hash': self.md5hash,
                    'prod_payment': self.creditcard_selected(),
+                  }
+        LOGGER.info(details)
+
+    def logSMSDetails(self):
+        details = {'OrderNumber': self.ordernumber,
+                   'Action': self.action,
+                   'prod_payment': 'SMS',
+                   'verification_code': self.order.verification_code
                   }
         LOGGER.info(details)
 
