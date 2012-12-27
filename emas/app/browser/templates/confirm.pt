@@ -158,7 +158,7 @@
                     <input name="shipping_address" value="" type="hidden"
                         tal:attributes="value view/shipping_address" >
 
-                    <div>
+                    <div tal:condition="view/sms_selected">
                         Once your SMS payment has been confirmed, you can <a href="#" tal:attributes="href string:${context/absolute_url}/@@practice">click here to go to Intelligent Practice.</a>
                     </div>
 
