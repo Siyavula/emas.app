@@ -103,11 +103,9 @@ def onOrderPaid(order, event):
             # if we have specific access groups add the user the those here.
             access_group = service.access_group
             if access_group:
-                pps = order.restrictedTraverse('@@plone_portal_state')
-                member = pps.member()
                 gt = getToolByName(order, 'portal_groups')
                 # now add the member to the correct group
-                gt.addPrincipalToGroup(member.getId(), access_group)
+                gt.addPrincipalToGroup(order.userid, access_group)
 
 
 def questionAsked(obj, event):
