@@ -137,12 +137,12 @@
 
               <tal:ms tal:define="ms python:item['brain'].getObject();
                                      toLocalizedTime nocall:ms/@@plone/toLocalizedTime;
-                                     creation_date ms/creation_date | nothing">
-              <td tal:condition="creation_date"
-                  tal:content="python:toLocalizedTime(creation_date)">
+                                     expiry_date ms/expiry_date | nothing">
+              <td tal:condition="expiry_date"
+                  tal:content="expiry_date">
                   12/14/2012
               </td>
-              <td tal:condition="not:creation_date">
+              <td tal:condition="not:expiry_date">
                   Undefined 
               </td>
               <td id="userid" tal:content="ms/userid">user001</td>
