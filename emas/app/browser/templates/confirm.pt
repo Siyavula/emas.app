@@ -19,6 +19,17 @@
 
                 <p>Thank you for your order!</p>
 
+                <tal:warnings condition="warnings">
+                <div id="duplicate-payment-warning" class="warning">
+                    You have already paid for the following: <br/>
+                    <ul>
+                        <li tal:repeat="warning warnings" tal:content="warning/title">
+                            warning
+                        </li>
+                    </ul>
+                </div>
+                </tal:warnings>
+
                 <p>You have ordered the following:
                 <ol>
                     <li tal:repeat="service view/display_items"
@@ -29,15 +40,6 @@
                 <p>
                 The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong>
                 </p>
-
-                <tal:warnings condition="warnings">
-                You have already paid for the following: <br/>
-                <ul>
-                    <li tal:repeat="warning warnings" tal:content="warning/title">
-                        warning
-                    </li>
-                </ul>
-                </tal:warnings>
 
                 <tal:eft tal:condition="view/eft_selected">
                     <p>You will receive an email to confirm your order. The
