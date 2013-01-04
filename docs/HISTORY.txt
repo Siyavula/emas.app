@@ -1,7 +1,27 @@
 Changelog
 =========
 
-=======
+1.8
+---
+
+Rework the expiry warning to make it more visible.
+
+Fix expiry date column values.
+
+First commit of custom folder view for memberservices with ability to
+filter on one memberid.
+
+Don't try to fetch the membership_tool again and rather use the order
+userid than the currently logged in user.
+
+Show SMS messaging only on SMS transactions.
+
+Fix VCS payment logging bug
+
+Refactor to accommodate Mxit Moola payment in a fashion closer to the
+current VCS and BulkSMS payments.
+
+
 1.7
 ---
 
