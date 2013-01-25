@@ -45,6 +45,7 @@ def setup_product():
     import upfront.shorturl
     import fullmarks.mathjax
     import siyavula.what
+    import inqbus.plone.fastmemberproperties
     import emas.app
 
     zcml.load_config('configure.zcml', package=plone.app.registry)
@@ -59,6 +60,8 @@ def setup_product():
     zcml.load_config('configure.zcml', package=upfront.shorturl)
     zcml.load_config('configure.zcml', package=fullmarks.mathjax)
     zcml.load_config('configure.zcml', package=siyavula.what)
+    zcml.load_config('configure.zcml',
+                     package=inqbus.plone.fastmemberproperties)
     zcml.load_config('configure.zcml', package=emas.app)
 
     fiveconfigure.debug_mode = False
