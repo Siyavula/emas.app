@@ -28,27 +28,25 @@ class ImportUsers(grok.View):
                        "school",]
 
     def update(self):
-        pmt = getToolByName(self.context, 'portal_membership')
+        self.mtool = getToolByName(self.context, 'portal_membership')
 
         self.errors = []
         self.data = []
         self.imported_users = []
-        self.not_imported_users = []
+        self.existing_users = []
+        self.duplicate_userids = []
 
         if self.request.get('submit.userimport', '') == 'Import':
-            self.errors, self.data = self.extractData(self.request)
+            self.errors, self.data = self.extractData()
             if self.errors:
                 return
 
-            reader = csv.DictReader(self.data)
-            errors, self.not_imported_users, self.imported_users = \
-                self.import_users(reader, pmt)
+            self.import_users()
 
-            if errors:
-                self.errors.extend(errors)
+            if self.errors:
                 LOG.info('\n'.join(self.errors))
 
-    def extractData(self, request):
+    def extractData(self):
         data = self.request.form['userdata']
         errors = []
         if not data or len(data.readlines()) < 1:
@@ -56,17 +54,9 @@ class ImportUsers(grok.View):
         data.seek(0)
         return errors, data
     
-    def get_existing_users(self, reader, membershiptool):
-        existing_users = set(membershiptool.listMemberIds())
-        userids = set([line['userid'] for line in reader])
-        not_created_ids = userids.intersection(existing_users)
-        return not_created_ids
-
-    def import_users(self, reader, membershiptool):
-        existing_users = membershiptool.listMemberIds()
-        imported_users = []
-        not_imported_users = []
-        errors = []
+    def import_users(self):
+        reader = csv.DictReader(self.data)
+        existing_users = self.mtool.listMemberIds()
         linenum = 0
         for line in reader:
             linenum += 1
@@ -74,13 +64,13 @@ class ImportUsers(grok.View):
             LOG.info('Importing user:%s' % userid)
             if userid:
                 if userid in existing_users:
-                    not_imported_users.append(userid)
+                    self.existing_users.append(userid)
+                elif userid in self.imported_users:
+                    self.duplicate_userids.append(userid)
                 else:
-                    imported_users.append(userid)
+                    self.imported_users.append(userid)
                     password = line.get('password', userid)
                     roles = line.get('roles', ['Member',])
-                    membershiptool.addMember(userid, password, roles, [], line)
+                    self.mtool.addMember(userid, password, roles, [], line)
             else:
-                errors.append('Error on line:%s (%s)' % (linenum, line))
-
-        return errors, not_imported_users, imported_users
+                self.errors.append('Error on line:%s (%s)' % (linenum, line))

@@ -34,10 +34,19 @@
             </form>
         </fieldset>
 
-        <div tal:condition="view/not_imported_users">
+        <div tal:condition="view/existing_users">
             <h2>Existing users (not imported)</h2>
             <ul>
-                <li tal:repeat="id view/not_imported_users">
+                <li tal:repeat="id view/existing_users">
+                    <span tal:content="id">user id</span>
+                </li>
+            </ul>
+        </div>
+
+        <div tal:condition="view/duplicate_userids">
+            <h2>Duplicate user ids (not imported)</h2>
+            <ul>
+                <li tal:repeat="id view/duplicate_userids">
                     <span tal:content="id">user id</span>
                 </li>
             </ul>
