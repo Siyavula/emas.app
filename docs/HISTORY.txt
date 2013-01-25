@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.9
+---
+
+extend import-users browser view to distinguish between existing users
+and duplicate user ids
+
 1.8
 ---
 

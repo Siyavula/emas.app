@@ -1,5 +1,5 @@
 <metadata>
-  <version>1.8</version>
+  <version>1.9</version>
     <dependencies>
         <dependency>profile-plone.app.dexterity:default</dependency>
         <dependency>profile-plone.app.z3cform:default</dependency>
