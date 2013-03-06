@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.10
+----
+
+Update pricing on order form and document how to make pricing changes
+
 1.9
 ---
 
