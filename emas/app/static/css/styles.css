@@ -128,12 +128,25 @@ img.delitem {
     white-space: nowrap;
 }
 
+#content .login-links {
+    font-size: 120%;
+}
+
 div#content div.selectpackage fieldset {
     border: medium none;
 }
 
 div.selectpackage ol li {
     font-weight: normal;
+}
+
+#content #postaladdress {
+    margin: 0;
+}
+
+#content .payment-confirmation {
+    font-weight: bold;
+    margin-top: 0;
 }
 
 .ordertotal {

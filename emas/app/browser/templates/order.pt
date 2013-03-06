@@ -26,13 +26,11 @@
                     <input type="hidden" name="ordernumber" value=""
                         tal:attributes="value view/ordernumber"/>
                     
-                    <fieldset class="login-links" tal:condition="isAnon"
+                    <div class="login-links" tal:condition="isAnon"
                         tal:define="login_url string:${context/absolute_url}/login;
                                     register_url string:${context/absolute_url}/@@register-from-orderform">
-                        <legend id='loginrequest'>
-                            You are not logged in, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
-                        </legend>
-                    </fieldset>
+                        You are <strong>not logged in</strong>, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
+                    </div>
 
                     <h2>Subject</h2>
                     <fieldset
@@ -93,18 +91,6 @@
 
                         <fieldset>
                             <p>
-                            <input name="prod_practice_book"
-                                   checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Textbook', selected)"
-                                   class="textbook add-textbook"
-                                   value="Practice,Textbook" 
-				   disabled="1"
-                                   type="radio" 
-                                   price="200"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R200</strong>]
-                            </p>
-                        </fieldset>
-                        <fieldset>
-                            <p>
                                 <input name="prod_practice_book" 
                                    checked=""
                                    tal:attributes="checked python:view.prod_practice_book_selected('Practice', selected)"
@@ -114,6 +100,18 @@
                                    price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong>R150</strong>]
                             </p>
                         </fieldset>
+
+                        <fieldset>
+                            <p>
+                            <input name="prod_practice_book"
+                                   checked=""
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Textbook', selected)"
+                                   class="textbook add-textbook"
+                                   value="Practice,Textbook" 
+                                   type="radio" 
+                                   price="350"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R350</strong>]
+                            </p>
+                        </fieldset>
                         <fieldset>
                             <p>
                                 <input name="prod_practice_book"
@@ -121,9 +119,8 @@
                                    tal:attributes="checked python:view.prod_practice_book_selected('Textbook', selected)"
                                    class="add-textbook"
                                    value="Textbook"
-				   disabled="1"
                                    type="radio"
-                                   price="95"> Textbook only (no Intelligent Practice) [per subject: <strong>R95</strong>]
+                                   price="200"> Textbook only (no Intelligent Practice) [per subject: <strong>R200</strong>]
                             </p>
                         </fieldset>
 
@@ -148,10 +145,10 @@
                     </fieldset>
 
                     <div id='bookonly' class='hidden'>
+                        <div id='postaladdress'>
+                            You have requested a <b>textbook</b>, we need to know your details for delivery: 
+                        </div>
                         <fieldset>
-                            <legend id='postaladdress'>
-                                You have requested a <b>textbook</b>, we need to know your details for delivery: 
-                            </legend>
                             <p>
                                 Name and surname:<input name="fullname" value=""
                                     type="text"
@@ -167,6 +164,11 @@
                                     tal:content="structure view/shipping_address"></textarea>
                             </p>
                         </fieldset>
+
+                        <div class="payment-confirmation">
+    Payment confirmation should take 24 hours for a credit card payment and 48 hours for an EFT payment. Door-to-door shipping will take 3 to 5 working days after your payment has been received.
+                        </div>
+
                     </div>
 
                     <div class="ordertotal">
@@ -178,13 +180,11 @@
                         </button>
                     </div>
 
-                    <fieldset class="login-links" tal:condition="isAnon"
+                    <div class="login-links" tal:condition="isAnon"
                         tal:define="login_url string:${context/absolute_url}/login;
                                     register_url string:${context/absolute_url}/@@register-from-orderform">
-                        <legend id='loginrequest'>
-                            You are not logged in, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
-                        </legend>
-                    </fieldset>
+                            You are <strong>not logged in</strong>, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
+                    </div>
 
                 </form>
             </div>
