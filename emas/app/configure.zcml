@@ -78,7 +78,7 @@
         />
 
     <adapter
-        for=".order_folder.IMemberServiceFolder"
+        for=".order_folder.IOrderFolder"
         factory="plone.folder.unordered.UnorderedOrdering"
         />
 
