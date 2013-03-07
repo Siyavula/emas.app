@@ -72,4 +72,14 @@
         handler=".eventhandlers.onMemberJoined"
         />
 
+    <adapter
+        for=".member_service_folder.IMemberServiceFolder"
+        factory="plone.folder.unordered.UnorderedOrdering"
+        />
+
+    <adapter
+        for=".order_folder.IMemberServiceFolder"
+        factory="plone.folder.unordered.UnorderedOrdering"
+        />
+
 </configure>
