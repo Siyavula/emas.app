@@ -1,5 +1,6 @@
 import datetime
 from z3c.relationfield.relation import create_relation
+from zope.component.hooks import getSite
 
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
@@ -212,3 +213,31 @@ def onMemberJoined(obj, event):
         ms.expiry_date = trialend 
         ms.manage_setLocalRoles(memberid, ('Owner',))
         ms.reindexObject()
+
+
+def service_cost_updated(event):
+    iface = event.record.interfaceName
+    fname = event.record.fieldName
+    price = event.newValue
+    site = getSite()
+    if not iface == 'emas.theme.interfaces.IEmasServiceCost':
+        return
+    
+    if fname == 'practiceprice':
+        for sid in ('maths-grade10-practice',
+                    'maths-grade11-practice',
+                    'maths-grade12-practice',
+                    'science-grade10-practice',
+                    'science-grade11-practice',
+                    'science-grade12-practice'):
+            service = site.products_and_services[sid]
+            service.price = price
+    elif fname == 'textbookprice':
+        for sid in ('maths-grade10-textbook',
+                    'maths-grade11-textbook',
+                    'maths-grade12-textbook',
+                    'science-grade10-textbook',
+                    'science-grade11-textbook',
+                    'science-grade12-textbook'):
+            service = site.products_and_services[sid]
+            service.price = price

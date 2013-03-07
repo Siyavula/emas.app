@@ -1,9 +1,10 @@
 from five import grok
 from zope.interface import Interface
+from zope.component import queryUtility
 
 from plone.registry.interfaces import IRegistry
 
-from emas.theme.interfaces import IEmasSettings
+from emas.theme.interfaces import IEmasServiceCost
 
 grok.templatedir('templates')
 
@@ -17,6 +18,13 @@ class Order(grok.View):
     def update(self):
         #TODO: check for authed before re-authing
         self.context.restrictedTraverse('logged_in')()
+
+        registry = queryUtility(IRegistry)
+        settings = registry.forInterface(IEmasServiceCost)
+        self.practiceprice = settings.practiceprice
+        self.textbookprice = settings.textbookprice
+        self.textbook_and_practiceprice = (
+            self.practiceprice + self.textbookprice)
 
     def products_and_services(self):
         pps = self.context.restrictedTraverse('@@plone_portal_state')
@@ -69,3 +77,4 @@ class Order(grok.View):
 
     def ordernumber(self):
         return self.request.get('ordernumber', '')
+

@@ -67,6 +67,11 @@
         />
 
     <subscriber
+        for="plone.registry.interfaces.IRecordModifiedEvent"
+        handler=".eventhandlers.service_cost_updated"
+        />
+
+    <subscriber
         for="Products.PluggableAuthService.interfaces.authservice.IPropertiedUser
             Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent"
         handler=".eventhandlers.onMemberJoined"

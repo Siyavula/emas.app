@@ -93,11 +93,12 @@
                             <p>
                                 <input name="prod_practice_book" 
                                    checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice', selected)"
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice', selected);
+                                                   price view/practiceprice"
                                    class="no-textbook" 
                                    value="Practice" 
                                    type="radio" 
-                                   price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong>R150</strong>]
+                                   price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong tal:content="string:R${view/practiceprice}">R150</strong>]
                             </p>
                         </fieldset>
 
@@ -105,22 +106,24 @@
                             <p>
                             <input name="prod_practice_book"
                                    checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Textbook', selected)"
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Textbook', selected);
+                                                   price view/textbook_and_practiceprice"
                                    class="textbook add-textbook"
                                    value="Practice,Textbook" 
                                    type="radio" 
-                                   price="350"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong>R350</strong>]
+                                   price="350"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong tal:content="string:R${view/textbook_and_practiceprice}">R350</strong>]
                             </p>
                         </fieldset>
                         <fieldset>
                             <p>
                                 <input name="prod_practice_book"
                                    checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Textbook', selected)"
+                                   tal:attributes="checked python:view.prod_practice_book_selected('Textbook', selected);
+                                                   price view/textbookprice"
                                    class="add-textbook"
                                    value="Textbook"
                                    type="radio"
-                                   price="200"> Textbook only (no Intelligent Practice) [per subject: <strong>R200</strong>]
+                                   price="200"> Textbook only (no Intelligent Practice) [per subject: <strong tal:content="string:R${view/textbookprice}">R200</strong>]
                             </p>
                         </fieldset>
 
