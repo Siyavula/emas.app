@@ -98,7 +98,7 @@
                                    class="no-textbook" 
                                    value="Practice" 
                                    type="radio" 
-                                   price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong tal:content="string:R${view/practiceprice}">R150</strong>]
+                                   price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong tal:content="python:'R%.2f' % view.practiceprice">R150</strong>]
                             </p>
                         </fieldset>
 
@@ -111,7 +111,7 @@
                                    class="textbook add-textbook"
                                    value="Practice,Textbook" 
                                    type="radio" 
-                                   price="350"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong tal:content="string:R${view/textbook_and_practiceprice}">R350</strong>]
+                                   price="350"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong tal:content="python:'R%.2f' % view.textbook_and_practiceprice">R350</strong>]
                             </p>
                         </fieldset>
                         <fieldset>
@@ -123,7 +123,7 @@
                                    class="add-textbook"
                                    value="Textbook"
                                    type="radio"
-                                   price="200"> Textbook only (no Intelligent Practice) [per subject: <strong tal:content="string:R${view/textbookprice}">R200</strong>]
+                                   price="200"> Textbook only (no Intelligent Practice) [per subject: <strong tal:content="python:'R%.2f' % view.textbookprice">R200</strong>]
                             </p>
                         </fieldset>
 
