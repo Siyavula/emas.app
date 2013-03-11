@@ -86,7 +86,7 @@
                         tal:define="selected view/prod_practice_book">
 
                         <legend>
-                            Select your product (printed textbooks unavailable at this time):
+                            Select your product:
                         </legend>
 
                         <fieldset>
