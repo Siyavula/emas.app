@@ -26,6 +26,11 @@ class Order(grok.View):
                 # traverse to confirm if form has required fields
                 view = self.context.restrictedTraverse('@@confirm')
                 return view()
+            else:
+                pps = self.context.restrictedTraverse('@@plone_portal_state')
+                ptool = pps.portal().plone_utils
+                ptool.addPortalMessage('All fields are required.', 'warning')
+                
         return super(Order, self).__call__()
 
     def update(self):
