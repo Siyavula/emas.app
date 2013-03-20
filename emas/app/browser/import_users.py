@@ -5,10 +5,12 @@ import logging
 from email.Utils import formataddr
 
 from five import grok
+from zope import event
 from zope.interface import Interface
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.PlonePAS.events import UserInitialLoginInEvent
 
 LOG = logging.getLogger('import-users:')
 
@@ -72,5 +74,12 @@ class ImportUsers(grok.View):
                     password = line.get('password', userid)
                     roles = line.get('roles', ['Member',])
                     self.mtool.addMember(userid, password, roles, [], line)
+
+                    # set initial login for user
+                    login_time = self.context.ZopeTime() - 1
+                    member = self.mtool.getMemberById(userid)
+                    props = {'login_time': login_time,
+                             'last_login_time': login_time}
+                    member.setMemberProperties(props)
             else:
                 self.errors.append('Error on line:%s (%s)' % (linenum, line))
