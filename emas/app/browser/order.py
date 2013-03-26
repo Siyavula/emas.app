@@ -14,7 +14,25 @@ class Order(grok.View):
     
     grok.context(Interface)
     grok.require('zope2.View')
-    
+
+    def __call__(self):
+        if self.request.has_key('order.form.submitted'):
+            # validate form
+            grade = self.request.form.get('grade', None)
+            prod_practice_book = self.request.form.get('prod_practice_book', None)
+            subjects = self.request.form.get('subjects', None)
+        
+            if grade and prod_practice_book and subjects:
+                # traverse to confirm if form has required fields
+                view = self.context.restrictedTraverse('@@confirm')
+                return view()
+            else:
+                pps = self.context.restrictedTraverse('@@plone_portal_state')
+                ptool = pps.portal().plone_utils
+                ptool.addPortalMessage('All fields are required.', 'warning')
+                
+        return super(Order, self).__call__()
+
     def update(self):
         #TODO: check for authed before re-authing
         self.context.restrictedTraverse('logged_in')()
@@ -32,15 +50,10 @@ class Order(grok.View):
         return products_and_services.getFolderContents(full_objects=True)
 
     def action(self, isAnon):
-        """ We cannot go to the 'confirm' view until the user has
-            authenticated, since the 'confirm' view has to create objects on
-            behalf of the authenticated user. That is why we rather submit back
-            to the 'order' view.
+        """ Post to the current view in order to validate the form.
+            We need enough info on the form for the confirm view to work.
         """
-        url = '%s/@@confirm' %self.context.absolute_url()
-        if isAnon:
-            url = '%s/@@order' %self.context.absolute_url()
-        return url
+        return '%s/@@order' %self.context.absolute_url()
         
     def subjects(self):
         return self.request.get('subjects', '')
