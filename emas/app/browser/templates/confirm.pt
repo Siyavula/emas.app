@@ -15,31 +15,7 @@
                         warnings view/warnings | nothing;">
 
             <div id="payment-form-container" class="selectpackage">
-                <h3>Order Number: <span tal:replace="view/ordernumber">1000</span></h3>
-
-                <p>Thank you for your order!</p>
-
-                <tal:warnings condition="warnings">
-                <div id="duplicate-payment-warning" class="warning">
-                    You have already paid for the following: <br/>
-                    <ul>
-                        <li tal:repeat="warning warnings" tal:content="warning/title">
-                            warning
-                        </li>
-                    </ul>
-                </div>
-                </tal:warnings>
-
-                <p>You have ordered the following:
-                <ol>
-                    <li tal:repeat="service view/display_items"
-                        tal:content="service/Title">1 year sub to Maths
-                    </li>
-                </ol>
-
-                <p>
-                The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong>
-                </p>
+                <p>The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong></p>
 
                 <tal:eft tal:condition="view/eft_selected">
                     <p>You will receive an email to confirm your order. The
@@ -71,14 +47,18 @@
                             </button>
                         </form>
                     </div>
-                    
                 </tal:eft>
 
                 <tal:sms tal:condition="view/sms_selected">
-                    In order to complete this transaction and pay, please
-                    SMS '<span tal:replace="view/verification_code">verification
-                    code</span>' to <span tal:replace="view/premium_number">
-                    premium number</span>.
+                    <div>
+                        In order to complete this transaction and pay, please
+                        SMS '<span tal:replace="view/verification_code">verification
+                        code</span>' to <span tal:replace="view/premium_number">
+                        premium number</span>.
+                    </div>
+                    <div>
+                        Once your SMS payment has been confirmed, you can <a href="#" tal:attributes="href string:${context/absolute_url}/@@practice">click here to go to Intelligent Practice.</a>
+                    </div>
                 </tal:sms>
 
                 <form id="payment-form" method="POST" action="."
@@ -130,6 +110,30 @@
                     </fieldset>
                 </form>
                 
+                <tal:warnings condition="warnings">
+                <div id="duplicate-payment-warning" class="warning">
+                    You have already paid for the following: <br/>
+                    <ul>
+                        <li tal:repeat="warning warnings" tal:content="warning/title">
+                            warning
+                        </li>
+                    </ul>
+                </div>
+                </tal:warnings>
+
+                <p>You have ordered the following:</p>
+                <ul class="nodots">
+                    <li tal:repeat="service view/display_items"
+                        tal:content="service/Title">1 year sub to Maths
+                    </li>
+                </ul>
+
+                <div>
+                    Order Number: <span tal:replace="view/ordernumber">1000</span>
+                </div>
+
+                <p>Thank you for your order!</p>
+
                 <form class="backbutton" action="." method="POST"
                     tal:attributes="action string:${context/absolute_url}/@@order">
 
@@ -160,11 +164,13 @@
                     <input name="shipping_address" value="" type="hidden"
                         tal:attributes="value view/shipping_address" >
 
-                    <div tal:condition="view/sms_selected">
-                        Once your SMS payment has been confirmed, you can <a href="#" tal:attributes="href string:${context/absolute_url}/@@practice">click here to go to Intelligent Practice.</a>
-                    </div>
-
-                    <button id="back" type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="confirm_back_button" value="back">Change order</button>
+                    <button tal:condition="not:view/sms_selected"
+                        id="back" type="submit"
+                        class="button generic no-icon small-caps allowMultiSubmit"
+                        name="confirm_back_button" 
+                        value="back">
+                        Change order
+                    </button>
                 </form>
 
             </div>
