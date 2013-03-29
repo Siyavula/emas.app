@@ -3,6 +3,7 @@ from zope.interface import Interface
 from zope.component import queryUtility
 
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.utils import getToolByName
 
 from emas.theme.interfaces import IEmasServiceCost
 
@@ -18,24 +19,29 @@ class Order(grok.View):
     def __call__(self):
         if self.request.has_key('order.form.submitted'):
             # validate form
-            grade = self.request.form.get('grade', None)
-            prod_practice_book = self.request.form.get('prod_practice_book', None)
-            subjects = self.request.form.get('subjects', None)
+            self.grade = self.request.form.get('grade', None)
+            self.prod_practice_book = self.request.form.get('prod_practice_book', None)
+            self.subjects = self.request.form.get('subjects', None)
+            names = ['selected_subjects', 'selected_grade', 'selected_product']
+            self.missing_fields = \
+                [name for name in names if getattr(self, name, None) is None]
         
-            if grade and prod_practice_book and subjects:
+            if self.grade and self.prod_practice_book and self.subjects:
                 # traverse to confirm if form has required fields
                 view = self.context.restrictedTraverse('@@confirm')
                 return view()
-            else:
-                pps = self.context.restrictedTraverse('@@plone_portal_state')
-                ptool = pps.portal().plone_utils
-                ptool.addPortalMessage('All fields are required.', 'warning')
                 
         return super(Order, self).__call__()
 
     def update(self):
-        #TODO: check for authed before re-authing
-        self.context.restrictedTraverse('logged_in')()
+        pmt = getToolByName(self.context, 'portal_membership')
+        if pmt.isAnonymousUser():
+            self.context.restrictedTraverse('logged_in')()
+
+        if not(self.grade and self.prod_practice_book and self.subjects):
+            pps = self.context.restrictedTraverse('@@plone_portal_state')
+            ptool = pps.portal().plone_utils
+            ptool.addPortalMessage('All fields are required.', 'warning')
 
         registry = queryUtility(IRegistry)
         settings = registry.forInterface(IEmasServiceCost)
