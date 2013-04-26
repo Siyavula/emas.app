@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.12
+----
+
+Mobile quick fixes
+
 1.11
 ----
 
