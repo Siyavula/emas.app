@@ -1,5 +1,5 @@
 import doctest
-import unittest
+import unittest2 as unittest
 
 from Testing import ZopeTestCase as ztc
 
