@@ -6,6 +6,23 @@ from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 
+from sqlalchemy import *
+from zope.sqlalchemy import ZopeTransactionExtension
+from sqlalchemy.orm import scoped_session, sessionmaker, relation
+
+from emas.app.alchemy.memberservice import MemberService
+
+# must come from environment; add to buildout soonest!
+#postgresql[+driver]://<user>:<pass>@<host>/<dbname>
+DSN='postgresql://emas:emas@localhost:5435/emas'
+TWOPHASE=True
+ENGINE = create_engine(DSN, convert_unicode=True)
+SESSION = scoped_session(
+    sessionmaker(bind=ENGINE,
+                 twophase=TWOPHASE,
+                 extension=ZopeTransactionExtension())
+)
+
 KEY_BASE = 'emas.app'
 RETRIES = 1000
 LOWER = 9999
@@ -172,6 +189,8 @@ def practice_service_uuids_for_subject(context, subject):
 
 
 def member_services(context, service_uids):
+    return SESSION.query(MemberService).all()
+
     pmt = getToolByName(context, 'portal_membership')
     member = pmt.getAuthenticatedMember()
     today = datetime.today().date()
