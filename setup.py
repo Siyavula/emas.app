@@ -31,6 +31,8 @@ setup(name='emas.app',
           'collective.testcaselayer',
           'plone.app.z3cform',
           'plone.directives.form',
+          'zope.sqlalchemy',
+          'psycopg2',
           # -*- Extra requirements: -*-
       ],
       extras_require={
