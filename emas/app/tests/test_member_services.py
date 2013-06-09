@@ -44,6 +44,17 @@ class TestMemberServiceIntegration(unittest.TestCase):
                   'expiry_date': datetime.now(),}
         ms1= utils.add_memberservice(self.portal, **kwargs) 
         self.failUnless(IMemberService.providedBy(ms1))
+        ms1_db = utils.get_memberservice(TEST_USER_ID, ms1.memberservice_id)
+
+    def test_adding_duplicates(self):
+        intids = queryUtility(IIntIds, context=self.portal)
+        kwargs = {'memberid': TEST_USER_ID,
+                  'title': '%s for %s' % (self.service.title, TEST_USER_ID),
+                  'related_service_id': intids.getId(self.service),
+                  'expiry_date': datetime.now(),}
+        ms1= utils.add_memberservice(self.portal, **kwargs) 
+        ms2= utils.add_memberservice(self.portal, **kwargs) 
+        self.failUnless(IMemberService.providedBy(ms1))
 
     def test_fti(self):
         fti = queryUtility(IDexterityFTI, name='emas.app.memberservice')
