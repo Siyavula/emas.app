@@ -1,27 +1,16 @@
 import random
 import hashlib
+import transaction
+
 from urlparse import urlparse
 from datetime import date, datetime, timedelta
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 
-import transaction
-from sqlalchemy import *
-from zope.sqlalchemy import ZopeTransactionExtension
-from sqlalchemy.orm import scoped_session, sessionmaker, relation
-
 from emas.app.alchemy.memberservice import MemberService
+from emas.app.alchemy import SESSION
 
-# must come from environment; add to buildout soonest!
-#postgresql[+driver]://<user>:<pass>@<host>/<dbname>
-DSN='postgresql://emas:emas@localhost:5435/emas'
-TWOPHASE=True
-ENGINE = create_engine(DSN, convert_unicode=True)
-EMAS_SESSION_MAKER = sessionmaker(bind=ENGINE,
-                                  twophase=TWOPHASE,
-                                  extension=ZopeTransactionExtension())
-SESSION = scoped_session(EMAS_SESSION_MAKER)
 
 KEY_BASE = 'emas.app'
 RETRIES = 1000
@@ -430,7 +419,7 @@ def is_unique_verification_code(context, verification_code):
 
 def add_memberservice(context, memberid, title, related_service_id, expiry_date,
                       credits=0, service_type="subscription"):
-    ms = MemberService(userid=memberid,
+    ms = MemberService(memberid=memberid,
                        title=title,
                        related_service_id=related_service_id,
                        expiry_date=expiry_date,
@@ -440,3 +429,10 @@ def add_memberservice(context, memberid, title, related_service_id, expiry_date,
     session.add(ms)
     transaction.commit()
     return ms
+
+def update_memberservice(context, memberid, title, related_service_id,
+                         expiry_date, credits=0, service_type="subscription"):
+    pass
+
+def get_memberservices_by_memberid(context,  memberid):
+    return [] 
