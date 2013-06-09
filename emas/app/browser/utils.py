@@ -6,6 +6,7 @@ from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 
+import transaction
 from sqlalchemy import *
 from zope.sqlalchemy import ZopeTransactionExtension
 from sqlalchemy.orm import scoped_session, sessionmaker, relation
@@ -17,11 +18,10 @@ from emas.app.alchemy.memberservice import MemberService
 DSN='postgresql://emas:emas@localhost:5435/emas'
 TWOPHASE=True
 ENGINE = create_engine(DSN, convert_unicode=True)
-SESSION = scoped_session(
-    sessionmaker(bind=ENGINE,
-                 twophase=TWOPHASE,
-                 extension=ZopeTransactionExtension())
-)
+EMAS_SESSION_MAKER = sessionmaker(bind=ENGINE,
+                                  twophase=TWOPHASE,
+                                  extension=ZopeTransactionExtension())
+SESSION = scoped_session(EMAS_SESSION_MAKER)
 
 KEY_BASE = 'emas.app'
 RETRIES = 1000
@@ -189,7 +189,8 @@ def practice_service_uuids_for_subject(context, subject):
 
 
 def member_services(context, service_uids):
-    return SESSION.query(MemberService).all()
+    session = SESSION()
+    return session.query(MemberService).all()
 
     pmt = getToolByName(context, 'portal_membership')
     member = pmt.getAuthenticatedMember()
@@ -427,3 +428,15 @@ def is_unique_verification_code(context, verification_code):
         return False
     return True
 
+def add_memberservice(context, memberid, title, related_service_id, expiry_date,
+                      credits=0, service_type="subscription"):
+    ms = MemberService(userid=memberid,
+                       title=title,
+                       related_service_id=related_service_id,
+                       expiry_date=expiry_date,
+                       credits=credits,
+                       service_type=service_type)
+    session = SESSION()
+    session.add(ms)
+    transaction.commit()
+    return ms
