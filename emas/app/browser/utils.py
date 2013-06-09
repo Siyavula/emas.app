@@ -417,7 +417,7 @@ def is_unique_verification_code(context, verification_code):
         return False
     return True
 
-def add_memberservice(context, memberid, title, related_service_id, expiry_date,
+def add_memberservice(memberid, title, related_service_id, expiry_date,
                       credits=0, service_type="subscription"):
     ms = MemberService(memberid=memberid,
                        title=title,
@@ -438,18 +438,22 @@ def add_memberservice(context, memberid, title, related_service_id, expiry_date,
     # from the db.
     return ms_id
 
-def update_memberservice(context, memberid, title, related_service_id,
-                         expiry_date, credits=0, service_type="subscription"):
-    pass
+def update_memberservice(memberservice):
+    session = SESSION()
+    ms = session.merge(memberservice)
+    session.flush()
+    ms_id = memberservice.id
+    transaction.commit()
+    return ms_id
 
-def get_memberservices_by_memberid(context,  memberid):
+def get_memberservices_by_memberid(memberid):
     session = SESSION()
     memberservices = session.query(MemberService).filter_by(
         memberid = memberid).all()
     return memberservices
 
-def get_memberservice(memberservice_id):
+def get_memberservice_by_primary_key(id):
     session = SESSION()
     memberservices = session.query(MemberService).filter_by(
         id = memberservice_id).all()
-    return memberservices
+    return memberservices[0]

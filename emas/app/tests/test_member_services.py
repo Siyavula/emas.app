@@ -39,26 +39,31 @@ class TestMemberServiceIntegration(unittest.TestCase):
                                         subject='maths',
                                         price='111')
         self.service = self.folder._getOb(s_id)
+        self.intids = queryUtility(IIntIds, context=self.portal)
+        self.ms_args = {
+            'memberid': TEST_USER_ID,
+            'title': '%s for %s' % (self.service.title, TEST_USER_ID),
+            'related_service_id': self.intids.getId(self.service),
+            'expiry_date': datetime.now(),
+        }
     
     def test_adding(self):
-        intids = queryUtility(IIntIds, context=self.portal)
-        kwargs = {'memberid': TEST_USER_ID,
-                  'title': '%s for %s' % (self.service.title, TEST_USER_ID),
-                  'related_service_id': intids.getId(self.service),
-                  'expiry_date': datetime.now(),}
-        ms1_id= utils.add_memberservice(self.portal, **kwargs) 
+        ms1_id= utils.add_memberservice(**self.ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         self.failUnless(IMemberService.providedBy(ms1))
 
     def test_adding_duplicates(self):
-        intids = queryUtility(IIntIds, context=self.portal)
-        kwargs = {'memberid': TEST_USER_ID,
-                  'title': '%s for %s' % (self.service.title, TEST_USER_ID),
-                  'related_service_id': intids.getId(self.service),
-                  'expiry_date': datetime.now(),}
-        ms1= utils.add_memberservice(self.portal, **kwargs) 
-        ms2= utils.add_memberservice(self.portal, **kwargs) 
+        ms1= utils.add_memberservice(**self.ms_args) 
+        ms2= utils.add_memberservice(**self.ms_args) 
         self.failUnless(IMemberService.providedBy(ms1))
+
+    def test_updating(self):
+        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms1 = self.get_memberservice(ms1_id)
+        ms1.title = 'new title'
+        utils.update_memberservice(ms1)
+        ms1 = self.get_memberservice(ms1_id)
+        self.assertEquals(ms1.title, 'new title')
 
     def test_fti(self):
         fti = queryUtility(IDexterityFTI, name='emas.app.memberservice')
@@ -78,7 +83,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         session = SESSION()
         memberservices = session.query(MemberService).filter_by(
             id = memberservice_id).all()
-        return memberservices
+        return memberservices[0]
 
 
 def test_suite():
