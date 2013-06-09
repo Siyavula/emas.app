@@ -17,7 +17,7 @@ class MemberService(Base):
     __tablename__ = 'memberservices'
 
     id                 = Column('memberservice_id', Integer, primary_key=True)
-    userid             = Column('userid', String(100))
+    memberid           = Column('memberid', String(100))
     title              = Column('title', String(100))
     related_service_id = Column('related_service_id', Integer)
     expiry_date        = Column('expiry_date', Date)
