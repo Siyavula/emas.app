@@ -427,12 +427,29 @@ def add_memberservice(context, memberid, title, related_service_id, expiry_date,
                        service_type=service_type)
     session = SESSION()
     session.add(ms)
+    # make sure this object in in the db without disassociating it from the 
+    # session
+    session.flush()
+    # get the newly created primary key
+    ms_id = ms.id
+    # commit the transaction so it is available to everyone else
     transaction.commit()
-    return ms
+    # return the id, so any calling code can immediately fetch the object
+    # from the db.
+    return ms_id
 
 def update_memberservice(context, memberid, title, related_service_id,
                          expiry_date, credits=0, service_type="subscription"):
     pass
 
 def get_memberservices_by_memberid(context,  memberid):
-    return [] 
+    session = SESSION()
+    memberservices = session.query(MemberService).filter_by(
+        memberid = memberid).all()
+    return memberservices
+
+def get_memberservice(memberservice_id):
+    session = SESSION()
+    memberservices = session.query(MemberService).filter_by(
+        id = memberservice_id).all()
+    return memberservices

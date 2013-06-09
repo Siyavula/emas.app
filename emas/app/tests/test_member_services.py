@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import unittest2 as unittest
+import transaction
 
 from z3c.relationfield.relation import create_relation
 from zope.component import createObject
@@ -12,8 +13,11 @@ from plone.app.testing import setRoles
 
 from plone.dexterity.interfaces import IDexterityFTI
 
-from emas.app.member_service import IMemberService
 from emas.app.browser import utils
+from emas.app.alchemy.memberservice import IMemberService
+from emas.app.alchemy.memberservice import MemberService
+from emas.app.alchemy import SESSION
+
 from emas.app.tests.base import INTEGRATION_TESTING
 
 
@@ -42,9 +46,9 @@ class TestMemberServiceIntegration(unittest.TestCase):
                   'title': '%s for %s' % (self.service.title, TEST_USER_ID),
                   'related_service_id': intids.getId(self.service),
                   'expiry_date': datetime.now(),}
-        ms1= utils.add_memberservice(self.portal, **kwargs) 
+        ms1_id= utils.add_memberservice(self.portal, **kwargs) 
+        ms1_db = self.get_memberservice(ms1_id)
         self.failUnless(IMemberService.providedBy(ms1))
-        ms1_db = utils.get_memberservice(TEST_USER_ID, ms1.memberservice_id)
 
     def test_adding_duplicates(self):
         intids = queryUtility(IIntIds, context=self.portal)
@@ -69,6 +73,13 @@ class TestMemberServiceIntegration(unittest.TestCase):
         fti = queryUtility(IDexterityFTI, name='emas.app.memberservice')
         factory = fti.factory
         self.assertEquals(factory, None)
+    
+    def get_memberservice(self, memberservice_id):
+        session = SESSION()
+        memberservices = session.query(MemberService).filter_by(
+            id = memberservice_id).all()
+        return memberservices
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
