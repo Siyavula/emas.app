@@ -446,6 +446,11 @@ def update_memberservice(memberservice):
     transaction.commit()
     return ms_id
 
+def delete_memberservice(memberservice):
+    session = SESSION()
+    session.delete(memberservice)
+    transaction.commit()
+
 def get_memberservices_by_memberid(memberid):
     session = SESSION()
     memberservices = session.query(MemberService).filter_by(

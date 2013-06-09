@@ -65,6 +65,13 @@ class TestMemberServiceIntegration(unittest.TestCase):
         ms1 = self.get_memberservice(ms1_id)
         self.assertEquals(ms1.title, 'new title')
 
+    def test_deleting(self):
+        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms1 = self.get_memberservice(ms1_id)
+        utils.delete_memberservice(ms1)
+        ms1 = self.get_memberservice(ms1_id)
+        self.assertEquals(ms1, None)
+
     def test_fti(self):
         fti = queryUtility(IDexterityFTI, name='emas.app.memberservice')
         self.assertEquals(None, fti)
@@ -83,7 +90,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         session = SESSION()
         memberservices = session.query(MemberService).filter_by(
             id = memberservice_id).all()
-        return memberservices[0]
+        return memberservices and memberservices[0] or None
 
 
 def test_suite():
