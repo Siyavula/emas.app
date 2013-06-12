@@ -30,19 +30,26 @@ class TestMemberServiceIntegration(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        self.portal.invokeFactory('Folder', 'testfolder')
+        if 'testfolder' not in self.portal.objectIds():
+            self.portal.invokeFactory('Folder', 'testfolder')
         self.folder = self.portal.testfolder
-        s_id= self.folder.invokeFactory('emas.app.service',
-                                        'service1',
-                                        service_type='subscription',
-                                        grade='12',
-                                        subject='maths',
-                                        price='111')
+        self.grade = '12'
+        self.subject = 'maths'
+        s_id = 'service1'
+        if s_id not in self.folder.objectIds():
+            self.folder.invokeFactory('emas.app.service',
+                                      s_id,
+                                      service_type='subscription',
+                                      grade=self.grade,
+                                      subject=self.subject,
+                                      price='111')
         self.service = self.folder._getOb(s_id)
         self.intids = queryUtility(IIntIds, context=self.portal)
         self.ms_args = {
             'memberid': TEST_USER_ID,
             'title': '%s for %s' % (self.service.title, TEST_USER_ID),
+            'subject': self.subject,
+            'grade': self.grade,
             'related_service_id': self.intids.getId(self.service),
             'expiry_date': datetime.now(),
         }
@@ -50,27 +57,29 @@ class TestMemberServiceIntegration(unittest.TestCase):
     def test_adding(self):
         ms1_id= utils.add_memberservice(**self.ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
-        self.failUnless(IMemberService.providedBy(ms1))
+        self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_adding_duplicates(self):
-        ms1= utils.add_memberservice(**self.ms_args) 
-        ms2= utils.add_memberservice(**self.ms_args) 
-        self.failUnless(IMemberService.providedBy(ms1))
+        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms2_id= utils.add_memberservice(**self.ms_args) 
+        ms1_db = self.get_memberservice(ms1_id)
+        ms2_db = self.get_memberservice(ms2_id)
+        self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_updating(self):
         ms1_id= utils.add_memberservice(**self.ms_args) 
-        ms1 = self.get_memberservice(ms1_id)
-        ms1.title = 'new title'
-        utils.update_memberservice(ms1)
-        ms1 = self.get_memberservice(ms1_id)
-        self.assertEquals(ms1.title, 'new title')
+        ms1_db = self.get_memberservice(ms1_id)
+        ms1_db.title = 'new title'
+        utils.update_memberservice(ms1_db)
+        ms1_db = self.get_memberservice(ms1_id)
+        self.assertEquals(ms1_db.title, 'new title')
 
     def test_deleting(self):
         ms1_id= utils.add_memberservice(**self.ms_args) 
-        ms1 = self.get_memberservice(ms1_id)
-        utils.delete_memberservice(ms1)
-        ms1 = self.get_memberservice(ms1_id)
-        self.assertEquals(ms1, None)
+        ms1_db = self.get_memberservice(ms1_id)
+        utils.delete_memberservice(ms1_db)
+        ms1_db = self.get_memberservice(ms1_id)
+        self.assertEquals(ms1_db, None)
 
     def test_fti(self):
         fti = queryUtility(IDexterityFTI, name='emas.app.memberservice')

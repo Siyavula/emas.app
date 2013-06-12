@@ -417,10 +417,12 @@ def is_unique_verification_code(context, verification_code):
         return False
     return True
 
-def add_memberservice(memberid, title, related_service_id, expiry_date,
-                      credits=0, service_type="subscription"):
+def add_memberservice(memberid, title, subject, grade, related_service_id,
+                      expiry_date, credits=0, service_type="subscription"):
     ms = MemberService(memberid=memberid,
                        title=title,
+                       subject=subject,
+                       grade=grade,
                        related_service_id=related_service_id,
                        expiry_date=expiry_date,
                        credits=credits,

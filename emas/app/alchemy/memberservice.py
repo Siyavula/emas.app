@@ -20,6 +20,8 @@ class MemberService(Base):
     memberid           = Column('memberid', String(100))
     title              = Column('title', String(100))
     related_service_id = Column('related_service_id', Integer)
+    subject            = Column('subject', String(100))
+    grade              = Column('grade', String(100))
     expiry_date        = Column('expiry_date', Date)
     credits            = Column('credits', Integer)
     service_type       = Column('service_type', String(100))
