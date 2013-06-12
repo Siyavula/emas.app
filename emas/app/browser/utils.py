@@ -2,6 +2,8 @@ import random
 import hashlib
 import transaction
 
+from sqlalchemy import or_
+
 from urlparse import urlparse
 from datetime import date, datetime, timedelta
 from Products.CMFCore.utils import getToolByName
@@ -194,16 +196,14 @@ def member_services(context, service_uids):
     return memberservices
 
 
-def member_services_for(context, service_uids, userid):
-    today = datetime.today().date()
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': userid,
-             'serviceuid': service_uids,
-             'expiry_date': {'query':today, 'range':'min'}
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
+def member_services_for(context, service_uids, memberid):
+    session = SESSION()
+    or_clause = or_()
+    for s_id in service_uids:
+        or_clause.append(MemberService.related_service_id == s_id)
+    result = session.query(MemberService).filter(or_clause).filter(
+        MemberService.memberid==memberid)
+    return result.all()
 
 
 def all_member_services_for(context, path, service_uids, userid):

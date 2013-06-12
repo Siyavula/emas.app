@@ -81,6 +81,15 @@ class TestMemberServiceIntegration(unittest.TestCase):
         ms1_db = self.get_memberservice(ms1_id)
         self.assertEquals(ms1_db, None)
 
+    def test_get_member_services_for(self):
+        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms1_db = self.get_memberservice(ms1_id)
+        service_uids = [self.intids.getId(self.service),]
+        memberid = TEST_USER_ID
+        memberservices = \
+            utils.member_services_for(self.portal, service_uids, memberid)
+        self.assertEquals(memberservices, [ms1_db])
+
     def test_fti(self):
         fti = queryUtility(IDexterityFTI, name='emas.app.memberservice')
         self.assertEquals(None, fti)
