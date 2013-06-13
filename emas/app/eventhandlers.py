@@ -8,8 +8,8 @@ from plone.dexterity.utils import createContentInContainer
 
 from emas.theme.browser.views import is_expert
 
-from emas.app.browser.utils import member_services
 from emas.app.browser.utils import qaservice_uuids
+from emas.app.memberservice import member_services
 
 
 def orderItemAdded(item, event):
