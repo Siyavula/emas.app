@@ -9,7 +9,7 @@ from plone.dexterity.utils import createContentInContainer
 from emas.theme.browser.views import is_expert
 
 from emas.app.browser.utils import qaservice_uuids
-from emas.app.memberservice import member_services
+from emas.app.memberservice import MemberServicesDataAccess 
 
 
 def orderItemAdded(item, event):
@@ -121,8 +121,11 @@ def questionAsked(obj, event):
     # there are no services so the user cannot pay for any.
     if service_uids is None or len(service_uids) < 1:
         return
-
-    memberservices = member_services(context, service_uids)
+    
+    pps = self.context.restrictedTraverse('@@plone_portal_state')
+    memberid = pps.member().getId()
+    dao = MemberServicesDataAccess(context)
+    memberservices = dao.get_member_services(context, service_uids)
     if len(memberservices) < 1:
         raise RuntimeError("The user has no credits.")
     else:
@@ -142,7 +145,10 @@ def questionDeleted(obj, event):
     if service_uids is None or len(service_uids) < 1:
         return
 
-    memberservices = member_services(context, service_uids)
+    pps = self.context.restrictedTraverse('@@plone_portal_state')
+    memberid = pps.member().getId()
+    dao = MemberServicesDataAccess(context)
+    memberservices = dao.get_member_services(context, service_uids)
     if len(memberservices) < 1:
         raise RuntimeError("The user has no credits.")
     else:

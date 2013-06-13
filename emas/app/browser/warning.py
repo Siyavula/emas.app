@@ -5,7 +5,7 @@ from zope.interface import Interface
 
 from emas.app.browser.utils import practice_service_uuids
 from emas.app.browser.utils import service_url as get_service_url
-from emas.app.memberservice import member_services
+from emas.app.memberservice import MemberServicesDataAccess
     
 grok.templatedir('templates')
     
@@ -19,7 +19,10 @@ class Warning(grok.View):
 
     def update(self):
         uids = practice_service_uuids(self.context)
-        self.memberservices =  member_services(self.context, uids)
+        pps = self.context.restrictedTraverse('@@plone_portal_state')
+        memberid = pps.member.getId()
+        dao = MemberServicesDataAccess(self.context)
+        self.memberservices =  dao.get_member_services(uids, memberid)
         # grab any errors from the request, just in case we want to display
         # them later.
         self.errors = self.request.get('errors', [])

@@ -14,7 +14,6 @@ from Products.CMFCore.utils import getToolByName
 from emas.app.browser.utils import get_display_items_from_order
 from emas.app.browser.utils import practice_service_uuids
 from emas.app.browser.utils import service_url as get_service_url
-from emas.app.memberservice import member_services
 
 LOGGER = logging.getLogger(__name__)
 
