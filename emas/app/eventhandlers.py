@@ -38,77 +38,56 @@ def onOrderPaid(order, event):
     if event.action == 'pay':
         pms = getToolByName(order, 'portal_membership')
         portal = getToolByName(order, 'portal_url').getPortalObject()
+        dao = MemberServicesDataAccess(portal)
         # we cannot use the authenticated user since an admin user might
         # trigger the workflow.
-        userid = order.userid 
+        memberid = order.userid 
 
-        memberservices = portal['memberservices']
-        ms_path = '/'.join(memberservices.getPhysicalPath())
-
-        pc = getToolByName(portal, 'portal_catalog')
-        query = {'portal_type': 'emas.app.memberservice',
-                 'userid'   : userid,
-                 'path'       : ms_path}
-        
         now = datetime.datetime.now().date()
         # grab the services from the orderitems
         for item in order.order_items():
             # try to find the memberservices based on the orderitem
             # related services.
-            service = item.related_item.to_object
-            uuid = IUUID(service)
-            query['serviceuid'] = uuid
-            brains = pc(query)
-            tmpservices = [b.getObject() for b in brains]
-
+            related_service = item.related_item.to_object
+            related_service_id = intids.getId(related_service)
+            memberservices = dao.get_member_services([related_service_id], memberid)
             # create a new memberservice if it doesn't exisst
-            if len(brains) == 0:
-                mstitle = '%s for %s' % (service.title, userid)
-
-                related_service = create_relation(service.getPhysicalPath())
-                props = {'title': mstitle,
-                         'userid': userid,
-                         'related_service': related_service,
-                         'service_type': service.service_type
-                         }
-
-                ms = createContentInContainer(
-                    memberservices,
-                    'emas.app.memberservice',
-                    False,
-                    **props
-                )
-
-                # give the order owner permissions on the new memberservice, or
-                # we wont' be able to find the memberservices for this user
-                ms.manage_setLocalRoles(order.userid, ('Owner',))
+            if len(memberservices) == 0:
+                mstitle = '%s for %s' % (related_service.title, memberid)
+                props = {'memberid': memberid,
+                         'title': mstitle,
+                         'related_service_id': intids.getId(related_service),
+                         'expiry_date': trialend,
+                         'service_type': related_service.service_type}
+                ms_id = dao.add_memberservice(**props)
+                ms = dao.get_memberservice_by_primary_key(ms_id)
                 tmpservices.append(ms)
 
             # update the memberservices with info from the orderitem
             for ms in tmpservices:
-                if service.service_type == 'credit':
+                if related_service.service_type == 'credit':
                     credits = ms.credits
-                    credits += service.amount_of_credits
+                    credits += related_service.amount_of_credits
                     ms.credits = credits
-                elif service.service_type == 'subscription':
+                elif related_service.service_type == 'subscription':
                     # Always use the current expiry date if it is greater than
                     # 'now', since that gives the user everything he paid for.
-                    # Only use 'now' if the service has already expired, so we
+                    # Only use 'now' if the related_service has already expired, so we
                     # don't give the user more than he paid for.
                     if now > ms.expiry_date:
                         ms.expiry_date = now
                     expiry_date = ms.expiry_date + datetime.timedelta(
-                        service.subscription_period
+                        related_service.subscription_period
                     )
                     ms.expiry_date = expiry_date
-                ms.reindexObject()
+                dao.update_memberservice(ms)
             
-            # if we have specific access groups add the user the those here.
-            access_group = service.access_group
+            # if we have specific access groups add the user to those here.
+            access_group = related_service.access_group
             if access_group:
                 gt = getToolByName(order, 'portal_groups')
                 # now add the member to the correct group
-                gt.addPrincipalToGroup(order.userid, access_group)
+                gt.addPrincipalToGroup(memberid, access_group)
 
 
 def questionAsked(obj, event):
