@@ -4,8 +4,8 @@ from Acquisition import aq_inner
 from zope.interface import Interface
 
 from emas.app.browser.utils import practice_service_uuids
-from emas.app.browser.utils import member_services
 from emas.app.browser.utils import service_url as get_service_url
+from emas.app.memberservice import member_services
     
 grok.templatedir('templates')
     
