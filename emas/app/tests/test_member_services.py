@@ -13,12 +13,7 @@ from plone.app.testing import setRoles
 
 from plone.dexterity.interfaces import IDexterityFTI
 
-from emas.app.memberservice import (
-    add_memberservice,
-    update_memberservice,
-    delete_memberservice,
-    member_services_for,
-)
+from emas.app.memberservice import MemberServicesDataAccess
 from emas.app.memberservice import IMemberService
 from emas.app.memberservice import MemberService
 from emas.app.memberservice import SESSION
@@ -56,41 +51,42 @@ class TestMemberServiceIntegration(unittest.TestCase):
             'related_service_id': self.intids.getId(self.service),
             'expiry_date': datetime.now(),
         }
+        self.dao = MemberServicesDataAccess(self.portal)
     
     def test_adding(self):
-        ms1_id= add_memberservice(**self.ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_adding_duplicates(self):
-        ms1_id= add_memberservice(**self.ms_args) 
-        ms2_id= add_memberservice(**self.ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
-        ms2_db = self.get_memberservice(ms2_id)
+        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        ms2_id= self.dao.add_memberservice(**self.ms_args) 
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
+        ms2_db = self.dao.get_memberservice_by_primary_key(ms2_id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_updating(self):
-        ms1_id= add_memberservice(**self.ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
         ms1_db.title = 'new title'
-        update_memberservice(ms1_db)
-        ms1_db = self.get_memberservice(ms1_id)
+        self.dao.update_memberservice(ms1_db)
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
         self.assertEquals(ms1_db.title, 'new title')
 
     def test_deleting(self):
-        ms1_id= add_memberservice(**self.ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
-        delete_memberservice(ms1_db)
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
+        self.dao.delete_memberservice(ms1_db)
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
         self.assertEquals(ms1_db, None)
 
     def test_get_member_services_for(self):
-        ms1_id= add_memberservice(**self.ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
         service_uids = [self.intids.getId(self.service),]
         memberid = TEST_USER_ID
         memberservices = \
-            member_services_for(self.portal, service_uids, memberid)
+            self.dao.get_member_services(service_uids, memberid)
         self.assertEquals(memberservices, [ms1_db])
 
     def test_fti(self):
@@ -107,12 +103,6 @@ class TestMemberServiceIntegration(unittest.TestCase):
         factory = fti.factory
         self.assertEquals(factory, None)
     
-    def get_memberservice(self, memberservice_id):
-        session = SESSION()
-        memberservices = session.query(MemberService).filter_by(
-            id = memberservice_id).all()
-        return memberservices and memberservices[0] or None
-
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
