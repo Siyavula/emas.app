@@ -1,8 +1,6 @@
 import random
 import hashlib
-import transaction
 
-from sqlalchemy import or_
 
 from urlparse import urlparse
 from datetime import date, datetime, timedelta
@@ -10,8 +8,6 @@ from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
 
-from emas.app.alchemy.memberservice import MemberService
-from emas.app.alchemy import SESSION
 
 
 KEY_BASE = 'emas.app'
@@ -177,33 +173,6 @@ def practice_service_uuids_for_subject(context, subject):
             uuids.append(IUUID(obj))
 
     return uuids
-
-
-def member_services(context, service_uids):
-    session = SESSION()
-    return session.query(MemberService).all()
-
-    pmt = getToolByName(context, 'portal_membership')
-    member = pmt.getAuthenticatedMember()
-    today = datetime.today().date()
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': member.getId(),
-             'serviceuid': service_uids,
-             'expiry_date': {'query':today, 'range':'min'}
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
-
-
-def member_services_for(context, service_uids, memberid):
-    session = SESSION()
-    or_clause = or_()
-    for s_id in service_uids:
-        or_clause.append(MemberService.related_service_id == s_id)
-    result = session.query(MemberService).filter(or_clause).filter(
-        MemberService.memberid==memberid)
-    return result.all()
 
 
 def all_member_services_for(context, path, service_uids, userid):
@@ -416,51 +385,3 @@ def is_unique_verification_code(context, verification_code):
     if len(brains) > 0:
         return False
     return True
-
-def add_memberservice(memberid, title, subject, grade, related_service_id,
-                      expiry_date, credits=0, service_type="subscription"):
-    ms = MemberService(memberid=memberid,
-                       title=title,
-                       subject=subject,
-                       grade=grade,
-                       related_service_id=related_service_id,
-                       expiry_date=expiry_date,
-                       credits=credits,
-                       service_type=service_type)
-    session = SESSION()
-    session.add(ms)
-    # make sure this object in in the db without disassociating it from the 
-    # session
-    session.flush()
-    # get the newly created primary key
-    ms_id = ms.id
-    # commit the transaction so it is available to everyone else
-    transaction.commit()
-    # return the id, so any calling code can immediately fetch the object
-    # from the db.
-    return ms_id
-
-def update_memberservice(memberservice):
-    session = SESSION()
-    ms = session.merge(memberservice)
-    session.flush()
-    ms_id = memberservice.id
-    transaction.commit()
-    return ms_id
-
-def delete_memberservice(memberservice):
-    session = SESSION()
-    session.delete(memberservice)
-    transaction.commit()
-
-def get_memberservices_by_memberid(memberid):
-    session = SESSION()
-    memberservices = session.query(MemberService).filter_by(
-        memberid = memberid).all()
-    return memberservices
-
-def get_memberservice_by_primary_key(id):
-    session = SESSION()
-    memberservices = session.query(MemberService).filter_by(
-        id = memberservice_id).all()
-    return memberservices[0]
