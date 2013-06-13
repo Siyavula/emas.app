@@ -13,10 +13,15 @@ from plone.app.testing import setRoles
 
 from plone.dexterity.interfaces import IDexterityFTI
 
-from emas.app.browser import utils
-from emas.app.alchemy.memberservice import IMemberService
-from emas.app.alchemy.memberservice import MemberService
-from emas.app.alchemy import SESSION
+from emas.app.memberservice import (
+    add_memberservice,
+    update_memberservice,
+    delete_memberservice,
+    member_services_for,
+)
+from emas.app.memberservice import IMemberService
+from emas.app.memberservice import MemberService
+from emas.app.memberservice import SESSION
 
 from emas.app.tests.base import INTEGRATION_TESTING
 
@@ -48,46 +53,44 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.ms_args = {
             'memberid': TEST_USER_ID,
             'title': '%s for %s' % (self.service.title, TEST_USER_ID),
-            'subject': self.subject,
-            'grade': self.grade,
             'related_service_id': self.intids.getId(self.service),
             'expiry_date': datetime.now(),
         }
     
     def test_adding(self):
-        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms1_id= add_memberservice(**self.ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_adding_duplicates(self):
-        ms1_id= utils.add_memberservice(**self.ms_args) 
-        ms2_id= utils.add_memberservice(**self.ms_args) 
+        ms1_id= add_memberservice(**self.ms_args) 
+        ms2_id= add_memberservice(**self.ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         ms2_db = self.get_memberservice(ms2_id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_updating(self):
-        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms1_id= add_memberservice(**self.ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         ms1_db.title = 'new title'
-        utils.update_memberservice(ms1_db)
+        update_memberservice(ms1_db)
         ms1_db = self.get_memberservice(ms1_id)
         self.assertEquals(ms1_db.title, 'new title')
 
     def test_deleting(self):
-        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms1_id= add_memberservice(**self.ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
-        utils.delete_memberservice(ms1_db)
+        delete_memberservice(ms1_db)
         ms1_db = self.get_memberservice(ms1_id)
         self.assertEquals(ms1_db, None)
 
     def test_get_member_services_for(self):
-        ms1_id= utils.add_memberservice(**self.ms_args) 
+        ms1_id= add_memberservice(**self.ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         service_uids = [self.intids.getId(self.service),]
         memberid = TEST_USER_ID
         memberservices = \
-            utils.member_services_for(self.portal, service_uids, memberid)
+            member_services_for(self.portal, service_uids, memberid)
         self.assertEquals(memberservices, [ms1_db])
 
     def test_fti(self):
