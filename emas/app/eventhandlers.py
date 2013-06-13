@@ -1,6 +1,8 @@
 import datetime
 from z3c.relationfield.relation import create_relation
 from zope.component.hooks import getSite
+from zope.component import queryUtility
+from zope.intid.interfaces import IIntIds
 
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
@@ -181,13 +183,12 @@ def memberServiceAdded(obj, event):
         obj.reindexObject()
 
 
-
 def onMemberJoined(obj, event):
     memberid = obj.getId()
     portal = obj.restrictedTraverse('@@plone_portal_state').portal()
-    pms = getToolByName(portal, 'portal_membership')
     products_and_services = portal._getOb('products_and_services')
-    memberservices = portal._getOb('memberservices')
+    dao = MemberServicesDataAccess(obj)
+    intids = queryUtility(IIntIds, context=obj)
 
     # 30 days free trial with 2 questions
     today = datetime.date.today()
@@ -202,23 +203,14 @@ def onMemberJoined(obj, event):
     )
 
     for sid in intelligent_practice_services:
-        service = products_and_services[sid]
-        service_relation = create_relation(service.getPhysicalPath())
-        mstitle = '%s for %s' % (service.title, memberid)
-        props = {'title': mstitle,
-                 'userid': memberid,
-                 'related_service': service_relation,
-                 'service_type': service.service_type}
-
-        ms = createContentInContainer(
-            memberservices,
-            'emas.app.memberservice',
-            False,
-            **props
-        )
-        ms.expiry_date = trialend 
-        ms.manage_setLocalRoles(memberid, ('Owner',))
-        ms.reindexObject()
+        related_service = products_and_services[sid]
+        mstitle = '%s for %s' % (related_service.title, memberid)
+        props = {'memberid': memberid,
+                 'title': mstitle,
+                 'related_service_id': intids.getId(related_service),
+                 'expiry_date': trialend,
+                 'service_type': related_service.service_type}
+        ms_id = dao.add_memberservice(**props) 
 
 
 def service_cost_updated(event):
