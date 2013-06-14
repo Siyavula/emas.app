@@ -494,12 +494,20 @@ def setupProductsAndServices(portal):
             item.reindexObject()
 
 
+def setupGroups(portal):
+    groups_tool = getToolByName(portal, 'portal_groups')
+    groupids = ['newsletter_subscribers',]
+    for groupid in groupids:
+        if not groupid in groups_tool.getGroupIds():
+            groups_tool.addGroup(groupid)
+
+
 def install(context):
     if context.readDataFile('emas.app-marker.txt') is None:
         return
     site = context.getSite()
+    setupGroups(site)
     setupPortalContent(site)
     setupCatalogIndexes(site)
     setupProductsAndServices(site)
-
 
