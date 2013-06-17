@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import unittest2 as unittest
 import transaction
@@ -117,7 +117,24 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.assertEqual(len(memberservices), 0)
 
     def test_get_active_memberservices(self):
-        pass
+        for count in range(0,3):
+            service = self.services.objectValues()[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            self.dao.add_memberservice(**ms_args)
+        
+        now = datetime.now().date()
+        td = timedelta(1)
+        yesterday = now - td
+        for count in range(3,6):
+            service = self.services.objectValues()[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = yesterday
+            self.dao.add_memberservice(**ms_args)
+        
+        active_memberservices = self.dao.get_active_memberservices(TEST_USER_ID)
+        self.assertEquals(len(active_memberservices), 3)
+        for ms in active_memberservices:
+            self.assertEquals(ms.expiry_date, now)
 
     def test_get_active_memberservices_by_subject(self):
         pass
@@ -129,7 +146,25 @@ class TestMemberServiceIntegration(unittest.TestCase):
         pass
 
     def test_get_expired_memberservices(self):
-        pass
+        now = datetime.now().date()
+        for count in range(0,3):
+            service = self.services.objectValues()[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = now
+            self.dao.add_memberservice(**ms_args)
+        
+        td = timedelta(1)
+        yesterday = now - td
+        for count in range(3,6):
+            service = self.services.objectValues()[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = yesterday
+            self.dao.add_memberservice(**ms_args)
+        
+        expired_memberservices = self.dao.get_expired_memberservices(TEST_USER_ID)
+        self.assertEquals(len(expired_memberservices), 3)
+        for ms in expired_memberservices:
+            self.assertEquals(ms.expiry_date, yesterday)
 
     def test_get_expired_memberservices_by_subject(self):
         pass
