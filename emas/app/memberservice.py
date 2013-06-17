@@ -69,7 +69,7 @@ class MemberServicesDataAccess(object):
         session = SESSION()
         return session.query(MemberService).all()
 
-    def get_member_services(self, service_uids, memberid):
+    def get_memberservices(self, service_uids, memberid):
         """ Fetches all memberservices for a specfic member.
             Ignores grade and subject.
             Ignores expiry dates.
@@ -84,7 +84,7 @@ class MemberServicesDataAccess(object):
 
         return result.all()
 
-    def get_member_services_by_subject(self, memberid, subject):
+    def get_memberservices_by_subject(self, memberid, subject):
         """ Fetches all memberservices for a specific member.
             Ignores expiry dates.
             Filters on subject.
@@ -94,13 +94,13 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(
             MemberService.memberid == memberid)
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.subject == subject:
                 memberservices.append(ms)
 
         return memberservices
 
-    def get_member_services_by_grade(self, memberid, grade):
+    def get_memberservices_by_grade(self, memberid, grade):
         """ Fetches all memberservices for a specific member.
             Ignores expiry dates.
             Filters on grade.
@@ -110,13 +110,13 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(
             MemberService.memberid == memberid)
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.grade == grade:
                 memberservices.append(ms)
 
         return memberservices
 
-    def get_member_services_by_subject_and_grade(self, memberid, subject, grade):
+    def get_memberservices_by_subject_and_grade(self, memberid, subject, grade):
         """ Fetches all memberservices for a specific member.
             Ignores expiry dates.
             Filters on subject and grade.
@@ -128,7 +128,7 @@ class MemberServicesDataAccess(object):
             MemberService.memberid == memberid)
 
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.grade == grade and \
                related_service.subject == subject:
 
@@ -136,7 +136,7 @@ class MemberServicesDataAccess(object):
 
         return memberservices
 
-    def get_active_member_services(self, memberid):
+    def get_active_memberservices(self, memberid):
         """ Fetches only active memberservices for a given member.
             Ignores subject and grade.
         """
@@ -147,7 +147,7 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(and_clause)
         return result.all()
 
-    def get_active_member_services_by_subject(self, memberid, subject):
+    def get_active_memberservices_by_subject(self, memberid, subject):
         """ Fetches only active memberservices for a given member.
             Filters on subject.
         """
@@ -160,13 +160,13 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(and_clause)
 
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.subject == subject:
                 memberservices.append(ms)
 
         return memberservices
 
-    def get_active_member_services_by_grade(self, memberid, grade):
+    def get_active_memberservices_by_grade(self, memberid, grade):
         """ Fetches only active memberservices for a given member.
             Filters on grade.
         """
@@ -181,13 +181,13 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(and_clause)
 
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.grade == grade:
                 memberservices.append(ms)
 
         return memberservices
 
-    def get_active_member_services_by_subject_and_grade(self, memberid, subject, grade):
+    def get_active_memberservices_by_subject_and_grade(self, memberid, subject, grade):
         """ Fetches all active memberservices for a specific member.
             Filters on subject and grade.
         """
@@ -199,7 +199,7 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(and_clause)
 
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.grade == grade and \
                related_service.subject == subject:
 
@@ -207,7 +207,7 @@ class MemberServicesDataAccess(object):
 
         return memberservices
 
-    def get_expired_member_services(self, memberid):
+    def get_expired_memberservices(self, memberid):
         """ Fetches only expired memberservices for a given member.
             Ignores subject and grade.
         """
@@ -220,7 +220,7 @@ class MemberServicesDataAccess(object):
 
         return result.all()
 
-    def get_expired_member_services_by_subject(self, memberid, subject):
+    def get_expired_memberservices_by_subject(self, memberid, subject):
         """ Fetches only expired memberservices for a given member.
             Filters on subject.
         """
@@ -233,14 +233,14 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(and_clause)
 
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.subject == subject:
 
                 memberservices.append(ms)
 
         return memberservices
 
-    def get_expired_member_services_by_grade(self, memberid, grade):
+    def get_expired_memberservices_by_grade(self, memberid, grade):
         """ Fetches only expired memberservices for a given member.
             Filters on grade.
         """
@@ -253,14 +253,14 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(and_clause)
 
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.grade == grade:
 
                 memberservices.append(ms)
 
         return memberservices
 
-    def get_expired_member_services_by_subject_and_grade(self, memberid, subject, grade):
+    def get_expired_memberservices_by_subject_and_grade(self, memberid, subject, grade):
         """ Fetches all expired memberservices for a specific member.
             Filters on subject and grade.
         """
@@ -273,7 +273,7 @@ class MemberServicesDataAccess(object):
         result = session.query(MemberService).filter(and_clause)
 
         for ms in result.all():
-            related_service = self.intids.get(ms.related_service_id)
+            related_service = self.related_service(ms)
             if related_service and related_service.grade == grade and \
                related_service.subject == subject:
 
@@ -334,3 +334,6 @@ class MemberServicesDataAccess(object):
         session = SESSION()
         session.delete(memberservice)
         transaction.commit()
+    
+    def related_service(self, service):
+        return self.intids.get(ms.related_service_id)
