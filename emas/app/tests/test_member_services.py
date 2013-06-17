@@ -83,10 +83,38 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.assertEqual(len(memberservices), 3)
 
     def test_get_memberservices_by_grade(self):
-        pass
+        grade_10_services = \
+            [s for s in self.services.objectValues() if s.grade == 'grade-10']
+        for count in range(0,3):
+            service = grade_10_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            self.dao.add_memberservice(**ms_args)
+
+        memberservices = \
+            self.dao.get_memberservices_by_grade(TEST_USER_ID, 'grade-10')
+        self.assertEqual(len(memberservices), 3)
 
     def test_get_memberservices_by_subject_and_grade(self):
-        pass
+        grade_10_maths_services = \
+            [s for s in self.services.objectValues() if s.grade == 'grade-10']
+        grade_10_maths_services = \
+            [s for s in grade_10_maths_services if s.subject == 'maths']
+        for count in range(0,3):
+            service = grade_10_maths_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            self.dao.add_memberservice(**ms_args)
+
+        memberservices = \
+            self.dao.get_memberservices_by_subject_and_grade(TEST_USER_ID,
+                                                             'maths',
+                                                             'grade-10')
+        self.assertEqual(len(memberservices), 3)
+
+        memberservices = \
+            self.dao.get_memberservices_by_subject_and_grade(TEST_USER_ID,
+                                                             'science',
+                                                             'grade-10')
+        self.assertEqual(len(memberservices), 0)
 
     def test_get_active_memberservices(self):
         pass
