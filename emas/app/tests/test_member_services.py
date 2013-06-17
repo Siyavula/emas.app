@@ -190,7 +190,35 @@ class TestMemberServiceIntegration(unittest.TestCase):
             self.assertEquals(ms.expiry_date, now)
 
     def test_get_active_memberservices_by_subject_and_grade(self):
-        pass
+        now = datetime.now().date()
+        td = timedelta(1)
+        yesterday = now - td
+
+        grade_10_maths_services = \
+            [s for s in self.services.objectValues() if \
+             s.grade == 'grade-10' and s.subject == 'maths']
+        for count in range(0,3):
+            service = grade_10_maths_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = now
+            self.dao.add_memberservice(**ms_args)
+
+        grade_10_science_services = \
+            [s for s in self.services.objectValues() if \
+             s.grade == 'grade-10' and s.subject == 'science']
+        for count in range(0,3):
+            service = grade_10_science_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = yesterday
+            self.dao.add_memberservice(**ms_args)
+
+        memberservices = \
+            self.dao.get_memberservices_by_subject_and_grade(TEST_USER_ID,
+                                                             'maths',
+                                                             'grade-10')
+        self.assertEqual(len(memberservices), 3)
+        for ms in memberservices:
+            self.assertEquals(ms.expiry_date, now)
 
     def test_get_expired_memberservices(self):
         now = datetime.now().date()
@@ -214,16 +242,95 @@ class TestMemberServiceIntegration(unittest.TestCase):
             self.assertEquals(ms.expiry_date, yesterday)
 
     def test_get_expired_memberservices_by_subject(self):
-        pass
+        now = datetime.now().date()
+        td = timedelta(1)
+        yesterday = now - td
+        services = \
+            [s for s in self.services.objectValues() if s.subject == 'maths']
+        for count in range(0,3):
+            service = services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = now
+            self.dao.add_memberservice(**ms_args)
+
+        services = \
+            [s for s in self.services.objectValues() if s.subject == 'science']
+        for count in range(0,3):
+            service = services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = yesterday
+            self.dao.add_memberservice(**ms_args)
+
+        memberservices = \
+            self.dao.get_expired_memberservices_by_subject(TEST_USER_ID, 'science')
+        self.assertEqual(len(memberservices), 3)
+        for ms in memberservices:
+            self.assertEquals(ms.expiry_date, yesterday)
 
     def test_get_expired_memberservices_by_grade(self):
-        pass
+        now = datetime.now().date()
+        td = timedelta(1)
+        yesterday = now - td
+
+        services = \
+            [s for s in self.services.objectValues() if s.grade == 'grade-10']
+        for count in range(0,3):
+            service = services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = now
+            self.dao.add_memberservice(**ms_args)
+
+        services = \
+            [s for s in self.services.objectValues() if s.grade == 'grade-11']
+        for count in range(0,3):
+            service = services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = yesterday
+            self.dao.add_memberservice(**ms_args)
+
+        memberservices = \
+            self.dao.get_expired_memberservices_by_grade(TEST_USER_ID,
+                                                         'grade-11')
+        self.assertEqual(len(memberservices), 3)
+        for ms in memberservices:
+            self.assertEquals(ms.expiry_date, yesterday)
 
     def test_get_expired_memberservices_by_subject_and_grade(self):
-        pass
+        now = datetime.now().date()
+        td = timedelta(1)
+        yesterday = now - td
+
+        grade_10_maths_services = \
+            [s for s in self.services.objectValues() if \
+             s.grade == 'grade-10' and s.subject == 'maths']
+        for count in range(0,3):
+            service = grade_10_maths_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = now
+            self.dao.add_memberservice(**ms_args)
+
+        grade_10_science_services = \
+            [s for s in self.services.objectValues() if \
+             s.grade == 'grade-10' and s.subject == 'science']
+        for count in range(0,3):
+            service = grade_10_science_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            ms_args['expiry_date'] = yesterday
+            self.dao.add_memberservice(**ms_args)
+
+        memberservices = \
+            self.dao.get_expired_memberservices_by_subject_and_grade(
+                TEST_USER_ID, 'science', 'grade-10')
+        self.assertEqual(len(memberservices), 3)
+        for ms in memberservices:
+            self.assertEquals(ms.expiry_date, yesterday)
 
     def test_get_memberservice_by_primary_key(self):
-        pass
+        service = self.services.objectValues()[0]
+        ms_args = self.get_ms_args(service, TEST_USER_ID)
+        ms1_id= self.dao.add_memberservice(**ms_args) 
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
+        self.assertEquals(ms1_db, self.get_memberservice(ms1_id))
 
     def test_add_memberservice(self):
         service = self.services.objectValues()[0]
@@ -261,7 +368,11 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.assertEquals(ms1_db, None)
 
     def test_related_service(self):
-        pass
+        service = self.services.objectValues()[0]
+        ms_args = self.get_ms_args(service, TEST_USER_ID)
+        ms1_id= self.dao.add_memberservice(**ms_args) 
+        ms1_db = self.get_memberservice(ms1_id)
+        self.failUnless(self.dao.related_service(ms1_db), service)
 
     def test_fti(self):
         fti = queryUtility(IDexterityFTI, name='emas.app.memberservice')
