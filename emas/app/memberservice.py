@@ -335,5 +335,5 @@ class MemberServicesDataAccess(object):
         session.delete(memberservice)
         transaction.commit()
     
-    def related_service(self, service):
-        return self.intids.get(ms.related_service_id)
+    def related_service(self, memberservice):
+        return self.intids.getObject(memberservice.related_service_id)
