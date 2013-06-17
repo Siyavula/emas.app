@@ -29,28 +29,8 @@ class TestMemberServiceIntegration(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer['portal']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        if 'testfolder' not in self.portal.objectIds():
-            self.portal.invokeFactory('Folder', 'testfolder')
-        self.folder = self.portal.testfolder
-        self.grade = '12'
-        self.subject = 'maths'
-        s_id = 'service1'
-        if s_id not in self.folder.objectIds():
-            self.folder.invokeFactory('emas.app.service',
-                                      s_id,
-                                      service_type='subscription',
-                                      grade=self.grade,
-                                      subject=self.subject,
-                                      price='111')
-        self.service = self.folder._getOb(s_id)
+        self.services = self.portal._getOb('products_and_services')
         self.intids = queryUtility(IIntIds, context=self.portal)
-        self.ms_args = {
-            'memberid': TEST_USER_ID,
-            'title': '%s for %s' % (self.service.title, TEST_USER_ID),
-            'related_service_id': self.intids.getId(self.service),
-            'expiry_date': datetime.now(),
-        }
         self.dao = MemberServicesDataAccess(self.portal)
         setRoles(self.portal, TEST_USER_ID, ['Member'])
 
@@ -70,16 +50,37 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.assertEquals(all_ms, db_ms)
 
     def test_get_memberservices(self):
-        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        service = self.services.objectValues()[0]
+        ms_args = self.get_ms_args(service, TEST_USER_ID)
+        ms1_id= self.dao.add_memberservice(**ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
-        service_uids = [self.intids.getId(self.service),]
+        service_uids = [self.intids.getId(service),]
         memberid = TEST_USER_ID
         memberservices = \
             self.dao.get_memberservices(service_uids, memberid)
         self.assertEquals(memberservices, [ms1_db])
 
     def test_get_memberservices_by_subject(self):
-        pass
+        maths_services = \
+            [s for s in self.services.objectValues() if s.subject == 'maths']
+        for count in range(0,3):
+            service = maths_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            self.dao.add_memberservice(**ms_args)
+
+        science_services = \
+            [s for s in self.services.objectValues() if s.subject == 'science']
+        for count in range(0,3):
+            service = science_services[count]
+            ms_args = self.get_ms_args(service, TEST_USER_ID)
+            self.dao.add_memberservice(**ms_args)
+
+        memberservices = \
+            self.dao.get_memberservices_by_subject(TEST_USER_ID, 'maths')
+        self.assertEqual(len(memberservices), 3)
+        memberservices = \
+            self.dao.get_memberservices_by_subject(TEST_USER_ID, 'science')
+        self.assertEqual(len(memberservices), 3)
 
     def test_get_memberservices_by_grade(self):
         pass
@@ -115,19 +116,25 @@ class TestMemberServiceIntegration(unittest.TestCase):
         pass
 
     def test_add_memberservice(self):
-        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        service = self.services.objectValues()[0]
+        ms_args = self.get_ms_args(service, TEST_USER_ID)
+        ms1_id= self.dao.add_memberservice(**ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_adding_duplicate_memberservices(self):
-        ms1_id= self.dao.add_memberservice(**self.ms_args) 
-        ms2_id= self.dao.add_memberservice(**self.ms_args) 
+        service = self.services.objectValues()[0]
+        ms_args = self.get_ms_args(service, TEST_USER_ID)
+        ms1_id= self.dao.add_memberservice(**ms_args) 
+        ms2_id= self.dao.add_memberservice(**ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         ms2_db = self.get_memberservice(ms2_id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_update_memberservice(self):
-        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        service = self.services.objectValues()[0]
+        ms_args = self.get_ms_args(service, TEST_USER_ID)
+        ms1_id= self.dao.add_memberservice(**ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         ms1_db.title = 'new title'
         self.dao.update_memberservice(ms1_db)
@@ -135,7 +142,9 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.assertEquals(ms1_db.title, 'new title')
 
     def test_delete_memberservice(self):
-        ms1_id= self.dao.add_memberservice(**self.ms_args) 
+        service = self.services.objectValues()[0]
+        ms_args = self.get_ms_args(service, TEST_USER_ID)
+        ms1_id= self.dao.add_memberservice(**ms_args) 
         ms1_db = self.get_memberservice(ms1_id)
         self.dao.delete_memberservice(ms1_db)
         ms1_db = self.get_memberservice(ms1_id)
@@ -163,6 +172,30 @@ class TestMemberServiceIntegration(unittest.TestCase):
         memberservices = session.query(MemberService).filter_by(
             id = memberservice_id).all()
         return memberservices and memberservices[0] or None
+
+    def create_services(self):
+        subjects = ['maths', 'science']
+        grades = ['10', '11', '12']
+        for subject in subjects:
+            for count, grade in grades:
+                props = {'service_type' : 'subscription',
+                         'grade'        : grade,
+                         'subject'      : subject,
+                         'price'        : '111'}
+                s_id = self.services.invokeFactory('emas.app.service',
+                                                 '%s-%s' % (subject, grade),
+                                                 **props)
+                service = self.services._getOb(s_id)
+                service.subject = props['subject']
+
+    def get_ms_args(self, service, memberid):
+        ms_args = {
+            'memberid': memberid,
+            'title': '%s for %s' % (service.title, memberid),
+            'related_service_id': self.intids.getId(service),
+            'expiry_date': datetime.now(),
+        }
+        return ms_args
 
 
 def test_suite():
