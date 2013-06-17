@@ -175,7 +175,6 @@ class MemberServicesDataAccess(object):
 
         session = SESSION()
         and_clause = and_(MemberService.memberid == memberid,
-                          MemberService.grade == grade,
                           MemberService.expiry_date >= now)
 
         result = session.query(MemberService).filter(and_clause)
