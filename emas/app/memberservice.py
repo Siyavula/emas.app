@@ -69,14 +69,14 @@ class MemberServicesDataAccess(object):
         session = SESSION()
         return session.query(MemberService).all()
 
-    def get_memberservices(self, service_uids, memberid):
+    def get_memberservices(self, service_intids, memberid):
         """ Fetches all memberservices for a specfic member.
             Ignores grade and subject.
             Ignores expiry dates.
         """
         session = SESSION()
         or_clause = or_()
-        for s_id in service_uids:
+        for s_id in service_intids:
             or_clause.append(MemberService.related_service_id == s_id)
 
         result = session.query(MemberService).filter(or_clause).filter(
