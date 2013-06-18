@@ -7,6 +7,8 @@ from datetime import date, datetime, timedelta
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
 from zope.annotation.interfaces import IAnnotations
+from zope.component import queryUtility
+from zope.intid.interfaces import IIntIds
 
 
 
@@ -17,21 +19,6 @@ UPPER = 100000
 
 
 service_mapping = {
-    'qaservices' : {
-        'general': [],
-        'maths/grade-10'  :['products_and_services/maths-grade10-questions',
-                           ],
-        'maths/grade-11'  :['products_and_services/maths-grade11-questions',
-                           ],
-        'maths/grade-12'  :['products_and_services/maths-grade12-questions',
-                           ],
-        'science/grade-10':['products_and_services/science-grade10-questions',
-                           ],
-        'science/grade-11':['products_and_services/science-grade11-questions',
-                           ],
-        'science/grade-12':['products_and_services/science-grade12-questions',
-                           ]
-    },
     'practice_services' : {
         'general' : ['products_and_services/maths-grade10-practice',
                      'products_and_services/maths-grade11-practice',
@@ -115,10 +102,6 @@ def get_grade_from_path(path):
     return grade
 
 
-def qaservice_paths():
-    return service_mapping.get('qaservices')
-
-
 def subject_and_grade(context):
     """
         We trust in the structure of the content. Currently, this is
@@ -133,70 +116,6 @@ def subject_and_grade(context):
     if len(ppath) < 4:
         return ('none', 'none')
     return context.getPhysicalPath()[2:4]
-
-
-def paths_to_uuids(paths, context):
-    uids = []
-    for path in paths:
-        obj = context.restrictedTraverse(path)
-        if obj:
-            uids.append(IUUID(obj))
-    return uids
-
-
-def qaservice_uuids(context):
-    mapping = service_mapping.get('qaservices')
-    # better get a copy or we will modify this in-place and break the mapping
-    service_paths = mapping.get('general')[:]
-    subject, grade = subject_and_grade(context)
-    service_paths.extend(
-        mapping.get('%s/%s' %(subject, grade), [])
-    )
-    return paths_to_uuids(service_paths, context)
-
-
-def practice_service_uuids(context):
-    mapping = service_mapping.get('practice_services')
-    # at this stage we use only the general mappings since we don't have
-    # practice services that are context specific in EMAS yet.
-    service_paths = mapping.get('general')
-    return paths_to_uuids(service_paths, context)
-
-
-def practice_service_uuids_for_subject(context, subject):
-    mapping = service_mapping.get('practice_services')
-    paths = mapping.get('general')
-    uuids = []
-    for path in paths:
-        obj = context.restrictedTraverse(path)
-        if obj and obj.subject == subject:
-            uuids.append(IUUID(obj))
-
-    return uuids
-
-
-def all_member_services_for(context, path, service_uids, userid):
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': userid,
-             'path': path,
-             'serviceuid': service_uids,
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
-
-
-def member_services_for_subject(context, service_uids, userid, subject):
-    today = datetime.today().date()
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': userid,
-             'serviceuid': service_uids,
-             'subject': subject,
-             'expiry_date': {'query':today, 'range':'min'}
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
 
 
 def service_url(service):
@@ -222,43 +141,17 @@ def member_credits(context):
     return credits
 
 
-def memberservice_expiry_date(context):
-    expiry_date = None
-
-    service_uids = qaservice_uuids(context)
-    if service_uids is None or len(service_uids) < 1:
-        return None 
-    
-    memberservices = member_services(context, service_uids)
-    if len(memberservices) < 1:
-        return  None
-
-    for ms in memberservices:
-        expiry_date = ms.expiry_date
-
-    return expiry_date
-
-def practice_service_expirydate(context):
-    service_uids = practice_service_uuids(context)
-
-    if service_uids is None or len(service_uids) < 1:
-        return None
-    
-    memberservices = member_services(context, service_uids)
-    if len(memberservices) < 1:
-        return  None
-    
-    return memberservices[0].expiry_date
-
 def annotate(obj, key, value):
     annotations = IAnnotations(obj)
     key = '%s.%s' %(KEY_BASE, key)
     annotations[key] = value
 
+
 def get_annotation(obj, key):
     annotations = IAnnotations(obj)
     key = '%s.%s' %(KEY_BASE, key)
     return annotations.get(key, '')
+
 
 def compute_vcs_response_hash(props, md5key):
     keys = ("p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11",
@@ -385,3 +278,32 @@ def is_unique_verification_code(context, verification_code):
     if len(brains) > 0:
         return False
     return True
+
+
+def paths_to_intids(paths, context):
+    ids = []
+    intids = queryUtility(IIntIds, context=context)
+    for path in paths:
+        obj = context.restrictedTraverse(path)
+        if obj:
+            ids.append(intids.getId(obj))
+    return ids
+
+
+def practice_service_intids(context):
+    mapping = service_mapping.get('practice_services')
+    service_paths = mapping.get('general')
+    return paths_to_intids(service_paths, context)
+
+
+def practice_service_intids_for_subject(context, subject):
+    intids = queryUtility(IIntIds, context=context)
+    mapping = service_mapping.get('practice_services')
+    paths = mapping.get('general')
+    ids = []
+    for path in paths:
+        obj = context.restrictedTraverse(path)
+        if obj and obj.subject == subject:
+            ids.append(intids.getId(obj))
+
+    return ids
