@@ -28,7 +28,7 @@
             Active member services for <span tal:replace="view/userid">userid</span>:
             <ul>
                 <li tal:repeat="service services">
-                    <a href="#" tal:attributes="href service/absolute_url">
+                    <a href="#" tal:attributes="href string:${context/absolute_url}/memberservice-edit?id=${service/id}">
                         <span tal:replace="service/title">Service link</span>
                     </a> (expires on <span tal:content="python:service.expiry_date.strftime('%d %B %Y')">1 January 2012</span>)
                 </li>

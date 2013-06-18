@@ -2,7 +2,7 @@ from five import grok
 
 from zope.interface import Interface
 
-from emas.app.browser.utils import practice_service_uuids
+from emas.app.browser.utils import practice_service_intids
 from emas.app.browser.utils import service_url as get_service_url
 from emas.app.memberservice import MemberServicesDataAccess
 
@@ -15,21 +15,21 @@ class MemberServices(grok.View):
     
     grok.context(Interface)
     grok.require('zope2.View')
-    grok.name('db-member-services')
+    grok.name('member-services')
 
     def update(self):
-        self.service_uids = practice_service_uuids(self.context)
+        self.service_intids = practice_service_intids(self.context)
         pps = self.context.restrictedTraverse('@@plone_portal_state')
         memberid = pps.member().getId()
         self.dao = MemberServicesDataAccess(self.context)
         self.memberservices = []
         self.memberservices = \
-            self.dao.get_member_services(self.service_uids, memberid)
+            self.dao.get_active_memberservices(memberid)
 
     def service_url(self, service):
         return ''
 
-"""
+
 class ActiveMemberServicesFor(grok.View):
     grok.context(Interface)
     grok.require('zope2.View')
@@ -37,10 +37,9 @@ class ActiveMemberServicesFor(grok.View):
 
     def update(self):
         self.memberservices = []
+        self.dao = MemberServicesDataAccess(self.context)
         self.userid = self.request.get('userid', '')
         if self.userid:
-            uids = practice_service_uuids(self.context)
-            self.memberservices =  member_services_for(self.context,
-                                                       uids,
-                                                       self.userid)
-"""
+            ids = practice_service_intids(self.context)
+            dao = MemberServicesDataAccess(self.context)
+            self.memberservices = dao.get_active_memberservices(self.userid)
