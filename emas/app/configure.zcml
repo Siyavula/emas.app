@@ -49,18 +49,6 @@
         />
 
     <subscriber
-        for="siyavula.what.question.IQuestion
-             zope.lifecycleevent.IObjectAddedEvent"
-        handler=".eventhandlers.questionAsked"
-        />
-
-    <subscriber
-        for="siyavula.what.question.IQuestion
-             zope.app.container.interfaces.IObjectRemovedEvent"
-        handler=".eventhandlers.questionDeleted"
-        />
-
-    <subscriber
         for="emas.app.member_service.IMemberService
              zope.lifecycleevent.IObjectAddedEvent"
         handler=".eventhandlers.memberServiceAdded"

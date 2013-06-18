@@ -8,9 +8,6 @@ from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.utils import createContentInContainer
 
-from emas.theme.browser.views import is_expert
-
-from emas.app.browser.utils import qaservice_uuids
 from emas.app.memberservice import MemberServicesDataAccess 
 
 
@@ -88,53 +85,6 @@ def onOrderPaid(order, event):
                 gt = getToolByName(order, 'portal_groups')
                 # now add the member to the correct group
                 gt.addPrincipalToGroup(memberid, access_group)
-
-
-def questionAsked(obj, event):
-    """ Deduct a credit when a question is asked
-    """
-    if is_expert(obj):
-        return
-
-    context = obj.relatedContent.to_object
-
-    service_uids = qaservice_uuids(context)
-    # there are no services so the user cannot pay for any.
-    if service_uids is None or len(service_uids) < 1:
-        return
-    
-    pps = self.context.restrictedTraverse('@@plone_portal_state')
-    memberid = pps.member().getId()
-    dao = MemberServicesDataAccess(context)
-    memberservices = dao.get_member_services(context, service_uids)
-    if len(memberservices) < 1:
-        raise RuntimeError("The user has no credits.")
-    else:
-        credits = memberservices[0].credits - 1
-        memberservices[0].credits = credits
-
-
-def questionDeleted(obj, event):
-    """ Add a credit when a question is deleted.
-    """
-    if is_expert(obj):
-        return
-
-    context = obj.relatedContent.to_object
-
-    service_uids = qaservice_uuids(context)
-    if service_uids is None or len(service_uids) < 1:
-        return
-
-    pps = self.context.restrictedTraverse('@@plone_portal_state')
-    memberid = pps.member().getId()
-    dao = MemberServicesDataAccess(context)
-    memberservices = dao.get_member_services(context, service_uids)
-    if len(memberservices) < 1:
-        raise RuntimeError("The user has no credits.")
-    else:
-        credits = memberservices[0].credits + 1
-        memberservices[0].credits = credits
 
 
 def memberServiceAdded(obj, event):
