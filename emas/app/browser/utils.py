@@ -249,6 +249,7 @@ def get_display_items_from_order(order):
                      if i.related_service.to_object.getId() in SERVICE_IDS]
     return display_items 
 
+
 def get_paid_orders_for_member(context, memberid):
     query = {'portal_type': 'emas.app.order',
              'userid': memberid,
@@ -257,6 +258,7 @@ def get_paid_orders_for_member(context, memberid):
     pc = getToolByName(context, 'portal_catalog')
     brains = pc(query)
     return [b.getObject() for b in brains]
+
 
 def generate_verification_code(order):
     rnumber = random.randint(LOWER, UPPER)
@@ -269,6 +271,7 @@ def generate_verification_code(order):
         raise Exception('Could not find unique verification code.')
 
     return str(rnumber)
+
 
 def is_unique_verification_code(context, verification_code):
     pc = getToolByName(context, 'portal_catalog')

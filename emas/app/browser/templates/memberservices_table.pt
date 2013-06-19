@@ -1,0 +1,58 @@
+<div id="folderlisting-main-table"
+     i18n:domain="plone">
+  <input type="hidden" name="sort_on"
+         tal:attributes="value request/sort_on|string:getObjPositionInParent"
+         />
+  <input type="hidden" name="pagenumber" tal:attributes="value view/batch/pagenumber"/>
+  <input type="hidden" name="show_all" tal:attributes="value view/show_all"/>
+  <input type="hidden" name="orig_template" tal:attributes="value view/viewname"/>
+  <tal:block condition="view/selectall">
+    <input type="hidden" name="db_primary_keys:list"
+           tal:repeat="item view/batch/items_not_on_page"
+           tal:attributes="value item/db_primary_key"/>
+  </tal:block>
+
+  <p class="discreet"
+     tal:condition="not: view/batch"
+     i18n:translate="description_no_visible_items_add_paste">
+  </p>
+
+    <metal:listing define-macro="folder_listing"
+      tal:define="nosortclass view/get_nosort_class;">
+    
+    <div class="visualClear" id="clear-space-before-navigation"><!-- --></div>
+
+    <div tal:replace="structure view/batching" tal:condition="not:view/show_all"/>
+    <table class="listing"
+           id="listing-table"
+           summary="Content listing"
+           i18n:attributes="summary summary_content_listing;"
+           tal:condition="view/items">
+      <thead>
+        <tr>
+          <th class="nosort">&nbsp;</th>
+          <th class="nosort column" id="foldercontents-memberservicenumber-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservicenumber">memberservice #</tal:name>&nbsp;
+          </th>
+      </thead>
+
+      <metal:block tal:condition="view/batch">
+        <tbody>
+          <tal:items tal:repeat="item view/batch">
+            <tr tal:attributes="class item/table_row_class;
+                                id string:folder-contents-item-${item/id};"
+                tal:define="memberservice item/memberservice;">
+              <td>
+                  <a href="#" tal:attributes="href item/view_url;">
+                    <strong tal:content="memberservice/title"/>
+                  </a>
+              </td>
+
+            </tr>
+          </tal:items>
+        </tbody>
+      </metal:block>
+    </table>
+    <div tal:replace="structure view/batching">batching controls</div>
+  </metal:listing>
+</div>
