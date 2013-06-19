@@ -168,3 +168,6 @@ div.selectpackage ol li {
     text-align: center;
 }
 
+.nowrap {
+    white-space: nowrap;
+}

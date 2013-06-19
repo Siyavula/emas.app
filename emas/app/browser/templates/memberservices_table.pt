@@ -62,7 +62,7 @@
               <td>
                   <span tal:replace="memberservice/memberid">member</span>
               </td>
-              <td>
+              <td class="nowrap">
                   <a href="#" tal:attributes="href item/view_url;">
                       <strong tal:content="memberservice/title">title</strong>
                   </a>
