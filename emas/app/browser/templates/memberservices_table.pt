@@ -34,10 +34,16 @@
               &nbsp;<tal:name i18n:translate="listingheader_memberservice-id">Id</tal:name>&nbsp;
           </th>
           <th class="nosort column" id="foldercontents-memberservice-memberid-column">
-              &nbsp;<tal:name i18n:translate="listingheader_memberservice-memberid">Member id</tal:name>&nbsp;
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-memberid">Member</tal:name>&nbsp;
           </th>
           <th class="nosort column" id="foldercontents-memberservice-title-column">
               &nbsp;<tal:name i18n:translate="listingheader_memberservice-title">Title</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-expirydate-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-expirydate">Expires</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-servicetype-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-servicetype">Type</tal:name>&nbsp;
           </th>
           <th class="nosort column" id="foldercontents-memberservice-relatedservice-column">
               &nbsp;<tal:name i18n:translate="listingheader_memberservice-relatedservice">Related service</tal:name>&nbsp;
@@ -54,7 +60,7 @@
                   <span tal:replace="memberservice/id">id</span>
               </td>
               <td>
-                  <span tal:replace="memberservice/memberid">member id</span>
+                  <span tal:replace="memberservice/memberid">member</span>
               </td>
               <td>
                   <a href="#" tal:attributes="href item/view_url;">
@@ -62,7 +68,16 @@
                   </a>
               </td>
               <td>
-                  <span tal:replace="memberservice/related_service_id">related servive</span>
+                  <span tal:replace="memberservice/expiry_date">12 Jun 2013</span>
+              </td>
+              <td>
+                  <span tal:replace="memberservice/service_type">Service</span>
+              </td>
+              <td tal:define="rs_id memberservice/related_service_id;
+                              related_service python:view.related_service(rs_id);">
+                  <a href="#" tal:attributes="href related_service/absolute_url"> 
+                      <span tal:replace="related_service/Title">related service title</span>
+                  </a> 
               </td>
             </tr>
           </tal:items>

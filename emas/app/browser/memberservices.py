@@ -2,8 +2,9 @@ import urllib
 from five import grok
 from Acquisition import aq_inner
 
-from zope.component import getMultiAdapter
+from zope.component import getMultiAdapter, queryUtility
 from zope.interface import Interface
+from zope.intid.interfaces import IIntIds
 
 from plone.app.content.browser.foldercontents import FolderContentsView
 from plone.app.content.browser.foldercontents import FolderContentsTable
@@ -75,10 +76,11 @@ class ContentsTable(FolderContentsTable):
 
     def __init__(self, context, request, contentFilter=None):
         self.dao = MemberServicesDataAccess(context)
+        self.intids = queryUtility(IIntIds, context=context)
         super(ContentsTable, self).__init__(context, request, contentFilter)
         url = context.absolute_url()
         view_url = url + '/@@list-memberservices'
-        self.table = Table(request, url, view_url, self.items,
+        self.table = Table(context, request, url, view_url, self.items,
                            show_sort_column=self.show_sort_column,
                            buttons=self.buttons)
 
@@ -133,4 +135,14 @@ class Table(PloneTable):
     """                
 
     render = ViewPageTemplateFile("./templates/memberservices_table.pt")
+
+    def __init__(
+        self, context, request, url, view_url, items, show_sort_column, buttons):
+        self.context = context
+        super(Table, self).__init__(request, url, view_url, items,
+                                    show_sort_column, buttons)
+        self.intids = queryUtility(IIntIds, context=context)
+
+    def related_service(self, related_service_id):
+        return self.intids.getObject(related_service_id)
 
