@@ -2,10 +2,13 @@ import urllib
 from five import grok
 from Acquisition import aq_inner
 
+from zope import schema
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope.component import getMultiAdapter, queryUtility
 from zope.interface import Interface
 from zope.intid.interfaces import IIntIds
 
+from plone.directives import form
 from plone.app.content.browser.foldercontents import FolderContentsView
 from plone.app.content.browser.foldercontents import FolderContentsTable
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -15,9 +18,10 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.CMFPlone.utils import pretty_title_or_id
 
+from emas.app import MessageFactory as _
 from emas.app.browser.utils import practice_service_intids
 from emas.app.browser.utils import service_url as get_service_url
-from emas.app.memberservice import MemberServicesDataAccess
+from emas.app.memberservice import IMemberService, MemberServicesDataAccess
 
 
 grok.templatedir('templates')
@@ -145,4 +149,61 @@ class Table(PloneTable):
 
     def related_service(self, related_service_id):
         return self.intids.getObject(related_service_id)
+
+
+SERVICE_TYPES = SimpleVocabulary(
+    [SimpleTerm(value=u'credits', title=_(u'Credits')),
+     SimpleTerm(value=u'subscription', title=_(u'Subscription'))]
+    )
+
+class IMemberServiceForm(form.Schema):
+    form.mode(primary_key='hidden')
+    primary_key = schema.Int(
+        title=_(u'primary_key', default=u'Primary key'),
+        required=True,
+    )
+
+    memberid = schema.TextLine(
+               title=_(u'Member id'),
+        )
+
+    title = schema.TextLine(
+               title=_(u'Title'),
+        )
+
+    related_service = schema.Int(
+               title=_(u'Related service'),
+        )
+
+    expiry_date = schema.Date(
+               title=_(u'Expiry date'),
+        )
+
+    credits = schema.Int(
+               title=_(u'Credits'),
+        )
+
+    form.widget(service_type='z3c.form.browser.radio.RadioFieldWidget')
+    service_type = schema.Choice(
+            title=_(u"Service type"),
+            vocabulary=SERVICE_TYPES,
+        )
+
+
+class EditMemberService(form.SchemaForm):
+    grok.name('edit-memberservice')
+    grok.require('zope2.View')
+    grok.context(Interface)
+
+    schema = IMemberServiceForm
+    ignoreContext = True
+
+    label = _(u'Edit Member Service')
+    description = _('Edit member service.')
+    name = _('edit-memberservice')
+
+    def __init__(self, context, request):
+        super(EditMemberService, self).__init__(context, request)
+        self.errors = []
+        self.dao = MemberServicesDataAccess(context)
 
