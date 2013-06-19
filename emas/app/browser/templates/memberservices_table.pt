@@ -30,9 +30,17 @@
            tal:condition="view/items">
       <thead>
         <tr>
-          <th class="nosort">&nbsp;</th>
-          <th class="nosort column" id="foldercontents-memberservicenumber-column">
-              &nbsp;<tal:name i18n:translate="listingheader_memberservicenumber">memberservice #</tal:name>&nbsp;
+          <th class="nosort column" id="foldercontents-memberservice-id-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-id">Id</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-memberid-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-memberid">Member id</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-title-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-title">Title</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-relatedservice-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-relatedservice">Related service</tal:name>&nbsp;
           </th>
       </thead>
 
@@ -43,11 +51,19 @@
                                 id string:folder-contents-item-${item/id};"
                 tal:define="memberservice item/memberservice;">
               <td>
+                  <span tal:replace="memberservice/id">id</span>
+              </td>
+              <td>
+                  <span tal:replace="memberservice/memberid">member id</span>
+              </td>
+              <td>
                   <a href="#" tal:attributes="href item/view_url;">
-                    <strong tal:content="memberservice/title"/>
+                      <strong tal:content="memberservice/title">title</strong>
                   </a>
               </td>
-
+              <td>
+                  <span tal:replace="memberservice/related_service_id">related servive</span>
+              </td>
             </tr>
           </tal:items>
         </tbody>
