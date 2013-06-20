@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import DateTime
 from five import grok
 from plone.directives import dexterity, form
@@ -104,6 +104,36 @@ class MemberService(dexterity.Item):
         else:
             enabled = self.credits > 0
         return enabled
+
+    def is_similar_to(self, other):
+        attrs = ['grade', 'subject', 'access_path']:
+        for attr in attrs:
+            self_attr = getattr(self.related_service.to_object, attr, None)
+            other_attr = getattr(other.related_service.to_object, attr, None)
+            if self_attr != other_attr:
+                return False
+        return True
+    
+    def merge_with(self, other):
+        now = datetime.now().date()
+        delta = timedelta(other.expiry_date - now)
+        if delta > 0:
+            self.expiry_date = self.expiry_date + delta
+        self_subs_period = self.related_service.to_object.subscription_period
+        other_subs_period = other.related_service.to_object.subscription_period
+        if other_subscription_period > self_subs_period:
+            self.related_service = other.related_service
+        return self
+
+    def merge_memberservices(self, memberservices):
+        if not memberservices or len(memberservices) < 2:
+            return memberservices
+
+        other = memberservices.pop(0)
+        for memberservice in memberservices:
+            if memberservice.is_similar_to(other):
+                memberservice.merge_with(other)
+        return self.merge_memberservices(memberservices) 
 
 
 class SampleView(grok.View):
