@@ -2,6 +2,7 @@ import urllib
 from five import grok
 from Acquisition import aq_inner
 
+from z3c.form import button
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope.component import getMultiAdapter, queryUtility
@@ -128,7 +129,7 @@ class ContentsTable(FolderContentsTable):
                 id = obj.id,
                 quoted_id = obj.id,
                 db_primary_key = db_primary_key,
-                view_url = '#',
+                view_url = '@@edit-memberservice',
                 table_row_class = table_row_class,
             ))
         return results
@@ -157,9 +158,9 @@ SERVICE_TYPES = SimpleVocabulary(
     )
 
 class IMemberServiceForm(form.Schema):
-    form.mode(primary_key='hidden')
-    primary_key = schema.Int(
-        title=_(u'primary_key', default=u'Primary key'),
+    form.mode(id='hidden')
+    id = schema.Int(
+        title=_(u'id', default=u'Primary key'),
         required=True,
     )
 
@@ -171,7 +172,7 @@ class IMemberServiceForm(form.Schema):
                title=_(u'Title'),
         )
 
-    related_service = schema.Int(
+    related_service_id = schema.Int(
                title=_(u'Related service'),
         )
 
@@ -205,5 +206,28 @@ class EditMemberService(form.SchemaForm):
     def __init__(self, context, request):
         super(EditMemberService, self).__init__(context, request)
         self.errors = []
+        self.memberservice = None
         self.dao = MemberServicesDataAccess(context)
+
+        ms_pk = self.request.get('id', None)
+        if not ms_pk:
+            self.errors.append('Missing memberservice primary key.')
+            return
+        self.memberservice = self.dao.get_memberservice_by_primary_key(ms_pk)
+
+    def update(self):
+        if self.memberservice:
+            for name in self.schema.names():
+                value = getattr(self.memberservice, name)
+                if name == 'expiry_date':
+                    value = value.strftime('%m/%d/%y')
+                self.request['form.widgets.%s' % name] = value
+        super(EditMemberService, self).update()
+
+    def updateWidgets(self):
+        super(EditMemberService, self).updateWidgets()
+    
+    @button.buttonAndHandler(_(u'Save'))
+    def handleApply(self, action):
+        self.data, self.errors = self.extractData()
 

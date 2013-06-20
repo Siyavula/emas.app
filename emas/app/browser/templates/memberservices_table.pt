@@ -42,16 +42,13 @@
           <th class="nosort column" id="foldercontents-memberservice-expirydate-column">
               &nbsp;<tal:name i18n:translate="listingheader_memberservice-expirydate">Expires</tal:name>&nbsp;
           </th>
-          <th class="nosort column" id="foldercontents-memberservice-servicetype-column">
-              &nbsp;<tal:name i18n:translate="listingheader_memberservice-servicetype">Type</tal:name>&nbsp;
-          </th>
           <th class="nosort column" id="foldercontents-memberservice-relatedservice-column">
               &nbsp;<tal:name i18n:translate="listingheader_memberservice-relatedservice">Related service</tal:name>&nbsp;
           </th>
       </thead>
 
       <metal:block tal:condition="view/batch">
-        <tbody>
+        <tbody class="nowrap">
           <tal:items tal:repeat="item view/batch">
             <tr tal:attributes="class item/table_row_class;
                                 id string:folder-contents-item-${item/id};"
@@ -62,16 +59,13 @@
               <td>
                   <span tal:replace="memberservice/memberid">member</span>
               </td>
-              <td class="nowrap">
-                  <a href="#" tal:attributes="href item/view_url;">
+              <td>
+                  <a href="#" tal:attributes="href string:${item/view_url}?id=${memberservice/id};">
                       <strong tal:content="memberservice/title">title</strong>
                   </a>
               </td>
               <td>
                   <span tal:replace="memberservice/expiry_date">12 Jun 2013</span>
-              </td>
-              <td>
-                  <span tal:replace="memberservice/service_type">Service</span>
               </td>
               <td tal:define="rs_id memberservice/related_service_id;
                               related_service python:view.related_service(rs_id);">
