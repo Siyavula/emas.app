@@ -54,8 +54,9 @@ def onOrderPaid(order, event):
             # try to find the memberservices based on the orderitem
             # related services.
             service = item.related_item.to_object
-            uuid = IUUID(service)
-            query['serviceuid'] = uuid
+            query['subject'] = service.subject
+            query['grade'] = service.grade
+            query['access_path'] = service.access_path
             brains = pc(query)
             tmpservices = [b.getObject() for b in brains]
 
@@ -99,6 +100,9 @@ def onOrderPaid(order, event):
                         service.subscription_period
                     )
                     ms.expiry_date = expiry_date
+                if ms.related_service.to_object.subscription_period < \
+                   service.subscription_period:
+                   ms.related_service = service
                 ms.reindexObject()
             
             # if we have specific access groups add the user the those here.

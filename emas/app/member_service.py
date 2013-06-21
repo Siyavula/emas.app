@@ -83,6 +83,18 @@ grok.global_adapter(subject, name="subject")
 
 
 @indexer(IMemberService)
+def grade(obj):
+    return obj.related_service.to_object.grade
+grok.global_adapter(grade, name="grade")
+
+
+@indexer(IMemberService)
+def access_path(obj):
+    return obj.related_service.to_object.access_path
+grok.global_adapter(access_path, name="access_path")
+
+
+@indexer(IMemberService)
 def expiry_date(obj):
     return obj.expiry_date
 grok.global_adapter(expiry_date, name="expiry_date")
