@@ -125,15 +125,17 @@ class MemberService(dexterity.Item):
             self.related_service = other.related_service
         return self
 
-    def merge_memberservices(self, memberservices):
-        if not memberservices or len(memberservices) < 2:
+    def merge_memberservices(self, memberservices, current_idx=0):
+        if not memberservices or current_idx >= len(memberservices):
             return memberservices
 
-        other = memberservices.pop(0)
+        other = memberservices[current_idx]
         for memberservice in memberservices:
+            if memberservice == other:
+                continue
             if memberservice.is_similar_to(other):
                 memberservice.merge_with(other)
-        return self.merge_memberservices(memberservices) 
+        return self.merge_memberservices(memberservices, current_idx+1) 
 
 
 class SampleView(grok.View):

@@ -82,8 +82,14 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms = self.createMemberService(service)
             memberservices.append(ms)
         memberservices = memberservices[0].merge_memberservices(memberservices)
-        self.assertEquals(len(memberservices), 2,
-                          'There should be 2 memberservices left.')
+        self.assertEquals(len(memberservices), 4,
+                          'There should be 4 memberservices.')
+        self.assertEquals(memberservices[0].related_service,
+                          memberservices[1].related_service,
+                          'They should have the same related_service.')
+        self.assertEquals(memberservices[2].related_service,
+                          memberservices[3].related_service,
+                          'They should have the same related_service.')
     
     def createMemberService(self, service):
         mstitle = '%s for %s' % (service.title, TEST_USER_ID)
