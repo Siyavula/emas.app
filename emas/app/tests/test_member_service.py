@@ -48,8 +48,42 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.assertEquals(ms1.related_service, ms2.related_service,
                           'The related services should be the same.')
 
-    def test_merge_memberservices(self):
-        self.fail()
+    def test_merge_memberservices_with_only_one_memberservice(self):
+        memberservices = []
+        ids = ['science-grade12-monthly-practice',]
+        for id in ids:
+            service = self.services[id]
+            ms = self.createMemberService(service)
+            memberservices.append(ms)
+        memberservices = memberservices[0].merge_memberservices(memberservices)
+        self.assertEquals(len(memberservices), 1,
+                          'There should be just one memberservices left.')
+
+    def test_merge_memberservices_only_science(self):
+        memberservices = []
+        ids = ['science-grade12-monthly-practice',
+               'science-grade12-practice']
+        for id in ids:
+            service = self.services[id]
+            ms = self.createMemberService(service)
+            memberservices.append(ms)
+        memberservices = memberservices[0].merge_memberservices(memberservices)
+        self.assertEquals(len(memberservices), 1,
+                          'There should be just one memberservices left.')
+    
+    def test_merge_memberservices_maths_and_science(self):
+        memberservices = []
+        ids = ['science-grade12-monthly-practice',
+               'science-grade12-practice',
+               'maths-grade12-monthly-practice',
+               'maths-grade12-practice']
+        for id in ids:
+            service = self.services[id]
+            ms = self.createMemberService(service)
+            memberservices.append(ms)
+        memberservices = memberservices[0].merge_memberservices(memberservices)
+        self.assertEquals(len(memberservices), 2,
+                          'There should be 2 memberservices left.')
     
     def createMemberService(self, service):
         mstitle = '%s for %s' % (service.title, TEST_USER_ID)
