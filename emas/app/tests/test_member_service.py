@@ -29,7 +29,10 @@ class TestMemberServiceIntegration(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Member'])
 
     def test_is_enabled(self):
-        self.fail()
+        service1 = self.services['science-grade12-monthly-practice']
+        ms1 = self.createMemberService(service1)
+        self.assertEquals(ms1.is_enabled(), True,
+                          'This memberservice should be enabled.')
 
     def test_is_similar_to(self):
         service1 = self.services['science-grade12-monthly-practice']
