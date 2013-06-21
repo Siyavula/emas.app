@@ -1,14 +1,32 @@
-import os
+from datetime import datetime, timedelta
 
-from base import BaseFunctionalTestCase
+import unittest2 as unittest
+import transaction
 
-dirname = os.path.dirname(__file__)
+from z3c.relationfield.relation import create_relation
+from zope.component import createObject
+from zope.component import queryUtility
 
-class TestEventhandlers(BaseFunctionalTestCase):
-    """ Test the intelligent practice messages service viewlets  """
-    
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import setRoles
+
+from emas.app.tests.base import INTEGRATION_TESTING
+
+
+class TestEventhandlers(unittest.TestCase):
+    """ Unit test for the eventhandlers.
+    """
+
+    layer = INTEGRATION_TESTING
+
     def setUp(self):
-        super(TestEventhandlers, self).setUp()
-    
-    def test_eventhandlers(self):
+        self.portal = self.layer['portal']
+        self.services = self.portal._getOb('products_and_services')
+        setRoles(self.portal, TEST_USER_ID, ['Member'])
+
+    def test_eventhandler(self):
         self.fail()
+
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
