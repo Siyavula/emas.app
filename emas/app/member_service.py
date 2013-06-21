@@ -116,12 +116,12 @@ class MemberService(dexterity.Item):
     
     def merge_with(self, other):
         now = datetime.now().date()
-        delta = timedelta(other.expiry_date - now)
-        if delta > 0:
+        delta = other.expiry_date - now
+        if delta.days > 0:
             self.expiry_date = self.expiry_date + delta
         self_subs_period = self.related_service.to_object.subscription_period
         other_subs_period = other.related_service.to_object.subscription_period
-        if other_subscription_period > self_subs_period:
+        if other_subs_period > self_subs_period:
             self.related_service = other.related_service
         return self
 

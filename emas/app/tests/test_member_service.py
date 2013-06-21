@@ -40,7 +40,13 @@ class TestMemberServiceIntegration(unittest.TestCase):
                           'The 2 should be similar.')
 
     def test_merge_with(self):
-        self.fail()
+        service1 = self.services['science-grade12-monthly-practice']
+        ms1 = self.createMemberService(service1)
+        service2 = self.services['science-grade12-practice']
+        ms2 = self.createMemberService(service2)
+        ms1 = ms1.merge_with(ms2)
+        self.assertEquals(ms1.related_service, ms2.related_service,
+                          'The related services should be the same.')
 
     def test_merge_memberservices(self):
         self.fail()
