@@ -106,7 +106,7 @@ class MemberService(dexterity.Item):
         return enabled
 
     def is_similar_to(self, other):
-        attrs = ['grade', 'subject', 'access_path']:
+        attrs = ['grade', 'subject', 'access_path']
         for attr in attrs:
             self_attr = getattr(self.related_service.to_object, attr, None)
             other_attr = getattr(other.related_service.to_object, attr, None)
