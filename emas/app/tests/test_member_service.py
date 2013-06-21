@@ -71,8 +71,11 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms = self.createMemberService(service)
             memberservices.append(ms)
         memberservices = memberservices[0].merge_memberservices(memberservices)
-        self.assertEquals(len(memberservices), 1,
-                          'There should be just one memberservices left.')
+        self.assertEquals(len(memberservices), 2,
+                          'There should be 2 memberservices left.')
+        self.assertEquals(memberservices[0].related_service,
+                          memberservices[1].related_service,
+                          'The related services should be the same.')
     
     def test_merge_memberservices_maths_and_science(self):
         memberservices = []
