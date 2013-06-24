@@ -72,6 +72,14 @@ class ListMemberServices(grok.View, FolderContentsView):
     def contents_table(self):
         table = ContentsTable(aq_inner(self.context), self.request)
         return table.render()
+    
+    def __call__(self):
+        dao = MemberServicesDataAccess(self.context)
+        ms_ids = self.request.get('ids', [])
+        for id in ms_ids:
+            memberservice = dao.get_memberservice_by_primary_key(id)
+            dao.delete_memberservice(memberservice)
+        return super(ListMemberServices, self).__call__()
 
 
 class ContentsTable(FolderContentsTable):
@@ -131,6 +139,7 @@ class ContentsTable(FolderContentsTable):
                 db_primary_key = db_primary_key,
                 view_url = '@@edit-memberservice',
                 table_row_class = table_row_class,
+                checked = '',
             ))
         return results
 

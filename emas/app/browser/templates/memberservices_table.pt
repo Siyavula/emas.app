@@ -30,6 +30,9 @@
            tal:condition="view/items">
       <thead>
         <tr>
+          <th class="nosort"
+              id="foldercontents-select-column"
+              tal:condition="view/show_select_column">&nbsp;</th>
           <th class="nosort column" id="foldercontents-memberservice-id-column">
               &nbsp;<tal:name i18n:translate="listingheader_memberservice-id">Id</tal:name>&nbsp;
           </th>
@@ -53,6 +56,26 @@
             <tr tal:attributes="class item/table_row_class;
                                 id string:folder-contents-item-${item/id};"
                 tal:define="memberservice item/memberservice;">
+                
+                <td tal:condition="view/show_select_column" class="notDraggable">
+                    <input type="checkbox"
+                        class="noborder"
+                        name="ids:list" id="#"
+                        value="#"
+                        tal:attributes="value   item/id;
+                                        id      string:cb_${item/id};
+                                        checked item/checked;
+                                        alt     python:view.msg_select_item(item);
+                                        title   python:view.msg_select_item(item)" />
+                    <input type="hidden" name="selected_ids:list" value="#"
+                        tal:attributes="value item/id" />
+                    <label tal:content="item/id"
+                        tal:attributes="for string:cb_${item/id}" 
+                        class="hiddenStructure">
+                        Item Title
+                    </label>
+                  </td>
+
               <td>
                   <span tal:replace="memberservice/id">id</span>
               </td>
@@ -79,5 +102,11 @@
       </metal:block>
     </table>
     <div tal:replace="structure view/batching">batching controls</div>
-  </metal:listing>
+
+    <input class="context" type="submit"
+           name="delete"
+           value="Delete"
+           i18n:attributes="value" />
+    
+    </metal:listing>
 </div>
