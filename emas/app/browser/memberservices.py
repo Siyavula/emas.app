@@ -182,6 +182,7 @@ class IMemberServiceForm(form.Schema):
 
     credits = schema.Int(
                title=_(u'Credits'),
+               required=False,
         )
 
     form.widget(service_type='z3c.form.browser.radio.RadioFieldWidget')
@@ -230,4 +231,12 @@ class EditMemberService(form.SchemaForm):
     @button.buttonAndHandler(_(u'Save'))
     def handleApply(self, action):
         self.data, self.errors = self.extractData()
+        ms_id = self.data.get('id')
+        memberservice = self.dao.get_memberservice_by_primary_key(ms_id)
+        if not memberservice:
+            raise NotFound('Could not find memberservice with id:%s') % ms_id
 
+        for attr_name in self.data.keys():
+            setattr(memberservice, attr_name, self.data[attr_name])
+        
+        self.request.response.redirect('@@list-memberservices')
