@@ -117,38 +117,6 @@ class MemberService(dexterity.Item):
             enabled = self.credits > 0
         return enabled
 
-    def is_similar_to(self, other):
-        attrs = ['grade', 'subject', 'access_path']
-        for attr in attrs:
-            self_attr = getattr(self.related_service.to_object, attr, None)
-            other_attr = getattr(other.related_service.to_object, attr, None)
-            if self_attr != other_attr:
-                return False
-        return True
-    
-    def merge_with(self, other):
-        now = datetime.now().date()
-        delta = other.expiry_date - now
-        if delta.days > 0:
-            self.expiry_date = self.expiry_date + delta
-        self_subs_period = self.related_service.to_object.subscription_period
-        other_subs_period = other.related_service.to_object.subscription_period
-        if other_subs_period > self_subs_period:
-            self.related_service = other.related_service
-        return self
-
-    def merge_memberservices(self, memberservices, current_idx=0):
-        if not memberservices or current_idx >= len(memberservices):
-            return memberservices
-
-        other = memberservices[current_idx]
-        for memberservice in memberservices:
-            if memberservice == other:
-                continue
-            if memberservice.is_similar_to(other):
-                memberservice.merge_with(other)
-        return self.merge_memberservices(memberservices, current_idx+1) 
-
 
 class SampleView(grok.View):
     grok.context(IMemberService)
