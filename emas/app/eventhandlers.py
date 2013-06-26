@@ -9,6 +9,7 @@ from plone.dexterity.utils import createContentInContainer
 from emas.theme.browser.views import is_expert
 
 from emas.app.browser.utils import member_services
+from emas.app.browser.utils import member_services_for_subject
 from emas.app.browser.utils import qaservice_uuids
 
 
@@ -40,8 +41,8 @@ def onOrderPaid(order, event):
         # trigger the workflow.
         userid = order.userid 
 
-        memberservices = portal['memberservices']
-        ms_path = '/'.join(memberservices.getPhysicalPath())
+        msfolder = portal['memberservices']
+        ms_path = '/'.join(msfolder.getPhysicalPath())
 
         pc = getToolByName(portal, 'portal_catalog')
         query = {'portal_type': 'emas.app.memberservice',
@@ -49,16 +50,24 @@ def onOrderPaid(order, event):
                  'path'       : ms_path}
         
         now = datetime.datetime.now().date()
+
         # grab the services from the orderitems
         for item in order.order_items():
             # try to find the memberservices based on the orderitem
             # related services.
-            service = item.related_item.to_object
-            query['subject'] = service.subject
-            query['grade'] = service.grade
-            query['access_path'] = service.access_path
-            brains = pc(query)
-            tmpservices = [b.getObject() for b in brains]
+
+            service_purchased = item.related_item.to_object
+
+            memberservices = utils.member_services(
+                portal, IUUID(service)
+                )
+            for ms in memberservices:
+                active_service = ms.related_service.to_object
+                if (active_service.subject == service_purchased.subject and
+                    active_service.grade == service_purchased.grade and
+                    active_service.access_path == \
+                        service_purchased.access_path):
+                    tmpservices.append(ms)
 
             # create a new memberservice if it doesn't exisst
             if len(brains) == 0:
@@ -72,7 +81,7 @@ def onOrderPaid(order, event):
                          }
 
                 ms = createContentInContainer(
-                    memberservices,
+                    msfolder,
                     'emas.app.memberservice',
                     False,
                     **props
