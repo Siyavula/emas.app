@@ -11,6 +11,7 @@ from emas.theme.browser.views import is_expert
 from emas.app.browser.utils import member_services_for
 from emas.app.browser.utils import member_services_for_subject
 from emas.app.browser.utils import qaservice_uuids
+from emas.app.browser.utils import practice_service_uuids
 
 
 def orderItemAdded(item, event):
@@ -44,6 +45,9 @@ def onOrderPaid(order, event):
         now = datetime.datetime.now().date()
         tmpservices = []
 
+        uuids = practice_service_uuids(portal)
+        memberservices = member_services_for(portal, uuids, userid)
+
         # grab the services from the orderitems
         for item in order.order_items():
             # try to find the memberservices based on the orderitem
@@ -51,9 +55,6 @@ def onOrderPaid(order, event):
 
             service_purchased = item.related_item.to_object
 
-            memberservices = member_services_for(
-                portal, IUUID(service_purchased), userid
-                )
             for ms in memberservices:
                 active_service = ms.related_service.to_object
                 if (active_service.subject == service_purchased.subject and
