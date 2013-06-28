@@ -107,7 +107,10 @@ def onOrderPaid(order, event):
                     ms.expiry_date = expiry_date
                 if ms.related_service.to_object.subscription_period < \
                    service_purchased.subscription_period:
-                   ms.related_service = service_purchased
+                    related_service = create_relation(
+                        service_purchased.getPhysicalPath()
+                        )
+                    ms.related_service = related_service
                 ms.reindexObject()
             
             # if we have specific access groups add the user the those here.
