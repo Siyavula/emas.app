@@ -58,7 +58,7 @@ def onOrderPaid(order, event):
 
             service_purchased = item.related_item.to_object
 
-            memberservices = utils.member_services(
+            memberservices = member_services(
                 portal, IUUID(service)
                 )
             for ms in memberservices:
