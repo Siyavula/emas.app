@@ -494,12 +494,32 @@ def setupProductsAndServices(portal):
             item.reindexObject()
 
 
+def setupCustomCatalog(portal):
+    if not portal.hasObject('order_catalog'):
+        portal.manage_addProduct['ZCatalog'].manage_addZCatalog(
+            'order_catalog', 'Order Catalog')
+    catalog = portal.order_catalog
+    
+    new_indexes = {'review_state'        : 'FieldIndex',
+                   'payment_method'      : 'FieldIndex',
+                   'userid'              : 'FieldIndex',
+                   'related_item_uuids'  : 'KeywordIndex',
+                   'allowedRolesAndUsers': 'KeywordIndex',
+                   'getId'               : 'FieldIndex',
+                   'order_date'          : 'DateIndex',
+                   'verification_code'   : 'FieldIndex',}
+
+    current_indexes = catalog.indexes()
+    for index_name, index_type in new_indexes.items():
+        if not index_name in current_indexes:
+            catalog.addIndex(index_name, index_type, extra=None)
+
+
 def install(context):
     if context.readDataFile('emas.app-marker.txt') is None:
         return
     site = context.getSite()
+    setupCustomCatalog(site)
     setupPortalContent(site)
     setupCatalogIndexes(site)
     setupProductsAndServices(site)
-
-
