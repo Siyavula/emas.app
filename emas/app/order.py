@@ -1,5 +1,7 @@
+from Products.CMFCore.utils import getToolByName
 from five import grok
 from plone.directives import dexterity, form
+from plone.indexer import indexer
 
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -83,6 +85,21 @@ class IOrder(form.Schema):
         required=True,
     )
 
+@indexer(IOrder)
+def related_item_uuids(obj):
+    uuids = []
+    for item in obj.order_items():
+        uuid = IUUID(obj.related_service.to_object)
+        uuids.append(uuid)
+    return uuids
+grok.global_adapter(related_item_uuids, name="related_item_uuids")
+
+@indexer(IOrder)
+def order_date(obj):
+    return obj.created
+grok.global_adapter(order_date, name="order_date")
+
+
 class Order(dexterity.Container):
     grok.implements(IOrder)
     
@@ -141,6 +158,13 @@ class Order(dexterity.Container):
         elif self.payment_method == MOOLA:
             returned_code = self.REQUEST.get('verification_code')
             return self.verification_code == returned_code
+    
+    def _getCatalogTool(self):
+        """ We override this method from Products.CMFCore.CMFCatalogAware,
+            because we want to put orders in a separate catalog.
+        """
+        return getToolByName(self, 'order_catalog', None)
+
 
 class SampleView(grok.View):
     grok.context(IOrder)
