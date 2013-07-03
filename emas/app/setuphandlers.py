@@ -508,6 +508,7 @@ def setupCustomCatalog(portal):
                    'related_item_uuids'  : 'KeywordIndex',
                    'allowedRolesAndUsers': 'KeywordIndex',
                    'getId'               : 'FieldIndex',
+                   'id'                  : 'FieldIndex',
                    'order_date'          : 'DateIndex',
                    'verification_code'   : 'FieldIndex',}
 
