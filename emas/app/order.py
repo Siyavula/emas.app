@@ -92,7 +92,7 @@ class IOrder(form.Schema):
 def related_item_uuids(obj):
     uuids = []
     for item in obj.order_items():
-        uuid = IUUID(obj.related_service.to_object)
+        uuid = IUUID(item.related_item.to_object)
         uuids.append(uuid)
     return uuids
 grok.global_adapter(related_item_uuids, name="related_item_uuids")
