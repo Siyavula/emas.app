@@ -496,8 +496,10 @@ def setupProductsAndServices(portal):
 
 def setupCustomCatalog(portal):
     if not portal.hasObject('order_catalog'):
-        portal.manage_addProduct['ZCatalog'].manage_addZCatalog(
-            'order_catalog', 'Order Catalog')
+        addTool = portal.manage_addProduct['emas.app'].manage_addTool
+        # Add the tool by its meta_type
+        addTool('EMAS Catalog Tool')
+
     catalog = portal.order_catalog
     
     new_indexes = {'review_state'        : 'FieldIndex',
