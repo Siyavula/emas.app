@@ -1,3 +1,5 @@
+from Acquisition import aq_base
+
 from Products.CMFCore.utils import getToolByName
 from five import grok
 from plone.directives import dexterity, form
@@ -163,7 +165,8 @@ class Order(dexterity.Container):
         """ We override this method from Products.CMFCore.CMFCatalogAware,
             because we want to put orders in a separate catalog.
         """
-        return getToolByName(self, 'order_catalog', None)
+        catalog = getToolByName(self, 'order_catalog', None)
+        return aq_base(catalog)
 
 
 class SampleView(grok.View):
