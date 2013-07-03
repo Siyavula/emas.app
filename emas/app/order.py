@@ -2,6 +2,7 @@ from Acquisition import aq_base
 
 from Products.CMFCore.utils import getToolByName
 from five import grok
+from plone.uuid.interfaces import IUUID
 from plone.directives import dexterity, form
 from plone.indexer import indexer
 
