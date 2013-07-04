@@ -502,7 +502,8 @@ def setupCustomCatalog(portal):
 
     catalog = portal.order_catalog
     
-    new_indexes = {'review_state'        : 'FieldIndex',
+    new_indexes = {'portal_type'         : 'FieldIndex',
+                   'review_state'        : 'FieldIndex',
                    'payment_method'      : 'FieldIndex',
                    'userid'              : 'FieldIndex',
                    'related_item_uuids'  : 'KeywordIndex',
@@ -510,6 +511,7 @@ def setupCustomCatalog(portal):
                    'getId'               : 'FieldIndex',
                    'id'                  : 'FieldIndex',
                    'order_date'          : 'DateIndex',
+                   'order_number'        : 'DateIndex',
                    'verification_code'   : 'FieldIndex',}
 
     current_indexes = catalog.indexes()
