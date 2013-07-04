@@ -54,10 +54,3 @@ class OrderItem(dexterity.Item):
         """ We don't want orderitems cataloged at all.
         """
         return None
-
-
-class SampleView(grok.View):
-    grok.context(IOrderItem)
-    grok.require('zope2.View')
-    
-    # grok.name('view')
