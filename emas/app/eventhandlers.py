@@ -43,7 +43,7 @@ def onOrderPaid(order, event):
         memberservices = portal['memberservices']
         ms_path = '/'.join(memberservices.getPhysicalPath())
 
-        pc = getToolByName(portal, 'portal_catalog')
+        pc = getToolByName(portal, 'order_catalog')
         query = {'portal_type': 'emas.app.memberservice',
                  'userid'   : userid,
                  'path'       : ms_path}
