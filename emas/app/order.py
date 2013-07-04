@@ -167,7 +167,7 @@ class Order(dexterity.Container):
             because we want to put orders in a separate catalog.
         """
         catalog = getToolByName(self, 'order_catalog', None)
-        return aq_base(catalog)
+        return catalog
 
 
 class SampleView(grok.View):
