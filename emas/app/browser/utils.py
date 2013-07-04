@@ -383,7 +383,7 @@ def get_paid_orders_for_member(context, memberid):
              'userid': memberid,
              'review_state': 'paid'
             }
-    pc = getToolByName(context, 'portal_catalog')
+    pc = getToolByName(context, 'order_catalog')
     brains = pc(query)
     return [b.getObject() for b in brains]
 
@@ -400,7 +400,7 @@ def generate_verification_code(order):
     return str(rnumber)
 
 def is_unique_verification_code(context, verification_code):
-    pc = getToolByName(context, 'portal_catalog')
+    pc = getToolByName(context, 'order_catalog')
     query = {'portal_type':       'emas.app.order',
              'verification_code': verification_code}
     brains = pc.unrestrictedSearchResults(query)
