@@ -234,7 +234,7 @@ class Confirm(grok.View):
         return str(rnumber)
 
     def is_unique_verification_code(self, verification_code):
-        pc = getToolByName(self.context, 'portal_catalog')
+        pc = getToolByName(self.context, 'order_catalog')
         query = {'portal_type':       'emas.app.order',
                  'verification_code': verification_code}
         brains = pc.unrestrictedSearchResults(query)
