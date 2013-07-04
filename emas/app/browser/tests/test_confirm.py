@@ -52,7 +52,7 @@ class TestConfirmView(PloneTestCase):
         view = self.new_confirm_view()
         vcode = view.order.verification_code
 
-        pc = getToolByName(self.portal, 'portal_catalog')
+        pc = getToolByName(self.portal, 'order_catalog')
         query = {'portal_type':       'emas.app.order',
                  'verification_code': vcode}
         brains = pc.unrestrictedSearchResults(query)
