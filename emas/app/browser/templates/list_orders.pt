@@ -55,8 +55,9 @@
                       </td>
                       <td>
                           <select id="select-review-state" name="review_state" class="select-widget choice-field">
-                              <option tal:repeat="details view/review_states" name="state"
-                                  tal:attributes="name python:details[0]">
+                              <option></option>
+                              <option tal:repeat="details view/review_states" value="state"
+                                  tal:attributes="value python:details[0]">
                                 <span tal:replace="python:details[1]">Ordered</span>
                               </option>
                           </select>
@@ -68,9 +69,10 @@
                       </td>
                       <td>
                           <select id="select-payment-method" name="payment_method" class="select-widget choice-field">
-                              <option tal:repeat="details view/payment_methods" name="payment_method"
-                                  tal:attributes="name python:details[0]">
-                                <span tal:replace="python:details[1]">EFT</span>
+                              <option></option>
+                              <option tal:repeat="details view/payment_methods" value="payment_method"
+                                  tal:attributes="value details/token">
+                                <span tal:replace="details/title">EFT</span>
                               </option>
                           </select>
                       </td>
@@ -92,8 +94,9 @@
                       </td>
                       <td>
                           <select id="select-related-services" name="related_item_uuids">
-                              <option tal:repeat="details view/services" name="service"
-                                tal:attributes="name python:details[0]">
+                              <option></option>
+                              <option tal:repeat="details view/services" value="service"
+                                tal:attributes="value python:details[0]">
                                   <span tal:replace="python:details[1]">service title</span>
                               </option>
                           </select>
@@ -106,7 +109,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="start_date" name="" value="" type="date"
+                          <input id="start_date" name="order_date.start:record:date:ignore_empty" value="" type="date"
                               tal:attributes="value request/start_date |nothing"/> <br/>
                       </td>
                       <td>
@@ -115,7 +118,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="end_date" name="" value="" type="date"
+                          <input id="end_date" name="order_date.end:record:date:ignore_empty" value="" type="date"
                               tal:attributes="value request/end_date |nothing"/> <br/>
                       </td>
                   </tr>
@@ -126,7 +129,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="verification_code" name="" value=""
+                          <input id="verification_code" name="verification_code" value=""
                               tal:attributes="value request/verification_code |nothing"/> <br/>
                       </td>
                       <td>
@@ -135,23 +138,25 @@
                           </label>
                       </td>
                       <td>
-                          <input id="order_number" name="" value=""
+                          <input id="order_number" name="order_number" value=""
                               tal:attributes="value request/order_number |nothing"/> <br/>
                       </td>
                   </tr>
                   <tr>
                       <td>
                           <input type="submit" name="list_orders.form.submitted"
-                            class="standalone" value="Search" />
+                            class="standalone multiSubmit" value="Search" />
                       </td>
                   </tr>
               </table>
           </form>
       </div>
-      <tal:defines define="orders view/orders">
+      <tal:defines define="order_brains view/orders">
 
-      <tal:orders condition="orders">
-          <table class="listing">
+      <tal:orders condition="order_brains">
+      <table class="listing"
+          tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;">
+
             <tr>
                 <th>State</th>
                 <th>Payment method</th>
@@ -161,8 +166,9 @@
                 <th>Order number</th>
                 <th>Verification code</th>
             </tr>
-            <tr tal:repeat="order orders">
-                <td tal:content="python:view.review_state(order)">
+            <tal:display-orders repeat="brain order_brains">
+            <tr tal:define="order python:brain.getObject()">
+                <td tal:content="python:view.get_review_state_for(order)">
                     State
                 </td>
                 <td tal:content="order/payment_method">
@@ -171,10 +177,12 @@
                 <td tal:content="order/userid">
                     User007
                 </td>
-                <td tal:content="order">
-                    Related services
+                <td tal:define="services python:view.get_related_services_for(order)">
+                    <tal:services repeat="service services">
+                    <span tal:content="service">Related services</span><br/>
+                    </tal:services>
                 </td>
-                <td tal:content="order/created">
+                <td tal:content="python:toLocalizedTime(order.creation_date)">
                     01 Jan 1970
                 </td>
                 <td tal:content="order/Title">
@@ -184,6 +192,7 @@
                     44444
                 </td>
             </tr>
+            </tal:display-orders>
           </table>
       </tal:orders>
 
