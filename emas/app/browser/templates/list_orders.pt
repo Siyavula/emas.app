@@ -54,8 +54,10 @@
                           </label>
                       </td>
                       <td>
-                          <input id="review_state" name="review_state" value=""
-                              tal:attributes="value request/review_state |nothing"/>
+                          <select id="select-review-state" name="review_state">
+                              <option name="ordered">Ordered</option>
+                              <option name="ordered">Paid</option>
+                          </select>
                       </td>
                       <td>
                           <label for="payment_method">
@@ -63,8 +65,11 @@
                           </label>
                       </td>
                       <td>
-                          <input id="payment_method" name="payment_method" value=""
-                              tal:attributes="value request/payment_method |nothing"/>
+                          <select id="select-payment-method" name="payment_method">
+                              <option name="eft">Electronic Fund Transfer</option>
+                              <option name="credit-card">Credit card</option>
+                              <option name="prsms">Premium rate SMS</option>
+                          </select>
                       </td>
                   </tr>
                   <tr>
