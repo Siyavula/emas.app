@@ -46,86 +46,100 @@
       <metal:content-core fill-slot="content-core">
       <div id="search-form">
           <form action="." method="POST" name="order-filter">
-          <table id="search-form-table">
-              <tr>
-                  <td>
-                      <label for="review_state">
-                          State
-                      </label>
-                  </td>
-                  <td>
-                      <input id="review_state" name="review_state" value=""
-                          tal:attributes="value request/review_state |nothing"/>
-                  </td>
-                  <td>
-                      <label for="payment_method">
-                          Payment method
-                      </label>
-                  </td>
-                  <td>
-                      <input id="payment_method" name="payment_method" value=""
-                          tal:attributes="value request/payment_method |nothing"/>
-                  </td>
-              </tr>
-              <tr>
-                  <td>
-                      <label for="userid">
-                          User id 
-                      </label>
-                  </td>
-                  <td>
-                      <input id="userid" name="userid" value=""
-                          tal:attributes="value request/userid |nothing"/> <br/>
-                  </td>
-                  <td>
-                      <label for="related_item_uuids">
-                          Related services
-                      </label>
-                  </td>
-                  <td>
-                      <input id="related_item_uuids" name="" value=""
-                          tal:attributes="value request/related_item_uuids |nothing"/> <br/>
-                  </td>
-              </tr>
-              <tr>
-                  <td>
-                      <label for="order_date">
-                          Order date
-                      </label>
-                  </td>
-                  <td>
-                      <input id="order_date" name="" value=""
-                          tal:attributes="value request/order_date |nothing"/> <br/>
-                  </td>
-                  <td>
-                      <label for="order_number">
-                          Order number
-                      </label>
-                  </td>
-                  <td>
-                      <input id="order_number" name="" value=""
-                          tal:attributes="value request/order_number |nothing"/> <br/>
-                  </td>
-              </tr>
-              <tr colspan="2">
-                  <td>
-                      <label for="verification_code">
-                          Verification code
-                      </label>
-                  </td>
-                  <td>
-                      <input id="verification_code" name="" value=""
-                          tal:attributes="value request/verification_code |nothing"/> <br/>
-                  </td>
-              </tr>
-          </table>
-          <input type="submit" name="list_orders.form.submitted" value="Search" />
+              <table id="search-form-table">
+                  <tr>
+                      <td>
+                          <label for="review_state">
+                              State
+                          </label>
+                      </td>
+                      <td>
+                          <input id="review_state" name="review_state" value=""
+                              tal:attributes="value request/review_state |nothing"/>
+                      </td>
+                      <td>
+                          <label for="payment_method">
+                              Payment method
+                          </label>
+                      </td>
+                      <td>
+                          <input id="payment_method" name="payment_method" value=""
+                              tal:attributes="value request/payment_method |nothing"/>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <label for="userid">
+                              User id 
+                          </label>
+                      </td>
+                      <td>
+                          <input id="userid" name="userid" value=""
+                              tal:attributes="value request/userid |nothing"/> <br/>
+                      </td>
+                      <td>
+                          <label for="related_item_uuids">
+                              Related services
+                          </label>
+                      </td>
+                      <td>
+                          <input id="related_item_uuids" name="" value=""
+                              tal:attributes="value request/related_item_uuids |nothing"/> <br/>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <label for="start_date">
+                              Start date
+                          </label>
+                      </td>
+                      <td>
+                          <input id="start_date" name="" value="" type="date"
+                              tal:attributes="value request/start_date |nothing"/> <br/>
+                      </td>
+                      <td>
+                          <label for="end_date">
+                              End date
+                          </label>
+                      </td>
+                      <td>
+                          <input id="end_date" name="" value="" type="date"
+                              tal:attributes="value request/end_date |nothing"/> <br/>
+                      </td>
+                  </tr>
+                  <tr colspan="2">
+                      <td>
+                          <label for="verification_code">
+                              Verification code
+                          </label>
+                      </td>
+                      <td>
+                          <input id="verification_code" name="" value=""
+                              tal:attributes="value request/verification_code |nothing"/> <br/>
+                      </td>
+                      <td>
+                          <label for="order_number">
+                              Order number
+                          </label>
+                      </td>
+                      <td>
+                          <input id="order_number" name="" value=""
+                              tal:attributes="value request/order_number |nothing"/> <br/>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <input type="submit" name="list_orders.form.submitted"
+                            class="standalone" value="Search" />
+                      </td>
+                  </tr>
+              </table>
           </form>
       </div>
       <tal:defines define="orders view/orders">
 
-      <tal:orders define="orders view/orders">
-          <table>
+      <tal:orders condition="orders">
+          <table class="listing">
             <tr>
                 <th>State</th>
                 <th>Payment method</th>
