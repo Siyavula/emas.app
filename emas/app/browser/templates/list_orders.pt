@@ -44,23 +44,86 @@
       </metal:content-description>
 
       <metal:content-core fill-slot="content-core">
-          <a href=""
-             class="link-parent"
-             tal:define="parent_url view/parent_url"
-             tal:condition="parent_url"
-             tal:attributes="href string:${parent_url}/folder_contents"
-             i18n:translate="go_to_parent_url">
-              Up one level
-          </a>
+      <form action="." method="POST" name="order-filter">
+          <label for="review_state">
+              State
+          </label>
+          <input id="review_state" name="review_state" value=""
+              tal:attributes="value request/review_state |nothing"/> <br/>
+          <label for="payment_method">
+              Payment method
+          </label>
+          <input id="payment_method" name="payment_method" value=""
+              tal:attributes="value request/payment_method |nothing"/> <br/>
+          <label for="userid">
+              User id 
+          </label>
+          <input id="userid" name="userid" value=""
+              tal:attributes="value request/userid |nothing"/> <br/>
+          <label for="related_item_uuids">
+              Related services
+          </label>
+          <input id="related_item_uuids" name="" value=""
+              tal:attributes="value request/related_item_uuids |nothing"/> <br/>
+          <label for="order_date">
+              Order date
+          </label>
+          <input id="order_date" name="" value=""
+              tal:attributes="value request/order_date |nothing"/> <br/>
+          <label for="order_number">
+              Order number
+          </label>
+          <input id="order_number" name="" value=""
+              tal:attributes="value request/order_number |nothing"/> <br/>
+          <label for="verification_code">
+              Verification code
+          </label>
+          <input id="verification_code" name="" value=""
+              tal:attributes="value request/verification_code |nothing"/> <br/>
 
-          <form name="folderContentsForm"
-                method="post"
-                action="folder_object"
-                tal:attributes="action context/absolute_url"
-                class="kssattr-serveraction-foldercontents_update_table">
-            <div tal:replace="structure view/contents_table"></div>
-            <input tal:replace="structure context/@@authenticator/authenticator" />
-          </form>
+          <input type="submit" name="list_orders.form.submitted" value="Search" />
+          <input type="reset" name="clear" value="Clear" />
+      </form>
+      <tal:defines define="orders view/orders">
+
+      <tal:orders define="orders view/orders">
+          <table>
+            <tr>
+                <th>State</th>
+                <th>Payment method</th>
+                <th>User id</th>
+                <th>Related services</th>
+                <th>Order date</th>
+                <th>Order number</th>
+                <th>Verification code</th>
+            </tr>
+            <tr tal:repeat="order orders">
+                <td tal:content="python:view.review_state(order)">
+                    State
+                </td>
+                <td tal:content="order/payment_method">
+                    CC|EFT|PRSMS
+                </td>
+                <td tal:content="order/userid">
+                    User007
+                </td>
+                <td tal:content="order">
+                    Related services
+                </td>
+                <td tal:content="order/created">
+                    01 Jan 1970
+                </td>
+                <td tal:content="order/Title">
+                    Order nnn
+                </td>
+                <td tal:content="order/verification_code">
+                    44444
+                </td>
+            </tr>
+          </table>
+      </tal:orders>
+
+      </tal:defines>
       </metal:content-core>
       
   </body>

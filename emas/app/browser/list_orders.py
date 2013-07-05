@@ -6,38 +6,58 @@ from plone.app.content.browser.foldercontents import FolderContentsTable
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.content.browser.tableview import Table as PloneTable
 
+from Products.CMFCore.utils import getToolByName
+
 from emas.app.order_folder import IOrderFolder
+from emas.app import MessageFactory as _
 
 grok.templatedir('templates')
+
+
+FILTERS = ['review_state',
+           'payment_method',
+           'userid',
+           'related_item_uuids',
+           'getId',
+           'id',
+           'order_date',
+           'order_number',
+           'verification_code',]
 
 class List_Orders(grok.View, FolderContentsView):
     """
     """
     grok.context(IOrderFolder)
     grok.require('zope2.View')
-    
-    def contents_table(self):
-        table = ContentsTable(aq_inner(self.context), self.request)
-        return table.render()
-    
 
-class ContentsTable(FolderContentsTable):
-    """
-    The contents table renders the table and its actions.
-    """
+    def update(self):
+        self.orders = []
 
-    def __init__(self, context, request, contentFilter=None):
-        super(ContentsTable, self).__init__(context, request, contentFilter)
-        url = context.absolute_url()
-        view_url = url + '/@@list_orders'
-        self.table = Table(request, url, view_url, self.items,
-                           show_sort_column=self.show_sort_column,
-                           buttons=self.buttons)
+        if self.request.has_key('list_orders.form.submitted'):
+            # we have to have *some* filter criteria or the search will take
+            # forever.
+            got_filter_criteria = False
+            pps = self.context.restrictedTraverse('@@plone_portal_state')
+            portal = pps.portal()
+            self.orders_folder = portal.orders
+            oc = getToolByName(self.context, 'order_catalog')
 
-
-class Table(PloneTable):
-    """ Custom table renderer for contents
-    """                
-
-    render = ViewPageTemplateFile("./templates/table.pt")
-
+            query = {'portal_type': 'emas.app.order',
+                     'path': '/'.join(self.orders_folder.getPhysicalPath())}
+            for key in FILTERS:
+                value = self.request.get(key, None)
+                if value:
+                    got_filter_criteria = True
+                    query[key] = value
+            
+            if got_filter_criteria:
+                self.orders = oc(query)
+            else:
+                self.context.plone_utils.addPortalMessage(
+                    _('Please supply search criteria.')
+                )
+            
+            if not self.orders:
+                self.context.plone_utils.addPortalMessage(
+                    _('No orders matching your search criteria.')
+                )
