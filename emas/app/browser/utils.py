@@ -388,8 +388,8 @@ def get_paid_orders_for_member(context, memberid):
 
 def generate_verification_code(order):
     vcu = getUtility(IVerificationCodeUtility)
-    return vcu.generate_verification_code(order)
+    return vcu.generate(order)
 
 def is_unique_verification_code(context, verification_code):
     vcu = getUtility(IVerificationCodeUtility)
-    return vcu.is_unique_verification_code(verification_code)
+    return vcu.is_unique(verification_code)
