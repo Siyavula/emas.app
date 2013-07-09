@@ -1,6 +1,7 @@
 import random
+from types import IntType
 from persistent import Persistent
-from BTrees.OOBTree import OOBTree
+from BTrees.IIBTree import IIBTree
 from zope.interface import implements, Interface
 
 RETRIES = 1000
@@ -28,7 +29,7 @@ class VerificationCodeUtility(Persistent):
     implements(IVerificationCodeUtility)
 
     def __init__(self):
-        self._verification_codes = OOBTree()
+        self._verification_codes = IIBTree()
 
     def generate(self, order):
         verification_code = random.randint(LOWER, UPPER)
@@ -47,9 +48,10 @@ class VerificationCodeUtility(Persistent):
         return self._verification_codes.has_key(code) and False or True
 
     def add(self, verification_code, order):
-        self._verification_codes[verification_code] = order
-    
-    def _p_resolveConflict(self, old, vc1, vc2):
-        import pdb;pdb.set_trace()
-        raise 'Not implemented yet.'
-        return self.generate_verification_code 
+        if not isinstance(verification_code, IntType):
+            verification_code = int(verification_code)
+        order_id = order.getId()
+        if not isinstance(order_id, IntType):
+            order_id = int(order_id)
+
+        self._verification_codes[verification_code] = order_id
