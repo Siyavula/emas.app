@@ -20,9 +20,10 @@ def process(portal):
     print '-------------------------------------------------------------------'
     print('Started at:%s' % datetime.datetime.now().strftime(TIME_FORMAT))
     vcu = getUtility(IVerificationCodeUtility)
-    for count in range(0, 1000):
+    for count in range(0, 10000):
         print('Iteration:%s' % count)
         order = Order()
+        order.id = count
         vercode = vcu.generate(order)
         transaction.commit()
     print '-------------------------------------------------------------------'
