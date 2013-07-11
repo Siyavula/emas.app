@@ -35,7 +35,7 @@
 
                     <div id="selectpackage">
                         <h3>Select a subject</h3>
-                        <p id="order-discount">3rd term discount! Practise 3 grades for the price of 1. Valid until 31 December 2013
+                        <p id="order-discount">3rd term discount! Practise 3 grades for the price of one. Valid until 31 December 2013
                         </p>
                         <ul tal:define="selected view/subjects">
                             <li>
@@ -89,7 +89,7 @@
                                 Total = <span id="totalcost" class="amount">R0</span>
                             </div>
 
-                            <button type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="submitorder" value="1">Submit
+                            <button type="submit" class="btn btn-large allowMultiSubmit" name="submitorder" value="1">Submit
                             </button>
                         </div>
                     </div>
