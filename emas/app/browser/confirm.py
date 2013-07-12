@@ -57,12 +57,8 @@ class Confirm(grok.View):
         registry = queryUtility(IRegistry)
         self.settings = registry.forInterface(IEmasSettings)
 
-        self.display_items = self._display_items()
-        # get the discount sorted out
-        self.discount_items = self._discount_items(self.display_items)
-        self.selected_items = dict(
-            chain(self.display_items.items(), self.discount_items.items())
-        )
+        self.subjects = self.request.get('subjects')
+        self.service_ordered = self._service_ordered()
 
         self.ordernumber = ordernumber = self.request.get('ordernumber', '')
 
@@ -94,13 +90,31 @@ class Confirm(grok.View):
             self.order.shipping_address = self.request.get('shipping_address', '')
             self.order.payment_method = self.prod_payment()
 
-            for service, quantity in self.selected_items.items():
+            maths_service_ids = [
+                'maths-grade10-practice',
+                'maths-grade11-practice',
+                'maths-grade12-practice',
+            ]
+            science_service_ids = [
+                'science-grade10-practice',
+                'science-grade11-practice',
+                'science-grade12-practice',
+            ]
+            # everybody receives a 3rd term discount
+            ordered_service_ids = ['3rd-term-discount']
+            if self.subjects in ('Maths', 'Maths,Science'):
+                ordered_service_ids.append(maths_service_ids)
+            if self.subjects in ('Science', 'Maths,Science'):
+                ordered_service_ids.append(science_service_ids)
+
+            for sid in ordered_service_ids:
+                service = self.products_and_services[sid]
                 item_id = 'orderitem.%s' %service.getId()
                 relation = create_relation(service.getPhysicalPath())
-                props = {'id'           :item_id,
-                         'title'        :service.Title(),
-                         'related_item' :relation,
-                         'quantity'     :quantity}
+                props = {'id': item_id,
+                         'title': service.Title(),
+                         'related_item': relation,
+                         'quantity': 1}
                 createContentInContainer(
                     self.order,
                     'emas.app.orderitem',
@@ -265,57 +279,12 @@ class Confirm(grok.View):
                   }
         LOGGER.info(details)
 
-    def _display_items(self):
-        """ TODO: move to utils.display_items ASAP
-        """
-        display_items = {}
-        # the submitted form data looks like this:
-        #{'order.form.submitted': 'true',
-        #'prod_practice_book': 'Practice,Textbook',
-        #'practice_subjects': 'Maths,Science',
-        #'submit': '1',
-        #'practice_grade': 'Grade 10'}
-        self.grade = self.request.form.get('grade', '')
-        self.prod_practice_book = self.request.form.get('prod_practice_book', '')
-        self.subjects = self.request.form.get('subjects', '')
-        for subject in self.subjects.split(','):
-            for item in self.prod_practice_book.split(','):
-                # e.g. subject-grade-[practice | questions | textbook]
-                sid = '%s-%s-%s' %(subject, self.grade, item)
-                sid = sid.replace(' ', '-').lower()
-                quantity = display_items.get(sid, 0) +1
-                service = self.products_and_services._getOb(sid)
-                display_items[service] = quantity
-                
-        return display_items
-
-    def _discount_items(self, selected_items): 
-        discount_items = {}
-        deals = {'maths-grade10-discount'   :['maths-grade10-practice',
-                                              'maths-grade10-textbook'],
-                 'science-grade10-discount' :['science-grade10-practice',
-                                              'science-grade10-textbook'],
-                 'maths-grade11-discount'   :['maths-grade11-practice',
-                                              'maths-grade11-textbook'],
-                 'science-grade11-discount' :['science-grade11-practice',
-                                              'science-grade11-textbook'],
-                 'maths-grade12-discount'   :['maths-grade12-practice',
-                                              'maths-grade12-textbook'],
-                 'science-grade12-discount' :['science-grade12-practice',
-                                              'science-grade12-textbook'], }
-        
-        selected_items = set(selected_items.keys())
-        for discount_id, items in deals.items():
-            deal_items = \
-                set([self.products_and_services._getOb(item) for item in items])
-
-            common_items = selected_items.intersection(deal_items)
-            if len(common_items) == len(deal_items):
-                discount_service = self.products_and_services._getOb(discount_id)
-                quantity = discount_items.get(discount_service.getId(), 0) +1
-                discount_items[discount_service] = quantity
-
-        return discount_items
+    def _service_ordered(self):
+        substr = "1 year subscription to %s Grade 10, 11 and 12"
+        if self.subjects in ('Maths', 'Science'):
+            return substr % self.subjects
+        elif self.subjects == 'Maths,Science':
+            return substr % "Maths and Science" 
 
     def ordersubmitted(self):
         return self.request.has_key('order.form.submitted')
@@ -383,7 +352,7 @@ class Confirm(grok.View):
         message = self.ordertemplate(
             fullname=fullname,
             sitename=sitename,
-            orderitems=self.display_items.keys(),
+            service_ordered=self.service_ordered,
             totalcost=totalcost,
             username=username,
             ordernumber=self.ordernumber,
@@ -402,7 +371,7 @@ class Confirm(grok.View):
         message = self.ordernotification(
             fullname=fullname,
             sitename=sitename,
-            orderitems=self.display_items.keys(),
+            service_ordered=self.service_ordered,
             totalcost=totalcost,
             orderurl=order.absolute_url(),
             username=username,

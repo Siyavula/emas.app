@@ -77,25 +77,25 @@ class IService(IProduct):
     amount_of_credits = schema.Int(
         title=_(u"Amount of credits"),
         required=False,
-        default=20,
+        default=0,
     )
 
     amount_of_moola = schema.Int(
         title=_(u"Amount of moola"),
         required=False,
-        default=200,
+        default=0,
     )
 
     grade = schema.Choice(
         title=_(u"Grade"),
         vocabulary=vocab_grades,
-        required=True,
+        required=False,
     )
 
     subject = schema.Choice(
         title=_(u"Subject"),
         vocabulary=vocab_subjects,
-        required=True,
+        required=False,
     )
     
     channels = schema.List(
