@@ -46,7 +46,7 @@
       <metal:content-core fill-slot="content-core">
       <div id="search-form">
           <form action="." method="POST" name="order-filter">
-              <table id="search-form-table">
+              <table id="search-form-table" class="listing">
                   <tr>
                       <td>
                           <label for="review_state">
@@ -54,7 +54,7 @@
                           </label>
                       </td>
                       <td>
-                          <select id="select-review-state" name="review_state" class="select-widget choice-field">
+                          <select id="select-review-state" name="filter_criteria.review_state:record:ignore_empty" class="select-widget choice-field">
                               <option></option>
                               <option tal:repeat="details view/review_states" value="state"
                                   tal:attributes="value python:details[0]">
@@ -68,7 +68,7 @@
                           </label>
                       </td>
                       <td>
-                          <select id="select-payment-method" name="payment_method" class="select-widget choice-field">
+                          <select id="select-payment-method" name="filter_criteria.payment_method:record:ignore_empty" class="select-widget choice-field">
                               <option></option>
                               <option tal:repeat="details view/payment_methods" value="payment_method"
                                   tal:attributes="value details/token">
@@ -84,7 +84,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="userid" name="userid" value=""
+                          <input id="userid" name="filter_criteria.userid:record:ignore_empty" value=""
                               tal:attributes="value request/userid |nothing"/> <br/>
                       </td>
                       <td>
@@ -93,7 +93,7 @@
                           </label>
                       </td>
                       <td>
-                          <select id="select-related-services" name="related_item_uuids">
+                          <select id="select-related-services" name="filter_criteria.related_item_uuids:record:ignore_empty">
                               <option></option>
                               <option tal:repeat="details view/services" value="service"
                                 tal:attributes="value python:details[0]">
@@ -109,7 +109,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="start_date" name="order_date.start:record:date:ignore_empty" value="" type="date"
+                          <input id="start_date" name="filter_criteria.order_date_start:record:date:ignore_empty" value="" type="date"
                               tal:attributes="value request/start_date |nothing"/> <br/>
                       </td>
                       <td>
@@ -118,7 +118,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="end_date" name="order_date.end:record:date:ignore_empty" value="" type="date"
+                          <input id="end_date" name="filter_criteria.order_date_end:record:date:ignore_empty" value="" type="date"
                               tal:attributes="value request/end_date |nothing"/> <br/>
                       </td>
                   </tr>
@@ -129,7 +129,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="verification_code" name="verification_code" value=""
+                          <input id="verification_code" name="filter_criteria.verification_code:record:ignore_empty" value=""
                               tal:attributes="value request/verification_code |nothing"/> <br/>
                       </td>
                       <td>
@@ -138,7 +138,7 @@
                           </label>
                       </td>
                       <td>
-                          <input id="order_number" name="order_number" value=""
+                          <input id="order_number" name="filter_criteria.order_number:record:ignore_empty" value=""
                               tal:attributes="value request/order_number |nothing"/> <br/>
                       </td>
                   </tr>
@@ -156,43 +156,46 @@
       <tal:orders condition="order_brains">
       <table class="listing"
           tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;">
-
-            <tr>
-                <th>State</th>
-                <th>Payment method</th>
-                <th>User id</th>
-                <th>Related services</th>
-                <th>Order date</th>
-                <th>Order number</th>
-                <th>Verification code</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>State</th>
+                    <th>Payment method</th>
+                    <th>User id</th>
+                    <th>Related services</th>
+                    <th>Order date</th>
+                    <th>Order number</th>
+                    <th>Verification code</th>
+                </tr>
+            </thead>
+            <tbody>
             <tal:display-orders repeat="brain order_brains">
-            <tr tal:define="order python:brain.getObject()">
-                <td tal:content="python:view.get_review_state_for(order)">
-                    State
-                </td>
-                <td tal:content="order/payment_method">
-                    CC|EFT|PRSMS
-                </td>
-                <td tal:content="order/userid">
-                    User007
-                </td>
-                <td tal:define="services python:view.get_related_services_for(order)">
-                    <tal:services repeat="service services">
-                    <span tal:content="service">Related services</span><br/>
-                    </tal:services>
-                </td>
-                <td tal:content="python:toLocalizedTime(order.creation_date)">
-                    01 Jan 1970
-                </td>
-                <td tal:content="order/Title">
-                    Order nnn
-                </td>
-                <td tal:content="order/verification_code">
-                    44444
-                </td>
-            </tr>
+                <tr tal:define="order python:brain.getObject()">
+                    <td tal:content="python:view.get_review_state_for(order)">
+                        State
+                    </td>
+                    <td tal:content="order/payment_method">
+                        CC|EFT|PRSMS
+                    </td>
+                    <td tal:content="order/userid">
+                        User007
+                    </td>
+                    <td tal:define="services python:view.get_related_services_for(order)">
+                        <tal:services repeat="service services">
+                        <span tal:content="service">Related services</span><br/>
+                        </tal:services>
+                    </td>
+                    <td tal:content="python:toLocalizedTime(order.creation_date)">
+                        01 Jan 1970
+                    </td>
+                    <td tal:content="order/Title">
+                        Order nnn
+                    </td>
+                    <td tal:content="order/verification_code">
+                        44444
+                    </td>
+                </tr>
             </tal:display-orders>
+            </tbody>
           </table>
       </tal:orders>
 
