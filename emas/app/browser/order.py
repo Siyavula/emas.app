@@ -58,6 +58,18 @@ class Order(grok.View):
     def subject_selected(self, subject, selected):
         return subject == selected and 'checked' or ''
 
+    def grade(self):
+        return self.request.get('grade', '')
+
+    def grade_selected(self, grade, selected):
+        return grade == selected and 'checked' or ''
+
+    def service(self):
+        return self.request.get('service', '')
+
+    def service_selected(self, service, selected):
+        return service == selected and 'checked' or ''
+
     def prod_payment(self):
         return self.request.get('prod_payment', '')
 
