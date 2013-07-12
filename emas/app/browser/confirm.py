@@ -86,28 +86,39 @@ class Confirm(grok.View):
                 self.order = self.orders._getOb(self.ordernumber)
 
             self.order.fullname = self.request.get('fullname', '')
-            self.order.phone= self.request.get('phone', '')
+            self.order.phone = self.request.get('phone', '')
             self.order.shipping_address = self.request.get('shipping_address', '')
             self.order.payment_method = self.prod_payment()
 
-            maths_service_ids = [
-                'maths-grade10-practice',
-                'maths-grade11-practice',
-                'maths-grade12-practice',
-            ]
-            science_service_ids = [
-                'science-grade10-practice',
-                'science-grade11-practice',
-                'science-grade12-practice',
-            ]
-            # everybody receives a 3rd term discount
             ordered_service_ids = []
-            if self.subjects in ('Maths', 'Maths,Science'):
-                ordered_service_ids.extend(maths_service_ids)
-            if self.subjects in ('Science', 'Maths,Science'):
-                ordered_service_ids.extend(science_service_ids)
-            discount_qty = len(ordered_service_ids)
-            ordered_service_ids.append('3rd-term-discount')
+
+            # mobile order
+            if self.request.get('service') == 'monthly-practice':
+                sid = '%s-%s-monthly-practice' % (
+                    self.subjects.lower(),
+                    self.request.get('grade')
+                    )
+                ordered_service_ids.append(sid)
+
+            # web order
+            else:
+                maths_service_ids = [
+                    'maths-grade10-practice',
+                    'maths-grade11-practice',
+                    'maths-grade12-practice',
+                ]
+                science_service_ids = [
+                    'science-grade10-practice',
+                    'science-grade11-practice',
+                    'science-grade12-practice',
+                ]
+                if self.subjects in ('Maths', 'Maths,Science'):
+                    ordered_service_ids.extend(maths_service_ids)
+                if self.subjects in ('Science', 'Maths,Science'):
+                    ordered_service_ids.extend(science_service_ids)
+                discount_qty = len(ordered_service_ids)
+                # everybody receives a 3rd term discount
+                ordered_service_ids.append('3rd-term-discount')
 
             for sid in ordered_service_ids:
                 service = self.products_and_services[sid]
@@ -286,11 +297,16 @@ class Confirm(grok.View):
         LOGGER.info(details)
 
     def _service_ordered(self):
-        substr = "1 year subscription to %s Grade 10, 11 and 12"
-        if self.subjects in ('Maths', 'Science'):
-            return substr % self.subjects
-        elif self.subjects == 'Maths,Science':
-            return substr % "Maths and Science" 
+        if self.request.get('service') == 'monthly-practice':
+            grade = self.request.get('grade')[-2:]
+            substr = "1 month subscription to %s Grade %s"
+            return substr % (self.subjects, grade)
+        else:
+            substr = "1 year subscription to %s Grade 10, 11 and 12"
+            if self.subjects in ('Maths', 'Science'):
+                return substr % self.subjects
+            elif self.subjects == 'Maths,Science':
+                return substr % "Maths and Science" 
 
     def ordersubmitted(self):
         return self.request.has_key('order.form.submitted')
