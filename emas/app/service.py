@@ -109,7 +109,6 @@ class IService(IProduct):
         title = _(u"Access group"),
         required = False,
         source = get_vocab_groups,
-        default = 'Members',
     )
 
     access_path = schema.TextLine(
