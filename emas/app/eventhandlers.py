@@ -43,7 +43,6 @@ def onOrderPaid(order, event):
         userid = order.userid 
         msfolder = portal['memberservices']
         now = datetime.datetime.now().date()
-        tmpservices = []
 
         uuids = practice_service_uuids(portal)
         memberservices = member_services_for(portal, uuids, userid)
@@ -53,6 +52,7 @@ def onOrderPaid(order, event):
             # try to find the memberservices based on the orderitem
             # related services.
 
+            tmpservices = []
             service_purchased = item.related_item.to_object
 
             for ms in memberservices:
