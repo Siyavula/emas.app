@@ -101,20 +101,26 @@ class Confirm(grok.View):
                 'science-grade12-practice',
             ]
             # everybody receives a 3rd term discount
-            ordered_service_ids = ['3rd-term-discount']
+            ordered_service_ids = []
             if self.subjects in ('Maths', 'Maths,Science'):
-                ordered_service_ids.append(maths_service_ids)
+                ordered_service_ids.extend(maths_service_ids)
             if self.subjects in ('Science', 'Maths,Science'):
-                ordered_service_ids.append(science_service_ids)
+                ordered_service_ids.extend(science_service_ids)
+            discount_qty = len(ordered_service_ids)
+            ordered_service_ids.append('3rd-term-discount')
 
             for sid in ordered_service_ids:
                 service = self.products_and_services[sid]
                 item_id = 'orderitem.%s' %service.getId()
                 relation = create_relation(service.getPhysicalPath())
+                if sid == '3rd-term-discount':
+                    quantity = discount_qty
+                else:
+                    quantity = 1
                 props = {'id': item_id,
                          'title': service.Title(),
                          'related_item': relation,
-                         'quantity': 1}
+                         'quantity': quantity}
                 createContentInContainer(
                     self.order,
                     'emas.app.orderitem',
