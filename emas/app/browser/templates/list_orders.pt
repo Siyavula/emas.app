@@ -151,52 +151,54 @@
               </table>
           </form>
       </div>
-      <tal:defines define="order_brains view/orders">
+      <tal:defines define="batch view/orders">
 
-      <tal:orders condition="order_brains">
+      <tal:orders condition="batch">
+      <div metal:use-macro="context/batch_macros/macros/navigation"></div>
       <table class="listing"
           tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;">
-            <thead>
-                <tr>
-                    <th>State</th>
-                    <th>Payment method</th>
-                    <th>User id</th>
-                    <th>Related services</th>
-                    <th>Order date</th>
-                    <th>Order number</th>
-                    <th>Verification code</th>
-                </tr>
-            </thead>
-            <tbody>
-            <tal:display-orders repeat="brain order_brains">
-                <tr tal:define="order python:brain.getObject()">
-                    <td tal:content="python:view.get_review_state_for(order)">
-                        State
-                    </td>
-                    <td tal:content="order/payment_method">
-                        CC|EFT|PRSMS
-                    </td>
-                    <td tal:content="order/userid">
-                        User007
-                    </td>
-                    <td tal:define="services python:view.get_related_services_for(order)">
-                        <tal:services repeat="service services">
-                        <span tal:content="service">Related services</span><br/>
-                        </tal:services>
-                    </td>
-                    <td tal:content="python:toLocalizedTime(order.creation_date)">
-                        01 Jan 1970
-                    </td>
-                    <td tal:content="order/Title">
-                        Order nnn
-                    </td>
-                    <td tal:content="order/verification_code">
-                        44444
-                    </td>
-                </tr>
-            </tal:display-orders>
-            </tbody>
-          </table>
+          <thead>
+              <tr>
+                  <th>State</th>
+                  <th>Payment method</th>
+                  <th>User id</th>
+                  <th>Related services</th>
+                  <th>Order date</th>
+                  <th>Order number</th>
+                  <th>Verification code</th>
+              </tr>
+          </thead>
+          <tbody>
+          <tal:display-orders repeat="brain batch">
+              <tr tal:define="order python:brain.getObject()">
+                  <td tal:content="python:view.get_review_state_for(order)">
+                      State
+                  </td>
+                  <td tal:content="order/payment_method">
+                      CC|EFT|PRSMS
+                  </td>
+                  <td tal:content="order/userid">
+                      User007
+                  </td>
+                  <td tal:define="services python:view.get_related_services_for(order)">
+                      <tal:services repeat="service services">
+                      <span tal:content="service">Related services</span><br/>
+                      </tal:services>
+                  </td>
+                  <td tal:content="python:toLocalizedTime(order.creation_date)">
+                      01 Jan 1970
+                  </td>
+                  <td tal:content="order/Title">
+                      Order nnn
+                  </td>
+                  <td tal:content="order/verification_code">
+                      44444
+                  </td>
+              </tr>
+          </tal:display-orders>
+          </tbody>
+      </table>
+      <div metal:use-macro="context/batch_macros/macros/navigation"></div>
       </tal:orders>
 
       </tal:defines>

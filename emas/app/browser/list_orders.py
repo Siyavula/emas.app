@@ -11,6 +11,7 @@ from plone.uuid.interfaces import IUUID
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.PloneBatch import Batch
 
 from emas.app.order_folder import IOrderFolder
 from emas.app.order import vocab_payment_methods
@@ -70,6 +71,9 @@ class List_Orders(grok.View):
                 self.context.plone_utils.addPortalMessage(
                     _('Please supply search criteria.')
                 )
+        b_size = int(self.request.get('b_size', 50))
+        b_start = int(self.request.get('b_start', 0))
+        self.orders = Batch(self.orders, b_size, b_start)
             
     def review_states(self):
         return [['ordered', 'Ordered'],
