@@ -168,3 +168,17 @@ div.selectpackage ol li {
     text-align: center;
 }
 
+#search-form-table {
+    border: none;
+}
+
+#search-form-table.listing td,
+#search-form-table.listing tbody tr,
+#search-form-table.listing tbody tr.odd {
+    background-color: transparent;
+    border: none;
+}
+
+#search-form-table.listing label {
+    font-weight: normal;
+}
