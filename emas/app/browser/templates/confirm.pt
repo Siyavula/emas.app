@@ -95,13 +95,13 @@
                             <button tal:condition="not:warnings"
                                 id="makepayment"
                                 type="submit" 
-                                class="button generic no-icon small-caps allowMultiSubmit"
+                                class="btn btn-large allowMultiSubmit"
                                 name="makepayment" value="make payment">
                                 Make payment
                             </button>
 
                             <button type="submit" tal:condition="warnings"
-                                class="button generic no-icon small-caps allowMultiSubmit"
+                                class="btn btn-large allowMultiSubmit"
                                 name="continue" value="1">
                                 I understand, make payment
                             </button>
@@ -123,7 +123,7 @@
 
                 <p>You have ordered the following:</p>
                 <ul class="nodots">
-                    <li tal:content="service view/service_ordered">
+                    <li tal:content="view/service_ordered">
                         1 year subscription to Maths Grade 10, 11 and 12
                     </li>
                 </ul>
@@ -151,7 +151,7 @@
                         
                     <button tal:condition="not:view/sms_selected"
                         id="back" type="submit"
-                        class="button generic no-icon small-caps allowMultiSubmit"
+                        class="btn btn-large allowMultiSubmit"
                         name="confirm_back_button" 
                         value="back">
                         Change order
