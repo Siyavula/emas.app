@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import DateTime
 from five import grok
 from plone.directives import dexterity, form
@@ -80,6 +80,18 @@ grok.global_adapter(serviceuid, name="serviceuid")
 def subject(obj):
     return obj.related_service.to_object.subject
 grok.global_adapter(subject, name="subject")
+
+
+@indexer(IMemberService)
+def grade(obj):
+    return obj.related_service.to_object.grade
+grok.global_adapter(grade, name="grade")
+
+
+@indexer(IMemberService)
+def access_path(obj):
+    return obj.related_service.to_object.access_path
+grok.global_adapter(access_path, name="access_path")
 
 
 @indexer(IMemberService)

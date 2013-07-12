@@ -8,8 +8,10 @@ from plone.dexterity.utils import createContentInContainer
 
 from emas.theme.browser.views import is_expert
 
-from emas.app.browser.utils import member_services
+from emas.app.browser.utils import member_services_for
+from emas.app.browser.utils import member_services_for_subject
 from emas.app.browser.utils import qaservice_uuids
+from emas.app.browser.utils import practice_service_uuids
 
 
 def orderItemAdded(item, event):
@@ -39,39 +41,43 @@ def onOrderPaid(order, event):
         # we cannot use the authenticated user since an admin user might
         # trigger the workflow.
         userid = order.userid 
-
-        memberservices = portal['memberservices']
-        ms_path = '/'.join(memberservices.getPhysicalPath())
-
-        pc = getToolByName(portal, 'portal_catalog')
-        query = {'portal_type': 'emas.app.memberservice',
-                 'userid'   : userid,
-                 'path'       : ms_path}
-        
+        msfolder = portal['memberservices']
         now = datetime.datetime.now().date()
+        tmpservices = []
+
+        uuids = practice_service_uuids(portal)
+        memberservices = member_services_for(portal, uuids, userid)
+
         # grab the services from the orderitems
         for item in order.order_items():
             # try to find the memberservices based on the orderitem
             # related services.
-            service = item.related_item.to_object
-            uuid = IUUID(service)
-            query['serviceuid'] = uuid
-            brains = pc(query)
-            tmpservices = [b.getObject() for b in brains]
+
+            service_purchased = item.related_item.to_object
+
+            for ms in memberservices:
+                active_service = ms.related_service.to_object
+                if (active_service.subject == service_purchased.subject and
+                    active_service.grade == service_purchased.grade and
+                    active_service.access_path == \
+                        service_purchased.access_path):
+                    tmpservices.append(ms)
 
             # create a new memberservice if it doesn't exisst
-            if len(brains) == 0:
-                mstitle = '%s for %s' % (service.title, userid)
+            if len(tmpservices) == 0:
+                mstitle = '%s for %s' % (service_purchased.title, userid)
 
-                related_service = create_relation(service.getPhysicalPath())
+                related_service = create_relation(
+                    service_purchased.getPhysicalPath()
+                    )
                 props = {'title': mstitle,
                          'userid': userid,
                          'related_service': related_service,
-                         'service_type': service.service_type
+                         'service_type': service_purchased.service_type
                          }
 
                 ms = createContentInContainer(
-                    memberservices,
+                    msfolder,
                     'emas.app.memberservice',
                     False,
                     **props
@@ -84,11 +90,11 @@ def onOrderPaid(order, event):
 
             # update the memberservices with info from the orderitem
             for ms in tmpservices:
-                if service.service_type == 'credit':
+                if service_purchased.service_type == 'credit':
                     credits = ms.credits
-                    credits += service.amount_of_credits
+                    credits += service_purchased.amount_of_credits
                     ms.credits = credits
-                elif service.service_type == 'subscription':
+                elif service_purchased.service_type == 'subscription':
                     # Always use the current expiry date if it is greater than
                     # 'now', since that gives the user everything he paid for.
                     # Only use 'now' if the service has already expired, so we
@@ -96,13 +102,19 @@ def onOrderPaid(order, event):
                     if now > ms.expiry_date:
                         ms.expiry_date = now
                     expiry_date = ms.expiry_date + datetime.timedelta(
-                        service.subscription_period
+                        service_purchased.subscription_period
                     )
                     ms.expiry_date = expiry_date
+                if ms.related_service.to_object.subscription_period < \
+                   service_purchased.subscription_period:
+                    related_service = create_relation(
+                        service_purchased.getPhysicalPath()
+                        )
+                    ms.related_service = related_service
                 ms.reindexObject()
             
             # if we have specific access groups add the user the those here.
-            access_group = service.access_group
+            access_group = service_purchased.access_group
             if access_group:
                 gt = getToolByName(order, 'portal_groups')
                 # now add the member to the correct group

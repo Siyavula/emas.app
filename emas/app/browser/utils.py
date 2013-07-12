@@ -185,6 +185,21 @@ def member_services(context, service_uids):
     return memberservices
 
 
+def member_services_for_subject(context, service_uids, subject):
+    pmt = getToolByName(context, 'portal_membership')
+    member = pmt.getAuthenticatedMember()
+    today = datetime.today().date()
+    query = {'portal_type': 'emas.app.memberservice',
+             'userid': member.getId(),
+             'serviceuid': service_uids,
+             'expiry_date': {'query':today, 'range':'min'},
+             'subject': subject.lower(),
+            }
+    pc = getToolByName(context, 'portal_catalog')
+    memberservices = [b.getObject() for b in pc(query)]
+    return memberservices
+
+
 def member_services_for(context, service_uids, userid):
     today = datetime.today().date()
     query = {'portal_type': 'emas.app.memberservice',
@@ -407,4 +422,3 @@ def is_unique_verification_code(context, verification_code):
     if len(brains) > 0:
         return False
     return True
-
