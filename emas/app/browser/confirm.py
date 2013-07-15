@@ -309,7 +309,8 @@ class Confirm(grok.View):
                 return substr % "Maths and Science" 
 
     def ordersubmitted(self):
-        return self.request.has_key('order.form.submitted')
+        return (self.request.has_key('order.form.submitted') or
+                self.request.has_key('mobileorder.form.submitted'))
 
     def prod_payment(self):
         return self.request.get('prod_payment', '')
