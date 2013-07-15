@@ -41,7 +41,7 @@
                     <div class="ordertotal">
                         <form method="POST" action=".">
                             <button type="submit" tal:condition="warnings"
-                                class="button generic no-icon small-caps allowMultiSubmit"
+                                class="btn btn-large allowMultiSubmit"
                                 name="continue" value="1">
                                 Continue
                             </button>
