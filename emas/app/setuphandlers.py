@@ -405,7 +405,7 @@ ITEMS = {
         'type': 'emas.app.service',
         'price': -100.00,
         'service_type': 'subscription',
-        'subscription_period': 365,
+        'subscription_period': 0,
         'amount_of_credits': 0,
         },
 }
