@@ -56,7 +56,7 @@
             </div>
 
             <button type="submit" 
-                class="button generic no-icon small-caps allowMultiSubmit" 
+                class="btn btn-large allowMultiSubmit" 
                 name="submit" value="1">
                 Click to continue
             </button>
