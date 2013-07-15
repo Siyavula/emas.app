@@ -302,7 +302,7 @@ class Confirm(grok.View):
             substr = "1 month subscription to %s Grade %s"
             return substr % (self.subjects, grade)
         else:
-            substr = "1 year subscription to %s Grade 10, 11 and 12"
+            substr = "6 month subscription to %s Grade 10, 11 and 12"
             if self.subjects in ('Maths', 'Science'):
                 return substr % self.subjects
             elif self.subjects == 'Maths,Science':

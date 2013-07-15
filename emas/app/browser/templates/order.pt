@@ -35,7 +35,7 @@
 
                     <div id="selectpackage">
                         <h3>Select a subject</h3>
-                        <p id="order-discount">3rd term discount! Practise 3 grades for the price of one. Valid until 31 December 2013
+                        <p id="order-discount">Promotional offer: practise three grades for the price of one! 6 month subscription.
                         </p>
                         <ul tal:define="selected view/subjects">
                             <li>

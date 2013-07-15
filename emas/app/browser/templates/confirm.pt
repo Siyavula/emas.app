@@ -124,7 +124,7 @@
                 <p>You have ordered the following:</p>
                 <ul class="nodots">
                     <li tal:content="view/service_ordered">
-                        1 year subscription to Maths Grade 10, 11 and 12
+                        6 month subscription to Maths Grade 10, 11 and 12
                     </li>
                 </ul>
 
