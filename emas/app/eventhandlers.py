@@ -55,6 +55,11 @@ def onOrderPaid(order, event):
             tmpservices = []
             service_purchased = item.related_item.to_object
 
+            # filter out ѕervices that don't have subject or grade set,
+            # eg. discounts
+            if not (service_purchased.grade and service_purchased.subject):
+                continue
+
             for ms in memberservices:
                 active_service = ms.related_service.to_object
                 if (active_service.subject == service_purchased.subject and
