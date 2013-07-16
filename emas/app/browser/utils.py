@@ -406,15 +406,5 @@ def generate_verification_code(order):
     return vcu.generate(order)
 
 def is_unique_verification_code(context, verification_code):
-<<<<<<< HEAD
-    pc = getToolByName(context, 'portal_catalog')
-    query = {'portal_type':       'emas.app.order',
-             'verification_code': verification_code}
-    brains = pc.unrestrictedSearchResults(query)
-    if len(brains) > 0:
-        return False
-    return True
-=======
     vcu = getUtility(IVerificationCodeUtility)
     return vcu.is_unique(verification_code)
->>>>>>> fix-verificationcode-generation
