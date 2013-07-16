@@ -48,8 +48,6 @@ class VerificationCodeUtility(Persistent):
         return self._verification_codes.has_key(code) and False or True
 
     def add(self, verification_code, order):
-        if not isinstance(verification_code, IntType):
-            verification_code = int(verification_code)
         order_id = order.getId()
         if not isinstance(order_id, IntType):
             order_id = int(order_id)
