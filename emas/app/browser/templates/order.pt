@@ -8,12 +8,13 @@
 <body>
 
     <metal:core fill-slot="main">
-        <h1 class="documentFirstHeading">Order form</h1>
-
         <div id="content-core"
             tal:define="isAnon context/@@plone_portal_state/anonymous;
                         action python:view.action(isAnon);">
-            <div id="individual-order-form" class="selectpackage">
+
+            <h3 class="center spacing">Buy</h3>
+
+            <div id="individual-order-form">
 
                 <form id="individual-orderform" name="orderform" 
                       class="update-action" method="POST"
@@ -29,166 +30,69 @@
                     <div class="login-links" tal:condition="isAnon"
                         tal:define="login_url string:${context/absolute_url}/login;
                                     register_url string:${context/absolute_url}/@@register-from-orderform">
-                        You are <strong>not logged in</strong>, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
+                        You are <strong>not logged in</strong>. You need an account on the site before you can buy a subscription.<br/> Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
                     </div>
 
-                    <h2>Subject</h2>
-                    <fieldset
-                        tal:define="selected view/subjects">
-                        <legend>
-                            Choose your subject(s) and grade:
-                        </legend>
-                        <p>
-                            <input name="subjects"
-                                   checked=""
-                                   tal:attributes="checked python:view.subject_selected('Maths', selected)"
-                                   value="Maths"
-                                   type="radio"
-                                   multiplier="1"> Maths
-
-                           <input name="subjects"
-                                  checked=""
-                                  tal:attributes="checked python:view.subject_selected('Science', selected)"
-                                  value="Science"
-                                  multiplier="1"
-                                  type="radio"> Science
-
-                           <input name="subjects"
-                                  checked=""
-                                  tal:attributes="checked python:view.subject_selected('Maths,Science', selected)"
-                                  multiplier="2"
-                                  value="Maths,Science"
-                                  type="radio"> Both Maths &amp; Science
+                    <div id="selectpackage">
+                        <h3>Select a subject</h3>
+                        <p id="order-discount">Promotional offer: practise three grades for the price of one! 6 month subscription for Gr 10, 11 and 12.
                         </p>
-                        <p
-                            tal:define="selected view/grade">
-                            <input name="grade"
-                                   checked=""
-                                   tal:attributes="checked python:view.grade_selected('grade10', selected)"
-                                   value="grade10"
-                                   type="radio"> Grade 10 (CAPS)
-                            <input name="grade" 
-                                   checked=""
-                                   tal:attributes="checked python:view.grade_selected('grade11', selected)"
-                                   value="grade11" 
-                                   type="radio"> Grade 11 (CAPS)
-                            <input name="grade"
-                                   checked=""
-                                   tal:attributes="checked python:view.grade_selected('grade12', selected)"
-                                   value="grade12" 
-                                   type="radio"> Grade 12 (NCS)
-                        </p>
-                    </fieldset>
+                        <ul tal:define="selected view/subjects">
+                            <li>
+                                <input name="subjects"
+                                    checked=""
+                                    tal:attributes="checked python:view.subject_selected('Maths', selected)"
+                                    value="Maths"
+                                    type="radio"
+                                    price="150"> Maths: R150
+                            </li>
+                            <li>
+                                <input name="subjects"
+                                    checked=""
+                                    tal:attributes="checked python:view.subject_selected('Science', selected)"
+                                    value="Science"
+                                    price="150"
+                                    type="radio"> Science: R150
+                            </li>
+                            <li>
+                                <input name="subjects"
+                                    checked=""
+                                    tal:attributes="checked python:view.subject_selected('Maths,Science', selected)"
+                                    price="300"
+                                    value="Maths,Science"
+                                    type="radio"> Maths and Science: R300
+                            </li>
+                        </ul>
 
-                    <h2>Product</h2>
+                        <h3>Select a payment method</h3>
 
-                    <fieldset
-                        tal:define="selected view/prod_practice_book">
+                        <ul
+                            tal:define="selected view/prod_payment">
+                            <li>
+                                <input name="prod_payment"
+                                    checked=""
+                                    tal:attributes="checked python:view.prod_payment_selected('creditcard', selected)"
+                                    value="creditcard"
+                                    type="radio"> Credit Card payment<br />
+                            </li>
+                            <li>
+                                <input name="prod_payment"
+                                    checked=""
+                                    tal:attributes="checked python:view.prod_payment_selected('eft', selected)"
+                                    value="eft"
+                                    type="radio"> Electronic Funds Transfer (EFT)<br />
+                            </li>
+                        </ul>
 
-                        <legend>
-                            Select your product:
-                        </legend>
+                        <div class="ordertotal">
+                            <div>
+                                Total = <span id="totalcost" class="amount">R0</span>
+                            </div>
 
-                        <fieldset>
-                            <p>
-                                <input name="prod_practice_book" 
-                                   checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice', selected);
-                                                   price view/practiceprice"
-                                   class="no-textbook" 
-                                   value="Practice" 
-                                   type="radio" 
-                                   price="150"> Intelligent Practice only (no textbook) [per subject: one year subscription <strong tal:content="python:'R%.2f' % view.practiceprice">R150</strong>]
-                            </p>
-                        </fieldset>
-
-                        <fieldset>
-                            <p>
-                            <input name="prod_practice_book"
-                                   checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Practice,Textbook', selected);
-                                                   price view/textbook_and_practiceprice"
-                                   class="textbook add-textbook"
-                                   value="Practice,Textbook" 
-                                   type="radio" 
-                                   price="350"> Intelligent Practice and a textbook [per subject: <strong>1</strong> textbook and one year subscription <strong tal:content="python:'R%.2f' % view.textbook_and_practiceprice">R350</strong>]
-                            </p>
-                        </fieldset>
-                        <fieldset>
-                            <p>
-                                <input name="prod_practice_book"
-                                   checked=""
-                                   tal:attributes="checked python:view.prod_practice_book_selected('Textbook', selected);
-                                                   price view/textbookprice"
-                                   class="add-textbook"
-                                   value="Textbook"
-                                   type="radio"
-                                   price="200"> Textbook only (no Intelligent Practice) [per subject: <strong tal:content="python:'R%.2f' % view.textbookprice">R200</strong>]
-                            </p>
-                        </fieldset>
-
-                    </fieldset>
-                    <h2>How would you like to pay?</h2>
-                    <fieldset
-                        tal:define="selected view/prod_payment">
-                        <p>
-                            <input name="prod_payment"
-                                checked=""
-                                tal:attributes="checked python:view.prod_payment_selected('creditcard', selected)"
-                                value="creditcard"
-                                type="radio"> Credit Card payment<br />
-                        </p>
-                        <p>
-                            <input name="prod_payment"
-                                checked=""
-                                tal:attributes="checked python:view.prod_payment_selected('eft', selected)"
-                                value="eft"
-                                type="radio"> Electronic Funds Transfer (EFT)<br />
-                        </p>
-                    </fieldset>
-
-                    <div id='bookonly' class='hidden'>
-                        <div id='postaladdress'>
-                            You have requested a <b>textbook</b>, we need to know your details for delivery: 
+                            <button type="submit" class="btn btn-large allowMultiSubmit" name="submitorder" value="1">Submit
+                            </button>
                         </div>
-                        <fieldset>
-                            <p>
-                                Name and surname:<input name="fullname" value=""
-                                    type="text"
-                                    tal:attributes="value view/fullname">
-                            </p>
-                            <p>
-                                Phone number:<input name="phone" value=""
-                                    type="text"
-                                    tal:attributes="value view/phone">
-                            </p>
-                            <p>
-                                Postal address: <textarea name="shipping_address"
-                                    tal:content="structure view/shipping_address"></textarea>
-                            </p>
-                        </fieldset>
-
-                        <div class="payment-confirmation">
-    Payment confirmation should take 24 hours for a credit card payment and 48 hours for an EFT payment. Door-to-door shipping will take 3 to 5 working days after your payment has been received.
-                        </div>
-
                     </div>
-
-                    <div class="ordertotal">
-                        <div>
-                            Total = <span id="totalcost" class="amount">R0</span>
-                        </div>
-
-                        <button type="submit" class="button generic no-icon small-caps allowMultiSubmit" name="submitorder" value="1">Submit
-                        </button>
-                    </div>
-
-                    <div class="login-links" tal:condition="isAnon"
-                        tal:define="login_url string:${context/absolute_url}/login;
-                                    register_url string:${context/absolute_url}/@@register-from-orderform">
-                            You are <strong>not logged in</strong>, you need an account on the site before you can order. Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
-                    </div>
-
                 </form>
             </div>
         </div>

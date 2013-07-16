@@ -1,4 +1,3 @@
-import random
 import hashlib
 
 
@@ -6,16 +5,16 @@ from urlparse import urlparse
 from datetime import date, datetime, timedelta
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
+from zope.component import getUtility
 from zope.annotation.interfaces import IAnnotations
 from zope.component import queryUtility
 from zope.intid.interfaces import IIntIds
 
 
 
+from emas.app.utilities import IVerificationCodeUtility
+
 KEY_BASE = 'emas.app'
-RETRIES = 1000
-LOWER = 9999
-UPPER = 100000
 
 
 service_mapping = {
@@ -261,52 +260,10 @@ def get_paid_orders_for_member(context, memberid):
 
 
 def generate_verification_code(order):
-    rnumber = random.randint(LOWER, UPPER)
-    count = 0
-    while not is_unique_verification_code(order, rnumber) and count < RETRIES:
-        count += 1
-        rnumber = random.randint(LOWER, UPPER)
-
-    if count > RETRIES - 1:
-        raise Exception('Could not find unique verification code.')
-
-    return str(rnumber)
+    vcu = getUtility(IVerificationCodeUtility, context=order)
+    return vcu.generate(order)
 
 
 def is_unique_verification_code(context, verification_code):
-    pc = getToolByName(context, 'portal_catalog')
-    query = {'portal_type':       'emas.app.order',
-             'verification_code': verification_code}
-    brains = pc.unrestrictedSearchResults(query)
-    if len(brains) > 0:
-        return False
-    return True
-
-
-def paths_to_intids(paths, context):
-    ids = []
-    intids = queryUtility(IIntIds, context=context)
-    for path in paths:
-        obj = context.restrictedTraverse(path)
-        if obj:
-            ids.append(intids.getId(obj))
-    return ids
-
-
-def practice_service_intids(context):
-    mapping = service_mapping.get('practice_services')
-    service_paths = mapping.get('general')
-    return paths_to_intids(service_paths, context)
-
-
-def practice_service_intids_for_subject(context, subject):
-    intids = queryUtility(IIntIds, context=context)
-    mapping = service_mapping.get('practice_services')
-    paths = mapping.get('general')
-    ids = []
-    for path in paths:
-        obj = context.restrictedTraverse(path)
-        if obj and obj.subject == subject:
-            ids.append(intids.getId(obj))
-
-    return ids
+    vcu = getUtility(IVerificationCodeUtility, context=order)
+    return vcu.is_unique(verification_code)

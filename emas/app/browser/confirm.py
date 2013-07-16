@@ -18,7 +18,11 @@ from plone.registry.interfaces import IRegistry
 from emas.theme.interfaces import IEmasSettings
 from emas.app.order import CREDITCARD, SMS, EFT
 from emas.app.service import IService
-from emas.app.browser.utils import annotate, get_paid_orders_for_member
+from emas.app.browser.utils import (
+    annotate,
+    get_paid_orders_for_member,
+    generate_verification_code
+    )
 
 LOGGER = logging.getLogger(__name__)
 
@@ -57,12 +61,8 @@ class Confirm(grok.View):
         registry = queryUtility(IRegistry)
         self.settings = registry.forInterface(IEmasSettings)
 
-        self.display_items = self._display_items()
-        # get the discount sorted out
-        self.discount_items = self._discount_items(self.display_items)
-        self.selected_items = dict(
-            chain(self.display_items.items(), self.discount_items.items())
-        )
+        self.subjects = self.request.get('subjects')
+        self.service_ordered = self._service_ordered()
 
         self.ordernumber = ordernumber = self.request.get('ordernumber', '')
 
@@ -90,17 +90,52 @@ class Confirm(grok.View):
                 self.order = self.orders._getOb(self.ordernumber)
 
             self.order.fullname = self.request.get('fullname', '')
-            self.order.phone= self.request.get('phone', '')
+            self.order.phone = self.request.get('phone', '')
             self.order.shipping_address = self.request.get('shipping_address', '')
             self.order.payment_method = self.prod_payment()
 
-            for service, quantity in self.selected_items.items():
+            ordered_service_ids = []
+
+            # mobile order
+            if self.request.get('service') == 'monthly-practice':
+                sid = '%s-%s-monthly-practice' % (
+                    self.subjects.lower(),
+                    self.request.get('grade')
+                    )
+                ordered_service_ids.append(sid)
+
+            # web order
+            else:
+                maths_service_ids = [
+                    'maths-grade10-practice',
+                    'maths-grade11-practice',
+                    'maths-grade12-practice',
+                ]
+                science_service_ids = [
+                    'science-grade10-practice',
+                    'science-grade11-practice',
+                    'science-grade12-practice',
+                ]
+                if self.subjects in ('Maths', 'Maths,Science'):
+                    ordered_service_ids.extend(maths_service_ids)
+                if self.subjects in ('Science', 'Maths,Science'):
+                    ordered_service_ids.extend(science_service_ids)
+                discount_qty = len(ordered_service_ids)
+                # everybody receives a 3rd term discount
+                ordered_service_ids.append('3rd-term-discount')
+
+            for sid in ordered_service_ids:
+                service = self.products_and_services[sid]
                 item_id = 'orderitem.%s' %service.getId()
                 relation = create_relation(service.getPhysicalPath())
-                props = {'id'           :item_id,
-                         'title'        :service.Title(),
-                         'related_item' :relation,
-                         'quantity'     :quantity}
+                if sid == '3rd-term-discount':
+                    quantity = discount_qty
+                else:
+                    quantity = 1
+                props = {'id': item_id,
+                         'title': service.Title(),
+                         'related_item': relation,
+                         'quantity': quantity}
                 createContentInContainer(
                     self.order,
                     'emas.app.orderitem',
@@ -217,30 +252,9 @@ class Confirm(grok.View):
         self.action = '.'
 
         # generate payment verification code
-        verification_code = self.generate_verification_code(order)
+        verification_code = generate_verification_code(order)
         order.verification_code = verification_code
         order.reindexObject(idxs=['verification_code'])
-
-    def generate_verification_code(self, order):
-        rnumber = random.randint(self.lower, self.upper)
-        count = 0
-        while not self.is_unique_verification_code(rnumber) and count < self.retries:
-            count += 1
-            rnumber = random.randint(self.lower, self.upper)
-
-        if count > self.retries - 1:
-            raise Exception('Could not find unique verification code.')
-
-        return str(rnumber)
-
-    def is_unique_verification_code(self, verification_code):
-        pc = getToolByName(self.context, 'portal_catalog')
-        query = {'portal_type':       'emas.app.order',
-                 'verification_code': verification_code}
-        brains = pc.unrestrictedSearchResults(query)
-        if len(brains) > 0:
-            return False
-        return True
 
     def logVCSDetails(self):
         details = {'OrderNumber': self.ordernumber,
@@ -265,60 +279,21 @@ class Confirm(grok.View):
                   }
         LOGGER.info(details)
 
-    def _display_items(self):
-        """ TODO: move to utils.display_items ASAP
-        """
-        display_items = {}
-        # the submitted form data looks like this:
-        #{'order.form.submitted': 'true',
-        #'prod_practice_book': 'Practice,Textbook',
-        #'practice_subjects': 'Maths,Science',
-        #'submit': '1',
-        #'practice_grade': 'Grade 10'}
-        self.grade = self.request.form.get('grade', '')
-        self.prod_practice_book = self.request.form.get('prod_practice_book', '')
-        self.subjects = self.request.form.get('subjects', '')
-        for subject in self.subjects.split(','):
-            for item in self.prod_practice_book.split(','):
-                # e.g. subject-grade-[practice | questions | textbook]
-                sid = '%s-%s-%s' %(subject, self.grade, item)
-                sid = sid.replace(' ', '-').lower()
-                quantity = display_items.get(sid, 0) +1
-                service = self.products_and_services._getOb(sid)
-                display_items[service] = quantity
-                
-        return display_items
-
-    def _discount_items(self, selected_items): 
-        discount_items = {}
-        deals = {'maths-grade10-discount'   :['maths-grade10-practice',
-                                              'maths-grade10-textbook'],
-                 'science-grade10-discount' :['science-grade10-practice',
-                                              'science-grade10-textbook'],
-                 'maths-grade11-discount'   :['maths-grade11-practice',
-                                              'maths-grade11-textbook'],
-                 'science-grade11-discount' :['science-grade11-practice',
-                                              'science-grade11-textbook'],
-                 'maths-grade12-discount'   :['maths-grade12-practice',
-                                              'maths-grade12-textbook'],
-                 'science-grade12-discount' :['science-grade12-practice',
-                                              'science-grade12-textbook'], }
-        
-        selected_items = set(selected_items.keys())
-        for discount_id, items in deals.items():
-            deal_items = \
-                set([self.products_and_services._getOb(item) for item in items])
-
-            common_items = selected_items.intersection(deal_items)
-            if len(common_items) == len(deal_items):
-                discount_service = self.products_and_services._getOb(discount_id)
-                quantity = discount_items.get(discount_service.getId(), 0) +1
-                discount_items[discount_service] = quantity
-
-        return discount_items
+    def _service_ordered(self):
+        if self.request.get('service') == 'monthly-practice':
+            grade = self.request.get('grade')[-2:]
+            substr = "1 month subscription to %s Grade %s"
+            return substr % (self.subjects, grade)
+        else:
+            substr = "6 month subscription to %s Grade 10, 11 and 12"
+            if self.subjects in ('Maths', 'Science'):
+                return substr % self.subjects
+            elif self.subjects == 'Maths,Science':
+                return substr % "Maths and Science" 
 
     def ordersubmitted(self):
-        return self.request.has_key('order.form.submitted')
+        return (self.request.has_key('order.form.submitted') or
+                self.request.has_key('mobileorder.form.submitted'))
 
     def prod_payment(self):
         return self.request.get('prod_payment', '')
@@ -383,7 +358,7 @@ class Confirm(grok.View):
         message = self.ordertemplate(
             fullname=fullname,
             sitename=sitename,
-            orderitems=self.display_items.keys(),
+            service_ordered=self.service_ordered,
             totalcost=totalcost,
             username=username,
             ordernumber=self.ordernumber,
@@ -402,7 +377,7 @@ class Confirm(grok.View):
         message = self.ordernotification(
             fullname=fullname,
             sitename=sitename,
-            orderitems=self.display_items.keys(),
+            service_ordered=self.service_ordered,
             totalcost=totalcost,
             orderurl=order.absolute_url(),
             username=username,

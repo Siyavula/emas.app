@@ -90,7 +90,7 @@ class Order(dexterity.Container):
         subtotal = 0
         items = self.objectValues()
         for item in items:
-            subtotal += item.price
+            subtotal += (item.price * item.quantity)
         return subtotal
         
     def vat(self, subtotal):

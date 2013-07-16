@@ -2,8 +2,8 @@ Dear <span tal:replace="options/fullname">John</span>
 
 Thank you for your order!
 
-You have ordered the following items from the <span tal:replace="options/sitename">Everything Maths</span> website:
-<tal:items tal:repeat="item options/orderitems">-  <tal:item tal:replace="item/Title"/></tal:items>
+You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
+- <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 

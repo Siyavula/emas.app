@@ -400,6 +400,14 @@ ITEMS = {
         'access_path'  :'@@practice/grade-12',
         'subject': u'science'},
 
+    '3rd-term-discount' : {
+        'title': '3rd Term Discount',
+        'type': 'emas.app.service',
+        'price': -100.00,
+        'service_type': 'subscription',
+        'subscription_period': 0,
+        'amount_of_credits': 0,
+        },
 }
 
 
@@ -486,7 +494,6 @@ def setupProductsAndServices(portal):
             **values
         ) 
         item = products_and_services._getOb(key)
-        item.subject = values['subject']
         wf = getToolByName(portal, 'portal_workflow')
         status = wf.getStatusOf('simple_publication_workflow', item)
         if status and status['review_state'] != 'published':

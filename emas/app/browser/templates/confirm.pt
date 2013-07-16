@@ -41,7 +41,7 @@
                     <div class="ordertotal">
                         <form method="POST" action=".">
                             <button type="submit" tal:condition="warnings"
-                                class="button generic no-icon small-caps allowMultiSubmit"
+                                class="btn btn-large allowMultiSubmit"
                                 name="continue" value="1">
                                 Continue
                             </button>
@@ -95,13 +95,13 @@
                             <button tal:condition="not:warnings"
                                 id="makepayment"
                                 type="submit" 
-                                class="button generic no-icon small-caps allowMultiSubmit"
+                                class="btn btn-large allowMultiSubmit"
                                 name="makepayment" value="make payment">
                                 Make payment
                             </button>
 
                             <button type="submit" tal:condition="warnings"
-                                class="button generic no-icon small-caps allowMultiSubmit"
+                                class="btn btn-large allowMultiSubmit"
                                 name="continue" value="1">
                                 I understand, make payment
                             </button>
@@ -123,8 +123,8 @@
 
                 <p>You have ordered the following:</p>
                 <ul class="nodots">
-                    <li tal:repeat="service view/display_items"
-                        tal:content="service/Title">1 year sub to Maths
+                    <li tal:content="view/service_ordered">
+                        6 month subscription to Maths Grade 10, 11 and 12
                     </li>
                 </ul>
 
@@ -146,27 +146,12 @@
                     <input name="subjects" value="" type="hidden"
                         tal:attributes="value view/subjects">
 
-                    <input name="grade" value="" type="hidden"
-                        tal:attributes="value view/grade">
-
-                    <input name="prod_practice_book" value="" type="hidden"
-                        tal:attributes="value view/prod_practice_book">
-
                     <input name="prod_payment" value="" type="hidden"
                         tal:attributes="value view/prod_payment" >
                         
-                    <input name="fullname" value="" type="hidden"
-                        tal:attributes="value view/fullname" >
-                        
-                    <input name="phone" value="" type="hidden"
-                        tal:attributes="value view/phone" >
-                        
-                    <input name="shipping_address" value="" type="hidden"
-                        tal:attributes="value view/shipping_address" >
-
                     <button tal:condition="not:view/sms_selected"
                         id="back" type="submit"
-                        class="button generic no-icon small-caps allowMultiSubmit"
+                        class="btn btn-large allowMultiSubmit"
                         name="confirm_back_button" 
                         value="back">
                         Change order

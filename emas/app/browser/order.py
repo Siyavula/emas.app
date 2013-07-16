@@ -17,35 +17,45 @@ class Order(grok.View):
     grok.require('zope2.View')
 
     def __call__(self):
-        self.grade = None
-        self.prod_practice_book = None
-        self.subjects = None
+        missing_input = False
+        form_submitted = False
+        self.subjects = self.request.get('subjects', None)
+
+        if self.request.has_key('login.form.submitted'):
+            membership_tool = getToolByName(self.context, 'portal_membership')
+            membership_tool.loginUser(self.request)
+
         if self.request.has_key('order.form.submitted'):
-            # validate form
-            self.grade = self.request.form.get('grade', None)
-            self.prod_practice_book = self.request.form.get('prod_practice_book', None)
-            self.subjects = self.request.form.get('subjects', None)
-            names = ['selected_subjects', 'selected_grade', 'selected_product']
-            self.missing_fields = \
-                [name for name in names if getattr(self, name, None) is None]
-        
-            if self.grade and self.prod_practice_book and self.subjects:
-                # traverse to confirm if form has required fields
-                view = self.context.restrictedTraverse('@@confirm')
-                return view()
-                
-        return super(Order, self).__call__()
+            form_submitted = True
+            if not self.subjects:
+                missing_input = True
+
+        elif self.request.has_key('mobileorder.form.submitted'):
+            form_submitted = True
+            required_fields = ['subjects', 'grade', 'service', 'prod_payment']
+            pps = self.context.restrictedTraverse('@@plone_portal_state')
+            for fieldname in required_fields:
+                if self.request.get(fieldname, None) is None:
+                    missing_input = True
+
+            if missing_input:
+                ptool = pps.portal().plone_utils
+                ptool.addPortalMessage('All fields are required.',
+                                        'warning')
+
+        if form_submitted and not missing_input:
+            # traverse to confirm if form has required fields
+            view = self.context.restrictedTraverse('@@confirm')
+            return view()
+        else:
+            return super(Order, self).__call__()
 
     def update(self):
-        if self.request.has_key('order.form.submitted'):
+        if (self.request.has_key('order.form.submitted') or
+                self.request.has_key('mobileorder.form.submitted')):
             pmt = getToolByName(self.context, 'portal_membership')
             if pmt.isAnonymousUser():
                 self.context.restrictedTraverse('logged_in')()
-
-            if not(self.grade and self.prod_practice_book and self.subjects):
-                pps = self.context.restrictedTraverse('@@plone_portal_state')
-                ptool = pps.portal().plone_utils
-                ptool.addPortalMessage('All fields are required.', 'warning')
 
         registry = queryUtility(IRegistry)
         settings = registry.forInterface(IEmasServiceCost)
@@ -65,9 +75,6 @@ class Order(grok.View):
         """
         return '%s/@@order' %self.context.absolute_url()
         
-    def subjects(self):
-        return self.request.get('subjects', '')
-   
     def subject_selected(self, subject, selected):
         return subject == selected and 'checked' or ''
 
@@ -77,26 +84,17 @@ class Order(grok.View):
     def grade_selected(self, grade, selected):
         return grade == selected and 'checked' or ''
 
-    def prod_practice_book(self):
-        return self.request.get('prod_practice_book', '')
+    def service(self):
+        return self.request.get('service', '')
 
-    def prod_practice_book_selected(self, prod_practice_book, selected):
-        return prod_practice_book == selected and 'checked' or ''
+    def service_selected(self, service, selected):
+        return service == selected and 'checked' or ''
 
     def prod_payment(self):
         return self.request.get('prod_payment', '')
 
     def prod_payment_selected(self, prod_payment, selected):
         return prod_payment == selected and 'checked' or ''
-
-    def fullname(self):
-        return self.request.get('fullname', '')
-
-    def phone(self):
-        return self.request.get('phone', '')
-
-    def shipping_address(self):
-        return self.request.get('shipping_address', '')
 
     def ordernumber(self):
         return self.request.get('ordernumber', '')

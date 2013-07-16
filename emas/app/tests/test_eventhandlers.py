@@ -1,29 +1,90 @@
+from datetime import datetime, timedelta
+
 import unittest2 as unittest
+import transaction
 
-from plone.testing.z2 import Browser as z2Browser
-from zope.testbrowser.browser import Browser as ZopeTestBrowser
+from z3c.relationfield.relation import create_relation
+from zope.component import createObject
+from zope.component import queryUtility
 
-from emas.app.tests.base import FUNCTIONAL_TESTING 
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import setRoles
+from plone.dexterity.utils import createContentInContainer
 
-class MemberServiceFunctionalTests(unittest.TestCase):
+from emas.app import eventhandlers
+from emas.app.tests.base import INTEGRATION_TESTING
 
-    layer =  FUNCTIONAL_TESTING
 
-    def test_register(self):
+class FauxEvent(object):
+    action = 'pay'
+
+
+class TestEventhandlers(unittest.TestCase):
+    """ Unit test for the eventhandlers.
+    """
+
+    layer = INTEGRATION_TESTING
+
+    def setUp(self):
         self.portal = self.layer['portal']
-        self.app = self.layer['app']
-        import pdb;pdb.set_trace()
+        self.services = self.portal._getOb('products_and_services')
+        setRoles(self.portal, TEST_USER_ID, ['Member'])
+        self.orders = self.portal._getOb('orders')
+        self.ordernumbers = []
 
-        #browser = ZopeTestBrowser()
-        #browser.open('http://nohost/plone/@@register')
-        #browser.getControl('Full Name').value = 'tester086'
-        #browser.getControl('E-mail').value = 'rijk@upfrontsystems.co.za'
-        #browser.getControl('Confirm password').value = '12345'
-        #browser.getControl('Subscibe to newsletter').selected = False
-        #browser.getControl('Register').click()
+    def tearDown(self):
+        self.orders.manage_delObjects(self.ordernumbers)
 
-        browser = z2Browser(self.app)
-        browser.open(self.portal.portal_url() + '/register')
-        assert('register' in browser.contents,
-               'This is not the registration page.')
+    def test_eventhandler(self):
+        service1 = self.services['science-grade12-monthly-practice']
+        service1.access_group = ''
+        ordernumber = '%04d' % 1
+        self.ordernumbers.append(ordernumber)
+        order1 = self.add_order(ordernumber, TEST_USER_ID, service1)
 
+        event1 = FauxEvent()
+        eventhandlers.onOrderPaid(order1, event1)
+
+        service2 = self.services['science-grade12-practice']
+        service2.access_group = ''
+        ordernumber = '%04d' % 2
+        self.ordernumbers.append(ordernumber)
+        order2 = self.add_order(ordernumber, TEST_USER_ID, service2)
+
+        event2 = FauxEvent()
+        eventhandlers.onOrderPaid(order2, event2)
+    
+    def add_order(self, ordernumber, memberid, service):
+        props = {'id'     :ordernumber,
+                 'title'  :ordernumber,
+                 'userid' :memberid}
+        createContentInContainer(
+            self.orders,
+            'emas.app.order',
+            False,
+            **props
+        )
+        order = self.orders._getOb(ordernumber)
+
+        order.fullname = 'test user'
+        order.phone = '999999999999'
+        order.shipping_address = ''
+        order.payment_method = 'eft'
+
+        item_id = 'orderitem.%s' %service.getId()
+        relation = create_relation(service.getPhysicalPath())
+        props = {'id'           :item_id,
+                 'title'        :service.Title(),
+                 'related_item' :relation,
+                 'quantity'     :1}
+        createContentInContainer(
+            order,
+            'emas.app.orderitem',
+            False,
+            **props
+        )
+        return order
+
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
