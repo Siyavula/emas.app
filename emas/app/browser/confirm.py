@@ -252,7 +252,7 @@ class Confirm(grok.View):
         self.action = '.'
 
         # generate payment verification code
-        verification_code = utils.generate_verification_code(order)
+        verification_code = generate_verification_code(order)
         order.verification_code = verification_code
         order.reindexObject(idxs=['verification_code'])
 
