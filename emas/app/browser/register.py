@@ -20,5 +20,3 @@ class RegistrationForm(BaseRegForm):
         self.request[ac_password] = self.request.get('form.password')
 
         return self.context.unrestrictedTraverse('@@login-from-orderform')()
-
-

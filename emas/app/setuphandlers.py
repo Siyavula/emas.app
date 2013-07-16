@@ -509,12 +509,39 @@ def setupGroups(portal):
             groups_tool.addGroup(groupid)
 
 
+def setupCustomCatalog(portal):
+    if not portal.hasObject('order_catalog'):
+        addTool = portal.manage_addProduct['emas.app'].manage_addTool
+        # Add the tool by its meta_type
+        addTool('EMAS Catalog Tool')
+
+    catalog = portal.order_catalog
+    
+    new_indexes = {'portal_type'         : 'FieldIndex',
+                   'review_state'        : 'FieldIndex',
+                   'payment_method'      : 'FieldIndex',
+                   'userid'              : 'FieldIndex',
+                   'related_item_uuids'  : 'KeywordIndex',
+                   'allowedRolesAndUsers': 'KeywordIndex',
+                   'getId'               : 'FieldIndex',
+                   'id'                  : 'FieldIndex',
+                   'order_date'          : 'DateIndex',
+                   'order_number'        : 'DateIndex',
+                   'verification_code'   : 'FieldIndex',}
+
+    current_indexes = catalog.indexes()
+    for index_name, index_type in new_indexes.items():
+        if not index_name in current_indexes:
+            catalog.addIndex(index_name, index_type, extra=None)
+
+
 def install(context):
     if context.readDataFile('emas.app-marker.txt') is None:
         return
+
     site = context.getSite()
+    setupCustomCatalog(site)
     setupGroups(site)
     setupPortalContent(site)
     setupCatalogIndexes(site)
     setupProductsAndServices(site)
-

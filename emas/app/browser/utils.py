@@ -254,7 +254,7 @@ def get_paid_orders_for_member(context, memberid):
              'userid': memberid,
              'review_state': 'paid'
             }
-    pc = getToolByName(context, 'portal_catalog')
+    pc = getToolByName(context, 'order_catalog')
     brains = pc(query)
     return [b.getObject() for b in brains]
 

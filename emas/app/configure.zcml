@@ -7,6 +7,9 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="emas.app">
 
+
+  <five:registerPackage package="." initialize=".initialize" />
+
   <!-- Include configuration for dependencies listed in setup.py -->
   <includeDependencies package="." />
   <include package=".browser" />

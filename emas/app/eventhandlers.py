@@ -40,6 +40,11 @@ def onOrderPaid(order, event):
         # trigger the workflow.
         memberid = order.userid 
 
+        pc = getToolByName(portal, 'order_catalog')
+        query = {'portal_type': 'emas.app.memberservice',
+                 'userid'   : userid,
+                 'path'       : ms_path}
+        
         now = datetime.datetime.now().date()
         # grab the services from the orderitems
         for item in order.order_items():
