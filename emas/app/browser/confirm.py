@@ -18,7 +18,11 @@ from plone.registry.interfaces import IRegistry
 from emas.theme.interfaces import IEmasSettings
 from emas.app.order import CREDITCARD, SMS, EFT
 from emas.app.service import IService
-from emas.app.browser.utils import annotate, get_paid_orders_for_member
+from emas.app.browser.utils import (
+    annotate,
+    get_paid_orders_for_member,
+    generate_verification_code
+    )
 
 LOGGER = logging.getLogger(__name__)
 
@@ -248,30 +252,9 @@ class Confirm(grok.View):
         self.action = '.'
 
         # generate payment verification code
-        verification_code = self.generate_verification_code(order)
+        verification_code = utils.generate_verification_code(order)
         order.verification_code = verification_code
         order.reindexObject(idxs=['verification_code'])
-
-    def generate_verification_code(self, order):
-        rnumber = random.randint(self.lower, self.upper)
-        count = 0
-        while not self.is_unique_verification_code(rnumber) and count < self.retries:
-            count += 1
-            rnumber = random.randint(self.lower, self.upper)
-
-        if count > self.retries - 1:
-            raise Exception('Could not find unique verification code.')
-
-        return str(rnumber)
-
-    def is_unique_verification_code(self, verification_code):
-        pc = getToolByName(self.context, 'portal_catalog')
-        query = {'portal_type':       'emas.app.order',
-                 'verification_code': verification_code}
-        brains = pc.unrestrictedSearchResults(query)
-        if len(brains) > 0:
-            return False
-        return True
 
     def logVCSDetails(self):
         details = {'OrderNumber': self.ordernumber,

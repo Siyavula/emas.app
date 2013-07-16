@@ -402,9 +402,9 @@ def get_paid_orders_for_member(context, memberid):
     return [b.getObject() for b in brains]
 
 def generate_verification_code(order):
-    vcu = getUtility(IVerificationCodeUtility)
+    vcu = getUtility(IVerificationCodeUtility, context=order)
     return vcu.generate(order)
 
 def is_unique_verification_code(context, verification_code):
-    vcu = getUtility(IVerificationCodeUtility)
+    vcu = getUtility(IVerificationCodeUtility, context=order)
     return vcu.is_unique(verification_code)
