@@ -20,6 +20,11 @@ class Order(grok.View):
         missing_input = False
         form_submitted = False
         self.subjects = self.request.get('subjects', None)
+
+        if self.request.has_key('login.form.submitted'):
+            membership_tool = getToolByName(self.context, 'portal_membership')
+            membership_tool.loginUser(self.request)
+
         if self.request.has_key('order.form.submitted'):
             form_submitted = True
             if not self.subjects:
