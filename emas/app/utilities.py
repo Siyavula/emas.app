@@ -45,7 +45,10 @@ class VerificationCodeUtility(Persistent):
         return str(verification_code)
         
     def is_unique(self, code):
-        return code in self._verification_codes.keys() and False or True
+        if code in self._verification_codes.keys():
+            return False
+        else:
+            return True
 
     def add(self, verification_code, order):
         order_id = order.getId()
