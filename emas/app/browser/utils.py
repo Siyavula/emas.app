@@ -267,3 +267,31 @@ def generate_verification_code(order):
 def is_unique_verification_code(context, verification_code):
     vcu = getUtility(IVerificationCodeUtility, context=order)
     return vcu.is_unique(verification_code)
+
+def paths_to_intids(paths, context):
+    ids = []
+    intids = queryUtility(IIntIds, context=context)
+    for path in paths:
+        obj = context.restrictedTraverse(path)
+        if obj:
+            ids.append(intids.getId(obj))
+    return ids
+
+
+def practice_service_intids(context):
+    mapping = service_mapping.get('practice_services')
+    service_paths = mapping.get('general')
+    return paths_to_intids(service_paths, context)
+
+
+def practice_service_intids_for_subject(context, subject):
+    intids = queryUtility(IIntIds, context=context)
+    mapping = service_mapping.get('practice_services')
+    paths = mapping.get('general')
+    ids = []
+    for path in paths:
+        obj = context.restrictedTraverse(path)
+        if obj and obj.subject == subject:
+            ids.append(intids.getId(obj))
+
+    return ids
