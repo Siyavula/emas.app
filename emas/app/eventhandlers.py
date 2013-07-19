@@ -45,7 +45,11 @@ def onOrderPaid(order, event):
         now = datetime.datetime.now().date()
 
         uuids = practice_service_uuids(portal)
-        memberservices = member_services_for(portal, uuids, userid)
+        query = {'portal_type': 'emas.app.memberservice',
+                 'userid': userid,
+                 'serviceuid': uuids}
+        pc = getToolByName(order, 'portal_catalog')
+        memberservices = [b.getObject() for b in pc(query)]
 
         # grab the services from the orderitems
         for item in order.order_items():
@@ -61,10 +65,10 @@ def onOrderPaid(order, event):
                 continue
 
             for ms in memberservices:
-                active_service = ms.related_service.to_object
-                if (active_service.subject == service_purchased.subject and
-                    active_service.grade == service_purchased.grade and
-                    active_service.access_path == \
+                related_service = ms.related_service.to_object
+                if (related_service.subject == service_purchased.subject and
+                    related_service.grade == service_purchased.grade and
+                    related_service.access_path == \
                         service_purchased.access_path):
                     tmpservices.append(ms)
 
