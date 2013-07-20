@@ -24,7 +24,7 @@ class List_Orders(grok.View):
     """
     """
     grok.context(IOrderFolder)
-    grok.require('zope2.View')
+    grok.require('zope2.ManageProperties')
 
     title = 'Orders'
 
