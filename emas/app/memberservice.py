@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 import transaction
 
@@ -23,7 +24,7 @@ from emas.app.interfaces import IMemberServiceDataAccess
 
 # must come from environment; add to buildout soonest!
 #postgresql[+driver]://<user>:<pass>@<host>/<dbname>
-DSN='postgresql://emas:emas@localhost:5435/emas'
+DSN = os.environ.get('emas_DSN')
 TWOPHASE=True
 ENGINE = create_engine(DSN, convert_unicode=True)
 EMAS_SESSION_MAKER = sessionmaker(bind=ENGINE,
