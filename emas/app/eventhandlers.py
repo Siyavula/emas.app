@@ -33,18 +33,12 @@ def onOrderPaid(order, event):
     """ Once the order is paid we create the memberservices.
     """
     if event.action == 'pay':
-        pms = getToolByName(order, 'portal_membership')
         portal = getToolByName(order, 'portal_url').getPortalObject()
         dao = MemberServicesDataAccess(portal)
         # we cannot use the authenticated user since an admin user might
         # trigger the workflow.
         memberid = order.userid 
 
-        pc = getToolByName(portal, 'order_catalog')
-        query = {'portal_type': 'emas.app.memberservice',
-                 'userid'   : userid,
-                 'path'       : ms_path}
-        
         now = datetime.datetime.now().date()
         # grab the services from the orderitems
         for item in order.order_items():
@@ -67,6 +61,7 @@ def onOrderPaid(order, event):
 
             # update the memberservices with info from the orderitem
             for ms in tmpservices:
+                # NOTE: remove this when we remove siyavula.what
                 if related_service.service_type == 'credit':
                     credits = ms.credits
                     credits += related_service.amount_of_credits
@@ -94,27 +89,17 @@ def onOrderPaid(order, event):
 
 def memberServiceAdded(obj, event):
     service = obj.related_service.to_object
-    obj_path = '/'.join(obj.getPhysicalPath())
+    related_service_id = intids.getId(service)
+    memberid = obj.memberid
+    dao = MemberServicesDataAccess(obj)
+    memberservices = dao.get_member_services([related_service_id], memberid)
 
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': obj.userid,
-             'serviceuid': IUUID(service),
-            }
-    pc = getToolByName(service, 'portal_catalog')
-    # exclude the current obj based on its path
-    brains = [b for b in pc(query) if b.getPath() != obj_path]
-    if brains is not None and len(brains) > 0:
+    if memberservices is not None and len(memberservices) > 0:
         raise RuntimeError(
             'Only one memberservice is allowed per purchasable service.'
             'This member (%s) already has a memberservice for '
             '%s.' %(obj.userid, service.Title())
         )
-
-    # fix up ownership (if manager created member service)
-    if obj.userid not in obj.users_with_local_role('Owner'):
-        pms = getToolByName(obj, 'portal_membership')
-        pms.setLocalRoles(obj, [obj.userid], 'Owner')
-        obj.reindexObject()
 
 
 def onMemberJoined(obj, event):
