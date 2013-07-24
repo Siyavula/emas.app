@@ -125,19 +125,9 @@ def service_url(service):
 
 
 def member_credits(context):
-    credits = 0
-
-    service_uids = qaservice_uuids(context)
-    if service_uids is None or len(service_uids) < 1:
-        return 0
-
-    memberservices = member_services(context, service_uids)
-    if len(memberservices) < 1:
-        return 0 
-
-    for ms in memberservices:
-        credits += ms.credits
-    return credits
+    """ NOTE: remove this completely when we finally remove siyavula.what
+    """
+    return 0
 
 
 def annotate(obj, key, value):
