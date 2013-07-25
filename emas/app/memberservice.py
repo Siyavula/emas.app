@@ -99,7 +99,7 @@ class MemberServicesDataAccess(object):
             MemberService.memberid == memberid)
         for ms in result.all():
             related_service = self.related_service(ms)
-            if related_service and related_service.subject == subject:
+            if related_service and subject in related_service.subject:
                 memberservices.append(ms)
 
         return memberservices
@@ -134,7 +134,7 @@ class MemberServicesDataAccess(object):
         for ms in result.all():
             related_service = self.related_service(ms)
             if related_service and related_service.grade == grade and \
-               related_service.subject == subject:
+               subject in related_service.subject:
 
                 memberservices.append(ms)
 
@@ -165,7 +165,7 @@ class MemberServicesDataAccess(object):
 
         for ms in result.all():
             related_service = self.related_service(ms)
-            if related_service and related_service.subject == subject:
+            if related_service and subject in related_service.subject:
                 memberservices.append(ms)
 
         return memberservices
@@ -204,7 +204,7 @@ class MemberServicesDataAccess(object):
         for ms in result.all():
             related_service = self.related_service(ms)
             if related_service and related_service.grade == grade and \
-               related_service.subject == subject:
+               subject in related_service.subject:
 
                 memberservices.append(ms)
 
@@ -237,7 +237,7 @@ class MemberServicesDataAccess(object):
 
         for ms in result.all():
             related_service = self.related_service(ms)
-            if related_service and related_service.subject == subject:
+            if related_service and subject in related_service.subject:
 
                 memberservices.append(ms)
 
@@ -278,7 +278,7 @@ class MemberServicesDataAccess(object):
         for ms in result.all():
             related_service = self.related_service(ms)
             if related_service and related_service.grade == grade and \
-               related_service.subject == subject:
+               subject in related_service.subject:
 
                 memberservices.append(ms)
 
@@ -317,9 +317,7 @@ class MemberServicesDataAccess(object):
         """
         session = SESSION()
         ms = session.merge(memberservice)
-        session.flush()
         ms_id = memberservice.id
-        transaction.commit()
         return ms_id
 
     def delete_memberservice(self, memberservice):
@@ -327,7 +325,6 @@ class MemberServicesDataAccess(object):
         """
         session = SESSION()
         session.delete(memberservice)
-        transaction.commit()
     
     def related_service(self, memberservice):
         return self.intids.getObject(memberservice.related_service_id)
