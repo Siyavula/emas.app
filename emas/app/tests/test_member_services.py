@@ -33,18 +33,17 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.intids = queryUtility(IIntIds, context=self.portal)
         self.dao = MemberServicesDataAccess(self.portal)
         setRoles(self.portal, TEST_USER_ID, ['Member'])
+        self.session = SESSION()
 
     def tearDown(self):
-        session = SESSION()
-        count = session.query(MemberService).filter(
+        count = self.session.query(MemberService).filter(
             MemberService.memberid == TEST_USER_ID
         ).delete()
         print 'Deleted %s' % count
         transaction.commit()
     
     def test_get_all_memberservices(self):
-        session = SESSION()
-        db_ms = session.query(MemberService).all()
+        db_ms = self.session.query(MemberService).all()
         all_ms = self.dao.get_all_memberservices()
         self.assertEquals(len(db_ms), len(all_ms))
         self.assertEquals(all_ms, db_ms)
@@ -52,8 +51,9 @@ class TestMemberServiceIntegration(unittest.TestCase):
     def test_get_memberservices(self):
         service = self.services.objectValues()[0]
         ms_args = self.get_ms_args(service, TEST_USER_ID)
-        ms1_id= self.dao.add_memberservice(**ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1 = self.dao.add_memberservice(**ms_args) 
+        self.session.flush()
+        ms1_db = self.get_memberservice(ms1.id)
         service_uids = [self.intids.getId(service),]
         memberid = TEST_USER_ID
         memberservices = \
@@ -67,6 +67,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             service = maths_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         science_services = \
             [s for s in self.services.objectValues() if s.subject == 'science']
@@ -74,6 +75,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             service = science_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_memberservices_by_subject(TEST_USER_ID, 'maths')
@@ -89,6 +91,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             service = grade_10_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_memberservices_by_grade(TEST_USER_ID, 'grade-10')
@@ -103,6 +106,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             service = grade_10_maths_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_memberservices_by_subject_and_grade(TEST_USER_ID,
@@ -121,6 +125,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             service = self.services.objectValues()[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
         
         now = datetime.now().date()
         td = timedelta(1)
@@ -130,6 +135,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
         
         active_memberservices = self.dao.get_active_memberservices(TEST_USER_ID)
         self.assertEquals(len(active_memberservices), 3)
@@ -147,6 +153,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = now
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         services = \
             [s for s in self.services.objectValues() if s.subject == 'science']
@@ -155,6 +162,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_active_memberservices_by_subject(TEST_USER_ID, 'maths')
@@ -174,6 +182,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = now
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         services = \
             [s for s in self.services.objectValues() if s.grade == 'grade-11']
@@ -182,6 +191,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_active_memberservices_by_grade(TEST_USER_ID, 'grade-10')
@@ -202,6 +212,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = now
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         grade_10_science_services = \
             [s for s in self.services.objectValues() if \
@@ -211,6 +222,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_memberservices_by_subject_and_grade(TEST_USER_ID,
@@ -227,6 +239,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = now
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
         
         td = timedelta(1)
         yesterday = now - td
@@ -235,6 +248,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
         
         expired_memberservices = self.dao.get_expired_memberservices(TEST_USER_ID)
         self.assertEquals(len(expired_memberservices), 3)
@@ -252,6 +266,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = now
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         services = \
             [s for s in self.services.objectValues() if s.subject == 'science']
@@ -260,6 +275,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_expired_memberservices_by_subject(TEST_USER_ID, 'science')
@@ -279,6 +295,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = now
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         services = \
             [s for s in self.services.objectValues() if s.grade == 'grade-11']
@@ -287,6 +304,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_expired_memberservices_by_grade(TEST_USER_ID,
@@ -308,6 +326,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = now
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         grade_10_science_services = \
             [s for s in self.services.objectValues() if \
@@ -317,6 +336,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
             ms_args = self.get_ms_args(service, TEST_USER_ID)
             ms_args['expiry_date'] = yesterday
             self.dao.add_memberservice(**ms_args)
+        self.session.flush()
 
         memberservices = \
             self.dao.get_expired_memberservices_by_subject_and_grade(
@@ -328,50 +348,57 @@ class TestMemberServiceIntegration(unittest.TestCase):
     def test_get_memberservice_by_primary_key(self):
         service = self.services.objectValues()[0]
         ms_args = self.get_ms_args(service, TEST_USER_ID)
-        ms1_id= self.dao.add_memberservice(**ms_args) 
-        ms1_db = self.dao.get_memberservice_by_primary_key(ms1_id)
-        self.assertEquals(ms1_db, self.get_memberservice(ms1_id))
+        ms1 = self.dao.add_memberservice(**ms_args) 
+        self.session.flush()
+        ms1_db = self.dao.get_memberservice_by_primary_key(ms1.id)
+        self.assertEquals(ms1_db, self.get_memberservice(ms1.id))
 
     def test_add_memberservice(self):
         service = self.services.objectValues()[0]
         ms_args = self.get_ms_args(service, TEST_USER_ID)
-        ms1_id= self.dao.add_memberservice(**ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1 = self.dao.add_memberservice(**ms_args) 
+        self.session.flush()
+        ms1_db = self.get_memberservice(ms1.id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_adding_duplicate_memberservices(self):
         service = self.services.objectValues()[0]
         ms_args = self.get_ms_args(service, TEST_USER_ID)
-        ms1_id= self.dao.add_memberservice(**ms_args) 
-        ms2_id= self.dao.add_memberservice(**ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
-        ms2_db = self.get_memberservice(ms2_id)
+        ms1 = self.dao.add_memberservice(**ms_args) 
+        ms2 = self.dao.add_memberservice(**ms_args) 
+        self.session.flush()
+        ms1_db = self.get_memberservice(ms1.id)
+        ms2_db = self.get_memberservice(ms2.id)
         self.failUnless(IMemberService.providedBy(ms1_db))
 
     def test_update_memberservice(self):
         service = self.services.objectValues()[0]
         ms_args = self.get_ms_args(service, TEST_USER_ID)
-        ms1_id= self.dao.add_memberservice(**ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1 = self.dao.add_memberservice(**ms_args) 
+        self.session.flush()
+        ms1_db = self.get_memberservice(ms1.id)
         ms1_db.title = 'new title'
         self.dao.update_memberservice(ms1_db)
-        ms1_db = self.get_memberservice(ms1_id)
+        self.session.flush()
+        ms1_db = self.get_memberservice(ms1.id)
         self.assertEquals(ms1_db.title, 'new title')
 
     def test_delete_memberservice(self):
         service = self.services.objectValues()[0]
         ms_args = self.get_ms_args(service, TEST_USER_ID)
-        ms1_id= self.dao.add_memberservice(**ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1 = self.dao.add_memberservice(**ms_args) 
+        self.session.flush()
+        ms1_db = self.get_memberservice(ms1.id)
         self.dao.delete_memberservice(ms1_db)
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1_db = self.get_memberservice(ms1.id)
         self.assertEquals(ms1_db, None)
 
     def test_related_service(self):
         service = self.services.objectValues()[0]
         ms_args = self.get_ms_args(service, TEST_USER_ID)
-        ms1_id= self.dao.add_memberservice(**ms_args) 
-        ms1_db = self.get_memberservice(ms1_id)
+        ms1 = self.dao.add_memberservice(**ms_args) 
+        self.session.flush()
+        ms1_db = self.get_memberservice(ms1.id)
         self.failUnless(self.dao.related_service(ms1_db), service)
 
     def test_fti(self):
@@ -389,8 +416,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.assertEquals(factory, None)
     
     def get_memberservice(self, memberservice_id):
-        session = SESSION()
-        memberservices = session.query(MemberService).filter_by(
+        memberservices = self.session.query(MemberService).filter_by(
             id = memberservice_id).all()
         return memberservices and memberservices[0] or None
 
