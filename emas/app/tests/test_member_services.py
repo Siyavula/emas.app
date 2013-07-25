@@ -21,7 +21,7 @@ from emas.app.memberservice import SESSION
 from emas.app.tests.base import INTEGRATION_TESTING
 
 
-class TestMemberServiceIntegration(unittest.TestCase):
+class TestMemberServicesIntegration(unittest.TestCase):
     """Unit test for the MemberService type
     """
 
@@ -62,7 +62,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
 
     def test_get_memberservices_by_subject(self):
         maths_services = \
-            [s for s in self.services.objectValues() if s.subject == 'maths']
+            [s for s in self.services.objectValues() if 'maths' in s.subject]
         for count in range(0,3):
             service = maths_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -70,7 +70,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.session.flush()
 
         science_services = \
-            [s for s in self.services.objectValues() if s.subject == 'science']
+            [s for s in self.services.objectValues() if 'science' in s.subject]
         for count in range(0,3):
             service = science_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -101,7 +101,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         grade_10_maths_services = \
             [s for s in self.services.objectValues() if s.grade == 'grade-10']
         grade_10_maths_services = \
-            [s for s in grade_10_maths_services if s.subject == 'maths']
+            [s for s in grade_10_maths_services if 'maths' in s.subject]
         for count in range(0,3):
             service = grade_10_maths_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -147,7 +147,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         td = timedelta(1)
         yesterday = now - td
         services = \
-            [s for s in self.services.objectValues() if s.subject == 'maths']
+            [s for s in self.services.objectValues() if 'maths' in s.subject]
         for count in range(0,3):
             service = services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -156,7 +156,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.session.flush()
 
         services = \
-            [s for s in self.services.objectValues() if s.subject == 'science']
+            [s for s in self.services.objectValues() if 'science' in s.subject]
         for count in range(0,3):
             service = services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -206,7 +206,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
 
         grade_10_maths_services = \
             [s for s in self.services.objectValues() if \
-             s.grade == 'grade-10' and s.subject == 'maths']
+             s.grade == 'grade-10' and 'maths' in s.subject]
         for count in range(0,3):
             service = grade_10_maths_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -216,7 +216,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
 
         grade_10_science_services = \
             [s for s in self.services.objectValues() if \
-             s.grade == 'grade-10' and s.subject == 'science']
+             s.grade == 'grade-10' and 'science' in s.subject]
         for count in range(0,3):
             service = grade_10_science_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -260,7 +260,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         td = timedelta(1)
         yesterday = now - td
         services = \
-            [s for s in self.services.objectValues() if s.subject == 'maths']
+            [s for s in self.services.objectValues() if 'maths' in s.subject]
         for count in range(0,3):
             service = services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -269,7 +269,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
         self.session.flush()
 
         services = \
-            [s for s in self.services.objectValues() if s.subject == 'science']
+            [s for s in self.services.objectValues() if 'science' in s.subject]
         for count in range(0,3):
             service = services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -320,7 +320,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
 
         grade_10_maths_services = \
             [s for s in self.services.objectValues() if \
-             s.grade == 'grade-10' and s.subject == 'maths']
+             s.grade == 'grade-10' and 'maths' in s.subject]
         for count in range(0,3):
             service = grade_10_maths_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
@@ -330,7 +330,7 @@ class TestMemberServiceIntegration(unittest.TestCase):
 
         grade_10_science_services = \
             [s for s in self.services.objectValues() if \
-             s.grade == 'grade-10' and s.subject == 'science']
+             s.grade == 'grade-10' and 'science' in s.subject]
         for count in range(0,3):
             service = grade_10_science_services[count]
             ms_args = self.get_ms_args(service, TEST_USER_ID)
