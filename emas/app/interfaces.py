@@ -98,7 +98,7 @@ class IMemberServiceDataAccess(Interface):
                           credits=0, service_type="subscription"):
         """ Adds a memberservice to the persistent store.
             Sets all given attributes.
-            Returns the primary key of the new memberservice.
+            Returns the new memberservice.
         """
         pass
 

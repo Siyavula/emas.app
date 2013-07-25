@@ -55,8 +55,7 @@ def onOrderPaid(order, event):
                          'related_service_id': intids.getId(related_service),
                          'expiry_date': trialend,
                          'service_type': related_service.service_type}
-                ms_id = dao.add_memberservice(**props)
-                ms = dao.get_memberservice_by_primary_key(ms_id)
+                ms = dao.add_memberservice(**props)
                 tmpservices.append(ms)
 
             # update the memberservices with info from the orderitem
@@ -129,7 +128,7 @@ def onMemberJoined(obj, event):
                  'related_service_id': intids.getId(related_service),
                  'expiry_date': trialend,
                  'service_type': related_service.service_type}
-        ms_id = dao.add_memberservice(**props) 
+        ms = dao.add_memberservice(**props) 
 
 
 def service_cost_updated(event):

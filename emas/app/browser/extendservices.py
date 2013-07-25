@@ -86,9 +86,8 @@ class ExtendMemberServicesForm(form.SchemaForm):
                              'related_service_id': intids.getId(related_service),
                              'expiry_date' : data['expiry_date'],
                              'service_type': service.service_type,
-                             }
-                    ms_id = dao.add_memberservice(**props)
-                    ms = dao.get_memberservice_by_primary_key(ms_id)
+                            }
+                    ms = dao.add_memberservice(**props)
                     tmpservices.append(ms)
                 
         self.status = "Member services extended successfully"

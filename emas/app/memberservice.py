@@ -10,6 +10,7 @@ from sqlalchemy import (
     create_engine,
     or_,
     and_,
+    Sequence,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker, relation
@@ -46,7 +47,9 @@ class MemberService(Base):
 
     __tablename__ = 'memberservices'
 
-    id                 = Column('memberservice_id', Integer, primary_key=True)
+    id                 = Column('memberservice_id', Integer,
+                                Sequence('memberservices_memberservice_id_seq'),
+                                primary_key=True)
     memberid           = Column('memberid', String(100))
     title              = Column('title', String(100))
     related_service_id = Column('related_service_id', Integer)
@@ -306,16 +309,7 @@ class MemberServicesDataAccess(object):
                            service_type=service_type)
         session = SESSION()
         session.add(ms)
-        # make sure this object in in the db without disassociating it from the 
-        # session
-        session.flush()
-        # get the newly created primary key
-        ms_id = ms.id
-        # commit the transaction so it is available to everyone else
-        transaction.commit()
-        # return the id, so any calling code can immediately fetch the object
-        # from the db.
-        return ms_id
+        return ms
 
     def update_memberservice(self, memberservice):
         """ Updates and existing memberservice.
