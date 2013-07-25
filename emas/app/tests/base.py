@@ -22,7 +22,6 @@ class Fixture(PloneSandboxLayer):
         import upfront.shorturl
         import fullmarks.mathjax
         import siyavula.what
-        import inqbus.plone.fastmemberproperties
         import emas.app
 
         self.loadZCML(package=plone.app.registry)
@@ -38,7 +37,6 @@ class Fixture(PloneSandboxLayer):
         self.loadZCML(package=upfront.shorturl)
         self.loadZCML(package=fullmarks.mathjax)
         self.loadZCML(package=siyavula.what)
-        self.loadZCML(package=inqbus.plone.fastmemberproperties)
         self.loadZCML(package=emas.app)
 
 
