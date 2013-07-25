@@ -34,6 +34,7 @@ def onOrderPaid(order, event):
     """
     if event.action == 'pay':
         portal = getToolByName(order, 'portal_url').getPortalObject()
+        intids = queryUtility(IIntIds, context=portal)
         dao = MemberServicesDataAccess(portal)
         # we cannot use the authenticated user since an admin user might
         # trigger the workflow.
@@ -88,6 +89,7 @@ def onOrderPaid(order, event):
 
 def memberServiceAdded(obj, event):
     service = obj.related_service.to_object
+    intids = queryUtility(IIntIds, context=service)
     related_service_id = intids.getId(service)
     memberid = obj.memberid
     dao = MemberServicesDataAccess(obj)
