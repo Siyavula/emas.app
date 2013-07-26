@@ -48,6 +48,23 @@ def onOrderPaid(order, event):
             related_service = item.related_item.to_object
             related_service_id = intids.getId(related_service)
             memberservices = dao.get_member_services([related_service_id], memberid)
+
+            tmpservices = []
+            service_purchased = item.related_item.to_object
+
+            # filter out services that don't have subject or grade set,
+            # eg. discounts
+            if not (service_purchased.grade and service_purchased.subject):
+                continue
+
+            for ms in memberservices:
+                related_service = ms.related_service.to_object
+                if (related_service.subject == service_purchased.subject and
+                    related_service.grade == service_purchased.grade and
+                    related_service.access_path == \
+                        service_purchased.access_path):
+                    tmpservices.append(ms)
+
             # create a new memberservice if it doesn't exisst
             if len(memberservices) == 0:
                 mstitle = '%s for %s' % (related_service.title, memberid)
