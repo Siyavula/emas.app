@@ -1,6 +1,8 @@
 from Acquisition import aq_base
 
+from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import ModifyPortalContent
 from five import grok
 from plone.uuid.interfaces import IUUID
 from plone.directives import dexterity, form
@@ -168,6 +170,22 @@ class Order(dexterity.Container):
         """
         catalog = getToolByName(self, 'order_catalog', None)
         return catalog
+
+    _cmf_security_indexes = ('allowedRolesAndUsers',)
+
+    security.declareProtected(ModifyPortalContent, 'reindexObjectSecurity')
+    def reindexObjectSecurity(self, skip_self=False):
+        """ Reindex security-related indexes on the object.
+        """
+        catalog = self._getCatalogTool()
+        if catalog is None:
+            return
+
+        # Recatalog with the same catalog uid.
+        s = getattr(self, '_p_changed', 0)
+        catalog.reindexObject(self, idxs=self._cmf_security_indexes,
+                             update_metadata=0, uid='/'.join(self.getPhysicalPa
+        if s is None: self._p_deactivate()
 
 
 class SampleView(grok.View):
