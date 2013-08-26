@@ -108,6 +108,8 @@ grok.global_adapter(order_date, name="order_date")
 class Order(dexterity.Container):
     grok.implements(IOrder)
     
+    security = ClassSecurityInfo()
+
     def subtotal(self):
         subtotal = 0
         items = self.objectValues()
@@ -184,7 +186,9 @@ class Order(dexterity.Container):
         # Recatalog with the same catalog uid.
         s = getattr(self, '_p_changed', 0)
         catalog.reindexObject(self, idxs=self._cmf_security_indexes,
-                             update_metadata=0, uid='/'.join(self.getPhysicalPa
+                              update_metadata=0,
+                              uid='/'.join(self.getPhysicalPath()))
+
         if s is None: self._p_deactivate()
 
 
