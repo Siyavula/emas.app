@@ -1,4 +1,5 @@
 import datetime
+from DateTime import DateTime
 from z3c.relationfield.relation import create_relation
 from zope.component.hooks import getSite
 from zope.component import queryUtility
@@ -153,7 +154,7 @@ def onMemberJoined(obj, event):
     login_time = obj.getProperty('login_time', default)
     if login_time == default:
         login_time = DateTime()
-        obj.setProperties(login_time=self.ZopeTime(),
+        obj.setProperties(login_time=obj.ZopeTime(),
                           last_login_time=login_time)
 
 
