@@ -22,7 +22,7 @@ class Warning(grok.View):
         pps = self.context.restrictedTraverse('@@plone_portal_state')
         memberid = pps.member().getId()
         dao = MemberServicesDataAccess(self.context)
-        self.memberservices = dao.get_member_services(intids, memberid)
+        self.memberservices = dao.get_memberservices(intids, memberid)
         # grab any errors from the request, just in case we want to display
         # them later.
         self.errors = self.request.get('errors', [])
