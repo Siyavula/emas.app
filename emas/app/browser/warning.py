@@ -20,7 +20,7 @@ class Warning(grok.View):
     def update(self):
         intids = practice_service_intids(self.context)
         pps = self.context.restrictedTraverse('@@plone_portal_state')
-        memberid = pps.member.getId()
+        memberid = pps.member().getId()
         dao = MemberServicesDataAccess(self.context)
         self.memberservices = dao.get_member_services(intids, memberid)
         # grab any errors from the request, just in case we want to display
