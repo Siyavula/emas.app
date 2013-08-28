@@ -12,6 +12,12 @@ class IMemberServiceDataAccess(Interface):
         """
         pass
 
+    def get_memberservices_batch(self, size=50):
+        """ Fetches a batch of memberservices
+            regardless of memberid, grade or subject.
+        """
+        pass
+
     def get_member_services_for(self, memberid):
         """ Fetches all memberservices for a specfic member.
             Ignores grade and subject.

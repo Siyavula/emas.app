@@ -118,7 +118,7 @@ def subject_and_grade(context):
     return context.getPhysicalPath()[2:4]
 
 
-def service_url(service):
+def service_url(service, context):
     # XXX: fix urls to point to appropriate site hosting the service
     portal_url = service.restrictedTraverse('@@plone_portal_state').portal_url()
     grade = service.related_service.to_object.grade

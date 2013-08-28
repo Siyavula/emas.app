@@ -77,6 +77,10 @@ class MemberServicesDataAccess(object):
         session = SESSION()
         return session.query(MemberService).all()
 
+    def get_memberservices_batch(self, start=0, size=50):
+        session = SESSION()
+        return session.query(MemberService).slice(start, size).all()
+
     def get_memberservices(self, service_intids, memberid):
         """ Fetches all memberservices for a specfic member.
             Ignores grade and subject.
