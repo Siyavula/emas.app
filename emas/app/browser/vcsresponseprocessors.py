@@ -65,9 +65,10 @@ class PaymentApproved(grok.View):
                 url = original_url + '/@@paymentapproved?p2=%s' % oid
                 self.request.response.redirect(url)
         except Exception, ex:
-            LOGGER.warn(ex)
+            LOGGER.error(ex)
             self.request['errors'] = self.request.get('errors', []).append(ex)
-            return self.request.response.redirect('@@warning')
+            original_url = self.request.get('m_1', None)
+            return self.request.response.redirect(url + '/@@warning')
     
     def memberservices(self):
         return get_display_items_from_order(self.order)
