@@ -13,6 +13,7 @@ from zope.intid.interfaces import IIntIds
 
 
 from emas.app.utilities import IVerificationCodeUtility
+from emas.app.memberservice import IMemberService, MemberServicesDataAccess
 
 KEY_BASE = 'emas.app'
 
@@ -219,23 +220,18 @@ def get_display_items_from_request(context):
 
 
 def get_display_items_from_order(order):
-    display_items = []
-    # it is a LazyMap, we slice it to get the full objects
-    orderitems = order.order_items()
+    memberid = order.userid
+    subject = get_subject_from_context(order)
     orderitems = dict(
         (item.related_item.to_object, item.quantity)
-        for item in orderitems
+        for item in order.order_items()
     )
-    discount_items = get_discount_items(order, orderitems)
 
-    discount_items = set(discount_items.keys())
-    orderitems = set(orderitems.keys())
-    
-    items = orderitems.difference(discount_items)
-    uuids = [IUUID(item) for item in items]
-    items = member_services(order, uuids)
-    display_items = [i for i in items \
-                     if i.related_service.to_object.getId() in SERVICE_IDS]
+    dao = MemberServicesDataAccess(order)
+    memberservices = \
+        dao.get_active_memberservices_by_subject(memberid, subject)
+    display_items = [ms for ms in memberservices \
+                     if ms.related_service in orderitems.keys()]
     return display_items 
 
 
