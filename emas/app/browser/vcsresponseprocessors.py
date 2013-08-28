@@ -67,7 +67,7 @@ class PaymentApproved(grok.View):
         except Exception, ex:
             LOGGER.error(ex)
             self.request['errors'] = self.request.get('errors', []).append(ex)
-            original_url = self.request.get('m_1', None)
+            url = self.request.get('m_1', None)
             return self.request.response.redirect(url + '/@@warning')
     
     def memberservices(self):
