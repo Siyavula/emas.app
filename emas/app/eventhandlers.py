@@ -72,6 +72,7 @@ def onOrderPaid(order, event):
                 props = {'memberid': memberid,
                          'title': mstitle,
                          'related_service_id': intids.getId(related_service),
+                         'expiry_date': now,
                          'service_type': related_service.service_type}
                 ms = dao.add_memberservice(**props)
                 tmpservices.append(ms)

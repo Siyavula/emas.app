@@ -28,4 +28,4 @@ class Warning(grok.View):
         self.errors = self.request.get('errors', [])
 
     def service_url(self, service):
-        return get_service_url(service)
+        return get_service_url(service, self.context)
