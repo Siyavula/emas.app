@@ -98,7 +98,7 @@ class ContentsTable(FolderContentsTable):
                            buttons=self.buttons)
 
     def contentsMethod(self):
-        return self.dao.get_all_memberservices
+        return self.dao.get_memberservices_batch
 
     def folderitems(self):
         """
@@ -107,14 +107,15 @@ class ContentsTable(FolderContentsTable):
         plone_utils = getToolByName(context, 'plone_utils')
         portal_properties = getToolByName(context, 'portal_properties')
         contentsMethod = self.contentsMethod()
-        show_all = self.request.get('show_all', '').lower() == 'true'
+        # We have millions of memberservices, we cannot possible show all
+        show_all = False
         pagesize = 20
         pagenumber = int(self.request.get('pagenumber', 1))
         start = (pagenumber - 1) * pagesize
         end = start + pagesize
 
         results = []
-        for i, obj in enumerate(contentsMethod()):
+        for i, obj in enumerate(contentsMethod(start=start, size=pagesize)):
             db_primary_key = obj.id
 
             # avoid creating unnecessary info for items outside the current
@@ -158,7 +159,7 @@ class Table(PloneTable):
         self.intids = queryUtility(IIntIds, context=context)
 
     def related_service(self, related_service_id):
-        return self.intids.getObject(related_service_id)
+        return self.intids.queryObject(related_service_id)
 
 
 SERVICE_TYPES = SimpleVocabulary(
