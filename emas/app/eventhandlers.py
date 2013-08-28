@@ -48,7 +48,7 @@ def onOrderPaid(order, event):
             # related services.
             related_service = item.related_item.to_object
             related_service_id = intids.getId(related_service)
-            memberservices = dao.get_member_services([related_service_id], memberid)
+            memberservices = dao.get_memberservices([related_service_id], memberid)
 
             tmpservices = []
             service_purchased = item.related_item.to_object
@@ -72,7 +72,6 @@ def onOrderPaid(order, event):
                 props = {'memberid': memberid,
                          'title': mstitle,
                          'related_service_id': intids.getId(related_service),
-                         'expiry_date': trialend,
                          'service_type': related_service.service_type}
                 ms = dao.add_memberservice(**props)
                 tmpservices.append(ms)
@@ -111,7 +110,7 @@ def memberServiceAdded(obj, event):
     related_service_id = intids.getId(service)
     memberid = obj.memberid
     dao = MemberServicesDataAccess(obj)
-    memberservices = dao.get_member_services([related_service_id], memberid)
+    memberservices = dao.get_memberservices([related_service_id], memberid)
 
     if memberservices is not None and len(memberservices) > 0:
         raise RuntimeError(
