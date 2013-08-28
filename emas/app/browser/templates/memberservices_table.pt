@@ -92,8 +92,8 @@
               </td>
               <td tal:define="rs_id memberservice/related_service_id;
                               related_service python:view.related_service(rs_id);">
-                  <a href="#" tal:attributes="href related_service/absolute_url"> 
-                      <span tal:replace="related_service/Title">related service title</span>
+                  <a href="#" tal:attributes="href related_service/absolute_url|string:#"> 
+                      <span tal:replace="related_service/Title|string:Not found!">related service title</span>
                   </a> 
               </td>
             </tr>
