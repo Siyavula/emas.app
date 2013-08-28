@@ -20,7 +20,7 @@
             <ul>
                 <li tal:repeat="service services">
                     <a href="#" tal:attributes="href python:view.service_url(service)">
-                        <span tal:replace="service/related_service/to_object/title">Service link</span>
+                        <span tal:replace="python: service.related_service(view).title">Service link</span>
                     </a> (expires on <span tal:content="python:service.expiry_date.strftime('%d %B %Y')">1 January 2012</span>)
                 </li>
             </ul>

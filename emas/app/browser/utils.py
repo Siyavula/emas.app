@@ -120,8 +120,8 @@ def subject_and_grade(context):
 
 def service_url(service, context):
     # XXX: fix urls to point to appropriate site hosting the service
-    portal_url = service.restrictedTraverse('@@plone_portal_state').portal_url()
-    grade = service.related_service.to_object.grade
+    portal_url = context.restrictedTraverse('@@plone_portal_state').portal_url()
+    grade = service.related_service(context).grade
     return '%s/@@practice/%s' %(portal_url, grade)
 
 
@@ -221,17 +221,14 @@ def get_display_items_from_request(context):
 
 def get_display_items_from_order(order):
     memberid = order.userid
-    subject = get_subject_from_context(order)
     orderitems = dict(
         (item.related_item.to_object, item.quantity)
         for item in order.order_items()
     )
 
     dao = MemberServicesDataAccess(order)
-    memberservices = \
-        dao.get_active_memberservices_by_subject(memberid, subject)
-    display_items = [ms for ms in memberservices \
-                     if ms.related_service in orderitems.keys()]
+    ids = [dao.intids.getId(service) for service in orderitems.keys()]
+    display_items = dao.get_memberservices(ids, memberid)
     return display_items 
 
 

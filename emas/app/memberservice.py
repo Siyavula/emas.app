@@ -57,7 +57,7 @@ class MemberService(Base):
     credits            = Column('credits', Integer)
     service_type       = Column('service_type', String(100))
 
-    def related_service(self):
+    def related_service(self, context):
         intids = queryUtility(IIntIds, context=context)
         return intids.getObject(self.related_service_id)
 

@@ -74,7 +74,7 @@ class PaymentApproved(grok.View):
         return get_display_items_from_order(self.order)
     
     def service_url(self, service):
-        return get_service_url(service)
+        return get_service_url(service, self.context)
     
     def logDetails(self):
         keys = [
