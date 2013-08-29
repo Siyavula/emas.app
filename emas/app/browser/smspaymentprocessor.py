@@ -16,6 +16,8 @@ from emas.theme.interfaces import IEmasSettings
 
 LOGGER = getLogger('emas.app:smspaymentprocessor')
 
+ADMIN_USER_ID = 'admin'
+
 class SMSPaymentApproved(grok.View):
     """ Reverse tunnel from siyavula:
         ssh -nNT -R 9999:localhost:8080 siyavula
@@ -83,6 +85,9 @@ class SMSPaymentApproved(grok.View):
         if not verification_code:
             return None
         
+        pmt = getToolByName(self.context, 'portal_membership')
+        admin = pmt.getMemberById(ADMIN_USER_ID)
+        newSecurityManager(request, admin)
         pc = getToolByName(self.context, 'order_catalog')
         query = {'portal_type':       'emas.app.order',
                  'verification_code': verification_code}
@@ -94,10 +99,10 @@ class SMSPaymentApproved(grok.View):
             return None
         
         brain = brains[0]
-        pmt = getToolByName(self.context, 'portal_membership')
-        user = pmt.getMemberById(brain.Creator)
+        order = brain.getObject()
+        user = pmt.getMemberById(order.userid)
         newSecurityManager(request, user)
-        return brain.getObject()
+        return order
 
     def validateSender(self, request, settings):
         password = request.get('password')
