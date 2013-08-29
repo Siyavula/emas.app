@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.14
+----
+
+Fix query for member services when order is transitioned to "paid"
+
 1.13
 ----
 
