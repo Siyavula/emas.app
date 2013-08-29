@@ -59,14 +59,14 @@ def onOrderPaid(order, event):
                 continue
 
             for ms in memberservices:
-                related_service = ms.related_service.to_object
+                related_service = ms.related_service(order)
                 if (related_service.subject == service_purchased.subject and
                     related_service.grade == service_purchased.grade and
                     related_service.access_path == \
                         service_purchased.access_path):
                     tmpservices.append(ms)
 
-            # create a new memberservice if it doesn't exisst
+            # create a new memberservice if it doesn't exist
             if len(memberservices) == 0:
                 mstitle = '%s for %s' % (related_service.title, memberid)
                 props = {'memberid': memberid,
