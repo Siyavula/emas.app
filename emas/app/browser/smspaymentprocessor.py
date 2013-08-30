@@ -16,7 +16,6 @@ from emas.theme.interfaces import IEmasSettings
 
 LOGGER = getLogger('emas.app:smspaymentprocessor')
 
-ADMIN_USER_ID = 'admin'
 
 class SMSPaymentApproved(grok.View):
     """ Reverse tunnel from siyavula:
@@ -84,12 +83,9 @@ class SMSPaymentApproved(grok.View):
         verification_code = request.get('message')
         if not verification_code:
             return None
-        
-        pmt = getToolByName(self.context, 'portal_membership')
-        admin = pmt.getMemberById(ADMIN_USER_ID)
-        newSecurityManager(request, admin)
+      
         pc = getToolByName(self.context, 'order_catalog')
-        query = {'portal_type':       'emas.app.order',
+        query = {'portal_type': 'emas.app.order',
                  'verification_code': verification_code}
         brains = pc.unrestrictedSearchResults(query)
         if not brains or len(brains) < 1:
@@ -97,10 +93,10 @@ class SMSPaymentApproved(grok.View):
                 'Could not find order with verification code:'
                 '%s' % verification_code)
             return None
-        
         brain = brains[0]
-        order = brain.getObject()
-        user = pmt.getMemberById(order.userid)
+        order = brain._unrestrictedGetObject()
+        pmt = getToolByName(self.context, 'portal_membership')
+	user = pmt.getMemberById(order.userid)
         newSecurityManager(request, user)
         return order
 
