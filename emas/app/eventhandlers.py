@@ -1,4 +1,5 @@
 import datetime
+from DateTime import DateTime
 from z3c.relationfield.relation import create_relation
 from zope.component.hooks import getSite
 
@@ -234,6 +235,13 @@ def onMemberJoined(obj, event):
         ms.expiry_date = trialend 
         ms.manage_setLocalRoles(memberid, ('Owner',))
         ms.reindexObject()
+
+    default = DateTime('2000/01/01')
+    login_time = obj.getProperty('login_time', default)
+    if login_time == default:
+        login_time = DateTime()
+        obj.setProperties(login_time=obj.ZopeTime(),
+                          last_login_time=login_time)
 
 
 def service_cost_updated(event):
