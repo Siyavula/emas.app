@@ -15,8 +15,9 @@ def setLoginTimes(self):
         if login_time == default:
             initialLogin = True
 	    login_time = DateTime()
-            member.setProperties(login_time=self.ZopeTime(),
-                                 last_login_time=login_time)
+            if hasattr(member, 'setProperties'):
+                member.setProperties(login_time=self.ZopeTime(),
+                                     last_login_time=login_time)
     return initialLogin
 
 MembershipTool.setLoginTimes = setLoginTimes
