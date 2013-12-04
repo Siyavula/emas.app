@@ -150,13 +150,6 @@ def onMemberJoined(obj, event):
                  'service_type': related_service.service_type}
         ms = dao.add_memberservice(**props) 
 
-    default = DateTime('2000/01/01')
-    login_time = obj.getProperty('login_time', default)
-    if login_time == default:
-        login_time = DateTime()
-        obj.setProperties(login_time=obj.ZopeTime(),
-                          last_login_time=login_time)
-
 
 def service_cost_updated(event):
     iface = event.record.interfaceName
