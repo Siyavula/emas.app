@@ -1,4 +1,5 @@
 import datetime
+from DateTime import DateTime as DT
 from types import DictType
 
 from five import grok
@@ -37,7 +38,6 @@ class List_Orders(grok.View):
         if self.request.has_key('list_orders.form.submitted'):
             # we have to have *some* filter criteria or the search will take
             # forever.
-            got_filter_criteria = False
             oc = getToolByName(self.context, 'order_catalog')
 
             query = {'portal_type': 'emas.app.order',
@@ -45,35 +45,31 @@ class List_Orders(grok.View):
             
             # make it a dict, because I want an easy way to get rid of some keys
             filter_criteria = DictType(self.request.get('filter_criteria', {}))
-            if filter_criteria:
-                got_filter_criteria = True
 
-            now = datetime.datetime.now()
-            yesterday = now - datetime.timedelta(1)
-            tomorrow = now + datetime.timedelta(1)
-	    
-            start_date = filter_criteria.get('order_date_start', yesterday)
-            filter_criteria.pop('order_date_start', None)
-            end_date = filter_criteria.get('order_date_end', tomorrow)
-            filter_criteria.pop('order_date_end', None)
-            query['start_date'] = {'minmax': [start_date, end_date]}
+            now = DT()
+            yesterday = now - 1
+            tomorrow = now + 1
+
+            start_date = self.request['order_date_start']
+            end_date = self.request['order_date_end']
+            if start_date and end_date:
+                start_date = DT(self.request['order_date_start'])
+                end_date = DT(self.request['order_date_end'])
+                date_query = {'query': [start_date, end_date], 'range': 'minmax'}
+                query['order_date'] = date_query
             
             for key, value in filter_criteria.items():
                 query[key] = value
             
-            if got_filter_criteria:
-                self.orders = oc(query)
-                if not self.orders:
-                    self.context.plone_utils.addPortalMessage(
-                        _('No orders match your search criteria.')
-                    )
+	    self.orders = oc(query)
+	    if self.orders:
+                b_size = int(self.request.get('b_size', 50))
+                b_start = int(self.request.get('b_start', 0))
+                self.orders = Batch(self.orders, b_size, b_start)
             else:
-                self.context.plone_utils.addPortalMessage(
-                    _('Please supply search criteria.')
-                )
-        b_size = int(self.request.get('b_size', 50))
-        b_start = int(self.request.get('b_start', 0))
-        self.orders = Batch(self.orders, b_size, b_start)
+	        self.context.plone_utils.addPortalMessage(
+	    	_('No orders match your search criteria.')
+	        )
             
     def review_states(self):
         return [['ordered', 'Ordered'],

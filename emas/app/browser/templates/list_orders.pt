@@ -122,9 +122,9 @@
                       <td>
                           <tal:define define="id string:start_date;
                                               show_hm show_hm | python:0;
-                                              inputname string:filter_criteria.order_date_start;
+                                              inputname string:order_date_start;
                                               formname string:list_orders;
-	                        	      inputvalue string:2013/12/05">
+	                        	      inputvalue request/order_date_start|string:">
                             <metal:box use-macro="context/calendar_macros/macros/calendarDatePickerBox">
                               <!-- a calendar, hopefully -->
                             </metal:box>                                                        
@@ -140,9 +140,9 @@
                       <td>
                           <tal:define define="id string:end_date;
                                               show_hm show_hm | python:0;
-                                              inputname string:filter_criteria.order_date_end;
+                                              inputname string:order_date_end;
                                               formname string:list_orders;
-	                        	      inputvalue string:2013/12/05">
+	                        	      inputvalue request/order_date_end|string:">
                             <metal:box use-macro="context/calendar_macros/macros/calendarDatePickerBox">
                               <!-- a calendar, hopefully -->
                             </metal:box>                                                        
