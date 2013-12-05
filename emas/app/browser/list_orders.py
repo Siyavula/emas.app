@@ -44,14 +44,14 @@ class List_Orders(grok.View):
                      'path': '/'.join(self.orders_folder.getPhysicalPath())}
             
             # make it a dict, because I want an easy way to get rid of some keys
-            filter_criteria = DictType(self.request['filter_criteria'])
+            filter_criteria = DictType(self.request.get('filter_criteria', {}))
             if filter_criteria:
                 got_filter_criteria = True
 
             now = datetime.datetime.now()
             yesterday = now - datetime.timedelta(1)
             tomorrow = now + datetime.timedelta(1)
-
+	    
             start_date = filter_criteria.get('order_date_start', yesterday)
             filter_criteria.pop('order_date_start', None)
             end_date = filter_criteria.get('order_date_end', tomorrow)
