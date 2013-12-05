@@ -7,17 +7,16 @@ def setLoginTimes(self):
     """ Changed into a no-op in order to stop ZODB access on each login.
         It is unnecessary and kills the app's performance.
     """ 
-    initialLogin = False
-    member = getSecurityManager().getUser()
-    if member is not None:
+    res = False
+    if not self.isAnonymousUser():
+        member = self.getAuthenticatedMember()
         default = DateTime('2000/01/01')
         login_time = member.getProperty('login_time', default)
         if login_time == default:
-            initialLogin = True
-	    login_time = DateTime()
-            if hasattr(member, 'setProperties'):
-                member.setProperties(login_time=self.ZopeTime(),
-                                     last_login_time=login_time)
-    return initialLogin
+            res = True
+            login_time = DateTime()
+            member.setProperties(login_time=self.ZopeTime(),
+                                 last_login_time=login_time)
+    return res
 
 MembershipTool.setLoginTimes = setLoginTimes
