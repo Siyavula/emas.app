@@ -51,7 +51,8 @@
       </metal:content-description>
 
       <metal:content-core fill-slot="content-core">
-      <div id="search-form">
+      <div id="search-form"
+	tal:define="filter_criteria python:request.get('filter_criteria', {})">
           <form action="." method="POST" name="order-filter">
               <table id="search-form-table" class="listing">
                   <tr>
@@ -64,7 +65,8 @@
                           <select id="select-review-state" name="filter_criteria.review_state:record:ignore_empty" class="select-widget choice-field">
                               <option></option>
                               <option tal:repeat="details view/review_states" value="state"
-                                  tal:attributes="value python:details[0]">
+                                  tal:attributes="value python:details[0];
+						  selected python:details[0] == filter_criteria.get('review_state');">
                                 <span tal:replace="python:details[1]">Ordered</span>
                               </option>
                           </select>
@@ -78,7 +80,8 @@
                           <select id="select-payment-method" name="filter_criteria.payment_method:record:ignore_empty" class="select-widget choice-field">
                               <option></option>
                               <option tal:repeat="details view/payment_methods" value="payment_method"
-                                  tal:attributes="value details/token">
+                                  tal:attributes="value details/token;
+						  selected python:details.token == filter_criteria.get('payment_method');">
                                 <span tal:replace="details/title">EFT</span>
                               </option>
                           </select>
@@ -92,7 +95,7 @@
                       </td>
                       <td>
                           <input id="userid" name="filter_criteria.userid:record:ignore_empty" value=""
-                              tal:attributes="value request/userid |nothing"/> <br/>
+                              tal:attributes="value python:filter_criteria.get('userid', '')"/> <br/>
                       </td>
                       <td>
                           <label for="related_item_uuids">
@@ -103,7 +106,8 @@
                           <select id="select-related-services" name="filter_criteria.related_item_uuids:record:ignore_empty">
                               <option></option>
                               <option tal:repeat="details view/services" value="service"
-                                tal:attributes="value python:details[0]">
+                                tal:attributes="value python:details[0];
+				                selected python:details[0] == filter_criteria.get('related_item_uuids');">
                                   <span tal:replace="python:details[1]">service title</span>
                               </option>
                           </select>
@@ -153,7 +157,7 @@
                       </td>
                       <td>
                           <input id="verification_code" name="filter_criteria.verification_code:record:ignore_empty" value=""
-                              tal:attributes="value request/verification_code |nothing"/> <br/>
+                              tal:attributes="value python:filter_criteria.get('verification_code', '')"/> <br/>
                       </td>
                       <td>
                           <label for="id">
@@ -162,7 +166,7 @@
                       </td>
                       <td>
                           <input id="id" name="filter_criteria.id:record:ignore_empty" value=""
-                              tal:attributes="value request/id |nothing"/> <br/>
+                              tal:attributes="value python:filter_criteria.get('id', '')"/> <br/>
                       </td>
                   </tr>
                   <tr>
@@ -173,6 +177,7 @@
                   </tr>
               </table>
           </form>
+<span tal:content="request/items"/>
       </div>
       <tal:defines define="batch view/orders">
 
@@ -213,7 +218,7 @@
                   </td>
                   <td>
                      <a href="#" tal:content="order/Title"
-                         tal:attributes="href order/absolute_url>Order nnn</a>
+                         tal:attributes="href order/absolute_url">Order nnn</a>
                   </td>
                   <td tal:content="order/verification_code">
                       44444
