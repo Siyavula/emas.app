@@ -526,7 +526,7 @@ def setupCustomCatalog(portal):
                    'getId'               : 'FieldIndex',
                    'id'                  : 'FieldIndex',
                    'order_date'          : 'DateIndex',
-                   'order_number'        : 'DateIndex',
+                   'order_number'        : 'FieldIndex',
                    'verification_code'   : 'FieldIndex',}
 
     current_indexes = catalog.indexes()
