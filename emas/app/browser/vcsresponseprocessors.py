@@ -28,6 +28,18 @@ def getOrder(context, request):
     orders = portal._getOb('orders')
     return orders._getOb(oid)
 
+def logDetails(request):
+    keys = [
+     'ACTUAL_URL', 'AUTHENTICATED_USER' 'CardHolderIpAddr',
+     'HTTP_X_FORWARDED_FOR', 'HTTP_X_VARNISH', 'Hash', 'MaskedCardNumber',
+     'REMOTE_ADDR', 'REQUEST_METHOD', 'TransactionType', 'm_1' 'm_10',
+     'm_2', 'm_3', 'm_4', 'm_5', 'm_6', 'm_7', 'm_8', 'm_9', 'method',
+     'p1', 'p10', 'p11', 'p12', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8',
+     'p9', 'pam'
+    ]
+    
+    for key in keys:
+        LOGGER.info('%s=%s' % (key, request.get(key)))
 
 class PaymentApproved(grok.View):
     """
@@ -39,7 +51,7 @@ class PaymentApproved(grok.View):
     
     def update(self):
         try:
-            self.logDetails()
+            logDetails(self.request)
             self.pps = self.context.restrictedTraverse('@@plone_portal_state')
             pms = getToolByName(self.context, 'portal_membership')
 
@@ -76,19 +88,6 @@ class PaymentApproved(grok.View):
     def service_url(self, service):
         return get_service_url(service, self.context)
     
-    def logDetails(self):
-        keys = [
-         'ACTUAL_URL', 'AUTHENTICATED_USER' 'CardHolderIpAddr',
-         'HTTP_X_FORWARDED_FOR', 'HTTP_X_VARNISH', 'Hash', 'MaskedCardNumber',
-         'REMOTE_ADDR', 'REQUEST_METHOD', 'TransactionType', 'm_1' 'm_10',
-         'm_2', 'm_3', 'm_4', 'm_5', 'm_6', 'm_7', 'm_8', 'm_9', 'method',
-         'p1', 'p10', 'p11', 'p12', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8',
-         'p9', 'pam'
-        ]
-        
-        for key in keys:
-            LOGGER.info('%s=%s' % (key, self.request.get(key)))
-
 
 class PaymentDeclined(grok.View):
     """
@@ -99,6 +98,7 @@ class PaymentDeclined(grok.View):
 
     
     def update(self):
+        logDetails(self.request)
         original_url = self.request.get('m_1', None)
         if original_url is not None and len(original_url) > 0:
             url = original_url + '/@@paymentdeclined'
