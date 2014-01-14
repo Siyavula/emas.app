@@ -408,6 +408,15 @@ ITEMS = {
         'subscription_period': 0,
         'amount_of_credits': 0,
         },
+
+    'maths-and-science-discount' : {
+        'title': 'Discount when both Maths and Science are purchased',
+        'type': 'emas.app.service',
+        'price': -200.00,
+        'service_type': 'subscription',
+        'subscription_period': 0,
+        'amount_of_credits': 0,
+        },
 }
 
 

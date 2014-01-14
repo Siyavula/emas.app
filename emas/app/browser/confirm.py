@@ -120,18 +120,15 @@ class Confirm(grok.View):
                     ordered_service_ids.extend(maths_service_ids)
                 if self.subjects in ('Science', 'Maths,Science'):
                     ordered_service_ids.extend(science_service_ids)
-                discount_qty = len(ordered_service_ids)
-                # everybody receives a 3rd term discount
-                ordered_service_ids.append('3rd-term-discount')
+                # add discount if both subjects were ordered
+                if self.subjects == 'Maths,Science':
+                    ordered_service_ids.append('maths-and-science-discount')
 
             for sid in ordered_service_ids:
                 service = self.products_and_services[sid]
                 item_id = 'orderitem.%s' %service.getId()
                 relation = create_relation(service.getPhysicalPath())
-                if sid == '3rd-term-discount':
-                    quantity = discount_qty
-                else:
-                    quantity = 1
+                quantity = 1
                 props = {'id': item_id,
                          'title': service.Title(),
                          'related_item': relation,
@@ -285,7 +282,7 @@ class Confirm(grok.View):
             substr = "1 month subscription to %s Grade %s"
             return substr % (self.subjects, grade)
         else:
-            substr = "6 month subscription to %s Grade 10, 11 and 12"
+            substr = "1 year subscription to %s Grade 10, 11 and 12"
             if self.subjects in ('Maths', 'Science'):
                 return substr % self.subjects
             elif self.subjects == 'Maths,Science':
