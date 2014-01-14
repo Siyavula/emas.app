@@ -365,6 +365,8 @@ class Confirm(grok.View):
             email=email,
             phone=phone,
             payment=self.prod_payment(),
+            verification_code=self.verification_code,
+            premium_number=self.premium_number(),
         )
 
         portal.MailHost.send(message, send_to_address, send_from_address,

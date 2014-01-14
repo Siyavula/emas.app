@@ -8,111 +8,25 @@
 <body>
 
     <metal:core fill-slot="main">
-        <h1 class="documentFirstHeading">Order confirmation</h1>
+        <h1 class="documentFirstHeading">Payment Information</h1>
 
         <div id="content-core"
             tal:define="isAnon context/@@plone_portal_state/anonymous;
                         warnings view/warnings | nothing;">
 
+            <tal:sms tal:condition="view/sms_selected">
+                <p><strong>You need to SMS '<span tal:replace="view/verification_code">verification code</span>' to <span tal:replace="view/premium_number"> premium number</span> to pay, before your subscription can be activated.</strong></p>
+
+                    <p><strong>The total cost of your order is: <tal:cost tal:replace="view/totalcost"/></strong></p>
+            </tal:sms>
+
+            <h3 tal:condition="not:view/sms_selected">Step 1: Check your order</h3>
+            <h3 tal:condition="view/sms_selected">1: Your order information</h3>
+
             <div id="payment-form-container" class="selectpackage">
-                <p>The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong></p>
-
-                <tal:eft tal:condition="view/eft_selected">
-                    <p>You will receive an email to confirm your order. The
-                    confirmation email will contain the instructions for
-                    payment as described below. Your services will only be
-                    activated once we have received payment.</p>
-
-                    <p>
-                    Payment for this order can be made using an electronic
-                    funds transfer (EFT) to the bank account below. Please
-                    ensure that you use the correct reference number as
-                    specified below.
-                    </p>
-
-                    <pre class="bankdetails">
-    Account name:   Siyavula Education
-    Bank:           Nedbank
-    Account number: 1018177434
-    Branch code:    198765
-    Reference:      <tal:username tal:replace="view/ordernumber"/>
-                    </pre>
-
-                    <div class="ordertotal">
-                        <form method="POST" action=".">
-                            <button type="submit" tal:condition="warnings"
-                                class="btn btn-large allowMultiSubmit"
-                                name="continue" value="1">
-                                Continue
-                            </button>
-                        </form>
-                    </div>
-                </tal:eft>
-
-                <tal:sms tal:condition="view/sms_selected">
-                    <div>
-                        In order to complete this transaction and pay, please
-                        SMS '<span tal:replace="view/verification_code">verification
-                        code</span>' to <span tal:replace="view/premium_number">
-                        premium number</span>.
-                    </div>
-                    <div>
-                        Once your SMS payment has been confirmed, you can <a href="#" tal:attributes="href string:${context/absolute_url}/@@practice">click here to go to Intelligent Practice.</a>
-                    </div>
-                </tal:sms>
-
-                <form id="payment-form" method="POST" action="."
-                    tal:attributes="action view/action"
-                    tal:condition="view/creditcard_selected">
-
-                    <fieldset>
-                        <input name="orderid" value="4444" type="hidden"
-                            tal:attributes="value view/order/getId">
-
-                        <input type="hidden" name="p1" value="1"
-                            tal:attributes="value view/vcs_terminal_id">
-
-                        <input type="hidden" name="p2" value="1"
-                            tal:attributes="value view/tid">
-                            
-                        <input type="hidden" name="p3" value="1"
-                            tal:attributes="value view/description">
-                            
-                        <input type="hidden" name="p4" value="1"
-                            tal:attributes="value view/cost">
-
-                        <input type="hidden" name="m_1" value="1"
-                            tal:attributes="value string:${view/returnurl}">
-                            
-                        <input type="hidden" name="hash" value="1"
-                            tal:attributes="value view/md5hash">
-
-                        <input name="prod_payment" value="creditcard"
-                            tal:attributes="checked view/creditcard_selected"
-                            type="hidden" checked="checked">
-
-                        <div class="ordertotal">
-                            <button tal:condition="not:warnings"
-                                id="makepayment"
-                                type="submit" 
-                                class="btn btn-large allowMultiSubmit"
-                                name="makepayment" value="make payment">
-                                Make payment
-                            </button>
-
-                            <button type="submit" tal:condition="warnings"
-                                class="btn btn-large allowMultiSubmit"
-                                name="continue" value="1">
-                                I understand, make payment
-                            </button>
-                        </div>
-                            
-                    </fieldset>
-                </form>
-                
                 <tal:warnings condition="warnings">
                 <div id="duplicate-payment-warning" class="warning">
-                    You have already paid for the following: <br/>
+                    You have previously ordered and paid for the following: <br/>
                     <ul>
                         <li tal:repeat="warning warnings" tal:content="warning/title">
                             warning
@@ -128,11 +42,11 @@
                     </li>
                 </ul>
 
+                <p>The total cost of your order is: <strong><tal:cost tal:replace="view/totalcost"/></strong></p>
+
                 <div>
                     Order Number: <span tal:replace="view/ordernumber">1000</span>
                 </div>
-
-                <p>Thank you for your order!</p>
 
                 <form class="backbutton" action="." method="POST"
                     tal:attributes="action string:${context/absolute_url}/@@order">
@@ -158,7 +72,111 @@
                     </button>
                 </form>
 
+                <p tal:condition="view/eft_selected">You will receive a
+confirmation email containing payment instructions as described below.
+Your subscription will only be activated once we have received payment.
+Payment may take up to 3 days to process, depending on your bank.</p>
+
             </div>
+
+
+            <div id="make-payment">
+
+                <h3 tal:condition="not:view/sms_selected">Step 2: Make a payment</h3>
+                <h3 tal:condition="view/sms_selected">2: Make a payment</h3>
+
+                <tal:eft tal:condition="view/eft_selected">
+                    <p>
+                    Payment for this order can be made using an electronic
+                    funds transfer (EFT) to the bank account below. Please
+                    ensure that you use the correct reference number as
+                    specified below.
+                    </p>
+
+                    <pre class="bankdetails">
+    Account name:   Siyavula Education
+    Bank:           Nedbank
+    Account number: 1018177434
+    Branch code:    198765
+    Reference:      <tal:username tal:replace="view/ordernumber"/>
+                    </pre>
+
+                </tal:eft>
+
+                <tal:sms tal:condition="view/sms_selected">
+                    <div>
+                        In order to complete this transaction and pay, please
+                        SMS '<span tal:replace="view/verification_code">verification
+                        code</span>' to <span tal:replace="view/premium_number">
+                        premium number</span> to make a mobile payment.
+                        You will receive an SMS confirming your payment
+                        was successful, after which your subscription
+                        will be activated.
+                    </div>
+                </tal:sms>
+
+                <tal:creditcard tal:condition="view/creditcard_selected">
+                <p>You can pay for your subscription online using our
+                secure online credit card facility. 
+                </p>
+                <a href="#" onClick="window.open('http://www.vcs.co.za','','')"><img src=http://website.vcs.co.za/wp-content/uploads/VCSLogoSites.jpg alt="Virtual Card Services"></a>
+
+                <form id="payment-form" method="POST" action="."
+                    tal:attributes="action view/action">
+
+                    <input name="orderid" value="4444" type="hidden"
+                        tal:attributes="value view/order/getId">
+
+                    <input type="hidden" name="p1" value="1"
+                        tal:attributes="value view/vcs_terminal_id">
+
+                    <input type="hidden" name="p2" value="1"
+                        tal:attributes="value view/tid">
+                        
+                    <input type="hidden" name="p3" value="1"
+                        tal:attributes="value view/description">
+                        
+                    <input type="hidden" name="p4" value="1"
+                        tal:attributes="value view/cost">
+
+                    <input type="hidden" name="m_1" value="1"
+                        tal:attributes="value string:${view/returnurl}">
+                        
+                    <input type="hidden" name="hash" value="1"
+                        tal:attributes="value view/md5hash">
+
+                    <input name="prod_payment" value="creditcard"
+                        tal:attributes="checked view/creditcard_selected"
+                        type="hidden" checked="checked">
+
+                    <div class="ordertotal">
+                        <button
+                            id="makepayment"
+                            type="submit" 
+                            class="btn btn-large allowMultiSubmit"
+                            name="makepayment" value="make payment">
+                            Make payment
+                        </button>
+                    </div>
+                            
+                </form>
+                
+                </tal:creditcard>
+
+            </div>
+
+            <div id="send-proof-of-payment" tal:condition="view/eft_selected">
+                <h3>Step 3: Send us proof of payment</h3>
+Don't forget to email your proof of payment to accounts@siyavula.com so
+we can activate your subscription. Should you have any queries, please
+contact us by email at <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a>, by phone at +27 (021) 469
+4771
+
+                <div class="center">
+                    <a class="btn btn-large" tal:attributes="href string:$portal_url">Back to home page</a>
+                </div>
+            </div>
+
         </div>
 
     </metal:core>
