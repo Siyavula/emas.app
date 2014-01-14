@@ -1,18 +1,16 @@
 Dear <span tal:replace="options/fullname">John</span>
 
-<tal:eft condition="python:options.get('payment', '') == 'eft'">You're
-almost done! You still need to make an EFT payment and send us proof of
-payment before we can activate your subscription.
+<tal:eft condition="python:options.get('payment', '') == 'eft'">You're almost done! You still need to make an EFT payment and send us proof of payment before we can activate your subscription.
 
-Step 1: Check your order
-------------------------
+STEP 1: CHECK YOUR ORDER
+
 You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
 - <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
-Step 2: Make a payment
-----------------------
+STEP 2: MAKE A PAYMENT
+
 Payment for this order can be made using an electronic funds transfer
 (EFT) to the bank account below. Please ensure that you use the correct
 reference as specified below. Your subscription will only be activated
@@ -25,8 +23,8 @@ Account number: 1018177434
 Branch code:198765
 Reference: <tal:ordernumber tal:replace="options/ordernumber"/>
 
-Step 3: Send us proof of payment
---------------------------------
+STEP 3: SEND US PROOF OF PAYMENT
+
 Don't forget to email your proof of payment to <tal:email tal:replace="options/email"/>
 </tal:eft><tal:creditcard condition="python:options.get('payment', '') == 'creditcard'">You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
 - <tal:item tal:replace="options/service_ordered"/>
@@ -46,14 +44,14 @@ If you have not yet paid, please return to www.everythingmaths.co.za or
 www.everythingscience.co.za to complete your order.
 </tal:creditcard><tal:sms condition="python:options.get('payment', '') == 'sms'">You're almost done! You still need to SMS '<span tal:replace="options/verification_code">verification code</span>' to <span tal:replace="options/premium_number"> premium number</span> to pay via premium SMS, before we can activate your subscription.
 
-Step 1: Your order information
-------------------------------
+STEP 1: YOUR ORDER INFORMATION
+
 You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
 - <tal:item tal:replace="options/service_ordered"/>
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
-Step 2: Make a payment
-----------------------
+STEP 2: MAKE A PAYMENT
+
 In order to complete this transaction and pay, please SMS '<span tal:replace="options/verification_code">verification code</span>' to
 <span tal:replace="options/premium_number"> premium number</span> to
 make a mobile payment. You will receive an SMS confirming your payment
