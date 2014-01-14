@@ -59,15 +59,15 @@
                                     tal:attributes="checked python:view.subject_selected('Maths', selected)"
                                     value="Maths"
                                     type="radio"
-                                    price="300"> Maths: R300
+                                    price="350"> Maths: R350
                             </li>
                             <li>
                                 <input name="subjects"
                                     checked=""
                                     tal:attributes="checked python:view.subject_selected('Science', selected)"
                                     value="Science"
-                                    price="300"
-                                    type="radio"> Science: R300
+                                    price="350"
+                                    type="radio"> Science: R350
                             </li>
                             <li>
                                 <input name="subjects"

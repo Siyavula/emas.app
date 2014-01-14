@@ -19,6 +19,9 @@
 
                     <p><strong>The total cost of your order is: <tal:cost tal:replace="view/totalcost"/></strong></p>
             </tal:sms>
+            <tal:eft tal:condition="view/eft_selected">
+                <p><strong>You need to do an EFT and send us proof of payment before your subscription can be activated.</strong></p>
+            </tal:eft>
 
             <h3 tal:condition="not:view/sms_selected">Step 1: Check your order</h3>
             <h3 tal:condition="view/sms_selected">1: Your order information</h3>
@@ -160,17 +163,18 @@ Payment may take up to 3 days to process, depending on your bank.</p>
                     </div>
                             
                 </form>
-                
+
+                <p>Should you have any queries, please contact us by email at <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a>, by phone at +27 (021) 469 4771</p>
+
                 </tal:creditcard>
 
             </div>
 
             <div id="send-proof-of-payment" tal:condition="view/eft_selected">
                 <h3>Step 3: Send us proof of payment</h3>
-Don't forget to email your proof of payment to accounts@siyavula.com so
-we can activate your subscription. Should you have any queries, please
-contact us by email at <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a>, by phone at +27 (021) 469
-4771
+<p>Don't forget to email your proof of payment to <a href="mailto:accouts@siyavula.com">accounts@siyavula.com</a> so we can activate your subscription.</p>
+<p>Should you have any queries, please
+contact us by email at <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a>, by phone at +27&nbsp;(021)&nbsp;469&nbsp;4771</p>
 
                 <div class="center">
                     <a class="btn btn-large" tal:attributes="href string:$portal_url">Back to home page</a>
