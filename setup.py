@@ -33,7 +33,7 @@ setup(name='emas.app',
           'plone.directives.form',
           'zope.sqlalchemy',
           'psycopg2',
-          # -*- Extra requirements: -*-
+          'zope.index',
       ],
       extras_require={
         'test': [

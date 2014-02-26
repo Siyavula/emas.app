@@ -68,6 +68,12 @@
         handler=".eventhandlers.onMemberJoined"
         />
 
+    <subscriber
+        for="Products.CMFCore.interfaces.IMemberData
+            Products.Archetypes.interfaces.IObjectEditedEvent"
+        handler=".eventhandlers.onMemberPropsUpdated"
+        />
+
     <adapter
         for=".member_service_folder.IMemberServiceFolder"
         factory="plone.folder.unordered.UnorderedOrdering"

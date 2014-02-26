@@ -3,12 +3,14 @@ from DateTime import DateTime
 from z3c.relationfield.relation import create_relation
 from zope.component.hooks import getSite
 from zope.component import queryUtility
+from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.utils import createContentInContainer
 
+from emas.app.usercatalog import IUserCatalog
 from emas.app.memberservice import MemberServicesDataAccess 
 
 
@@ -149,6 +151,12 @@ def onMemberJoined(obj, event):
                  'expiry_date': trialend,
                  'service_type': related_service.service_type}
         ms = dao.add_memberservice(**props) 
+
+    getUtility(IUserCatalog).index(obj)
+
+
+def onMemberPropsUpdated(obj, event):
+    getUtility(IUserCatalog).index(obj)
 
 
 def service_cost_updated(event):
