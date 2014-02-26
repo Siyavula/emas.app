@@ -19,12 +19,17 @@ class UserCatalog(Persistent):
     def __init__(self):
         self._index = TextIndex()
 
-    def index(self, member):
+    def index(self, user):
         ints = getUtility(IIntIds)  
-        memberid = ints.register(member)
-        text = "%s %s %s" % (member.getUserName(),
-                             member.getProperty('fullname'),
-                             member.getProperty('email'))
+        site = getSite()
+        mtool = getToolByName(site, 'portal_membership')
+        memberdata = mtool.getMemberById(user.getId())
+        if memberdata is None:
+            return
+        memberid = ints.register(memberdata)
+        text = "%s %s %s" % (memberdata.getUserName(),
+                             memberdata.getProperty('fullname'),
+                             memberdata.getProperty('email'))
         self._index.index_doc(memberid, text)
 
     def unindex(self, member):
