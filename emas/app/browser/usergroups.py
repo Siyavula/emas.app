@@ -62,7 +62,7 @@ class UsersOverviewControlPanel(Base):
         rolemakers = acl.plugins.listPlugins(IRolesPlugin)
         usercatalog = getUtility(IUserCatalog)
 
-        users = usercatalog.search(searchString=searchString)
+        users = usercatalog.search(searchstring=searchString)
         
         # Tack on some extra data, including whether each role is explicitly
         # assigned ('explicit'), inherited ('inherited'), or not
