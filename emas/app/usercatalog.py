@@ -9,6 +9,7 @@ from zope.index.text.textindex import TextIndex
 from zope.index.field import FieldIndex
 
 from Products.CMFCore.utils import getToolByName
+from BTrees.IOBTree import IOBTree
 
 class IUserCatalog(Interface):
     """ Index and search on user's login, full name and email 
@@ -21,6 +22,7 @@ class UserCatalog(Persistent):
     def __init__(self):
         self._index = TextIndex()
         self._regdate = FieldIndex()
+        self._metadata = IOBtree()
 
     def index(self, user):
         ints = getUtility(IIntIds)  
@@ -37,6 +39,12 @@ class UserCatalog(Persistent):
         regdate = datetime.strptime(regdate.strftime("%Y-%m-%d"), "%Y-%m-%d")
         self._index.index_doc(memberid, text)
         self._regdate.index_doc(memberid, regdate)
+        self._metadata[memberid] = {
+            'username': user.getUserName(),
+            'fullname': user.getProperty('fullname'),
+            'email': user.getProperty('email'),
+            'registrationdate': user.getProperty('registrationdate')
+            }
 
     def unindex(self, member):
         ints = getUtility(IIntIds)  
@@ -65,8 +73,6 @@ class UserCatalog(Persistent):
             memberids = res
         result = []
         for k in memberids:
-            member = ints.getObject(k)
-            member = mtool.getMemberById(member.id)
-            result.append(member)
+            result.append(self._metadata[k])
         return result
 

@@ -32,11 +32,11 @@ class ExportUsers(grok.View):
         csvwriter = csv.writer(csvfile)
         csvwriter.writerow(["username", "fullname", "email",
                             "registrationdate"])
-        for user in users:
-            csvwriter.writerow([user.getUserName(),
-                                user.getProperty('fullname'),
-                                user.getProperty('email'),
-                                user.getProperty('registrationdate')])
+        for usermd in users:
+            csvwriter.writerow([usermd['username'],
+                                usermd['fullname'],
+                                usermd['email'],
+                                usermd['registrationdate']])
 
         result = csvfile.getvalue()
         csvfile.close()

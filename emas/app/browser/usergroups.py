@@ -59,6 +59,7 @@ class UsersOverviewControlPanel(Base):
 
     def doSearch(self, searchString):
         acl = getToolByName(self, 'acl_users')
+        mtool = getToolByName(self.context, 'portal_membership')
         rolemakers = acl.plugins.listPlugins(IRolesPlugin)
         usercatalog = getUtility(IUserCatalog)
 
@@ -68,7 +69,8 @@ class UsersOverviewControlPanel(Base):
         # assigned ('explicit'), inherited ('inherited'), or not
         # assigned at all (None).
         results = []
-        for user in users:
+        for usermd in users:
+            user = mtool.getMemberById(usermd['username'])
             userId = user.getMemberId()
             explicitlyAssignedRoles = []
             for rolemaker_id, rolemaker in rolemakers:
