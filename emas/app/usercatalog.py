@@ -40,10 +40,10 @@ class UserCatalog(Persistent):
         self._index.index_doc(memberid, text)
         self._regdate.index_doc(memberid, regdate)
         self._metadata[memberid] = {
-            'username': user.getUserName(),
-            'fullname': user.getProperty('fullname'),
-            'email': user.getProperty('email'),
-            'registrationdate': user.getProperty('registrationdate')
+            'username': memberdata.getUserName(),
+            'fullname': memberdata.getProperty('fullname'),
+            'email': memberdata.getProperty('email'),
+            'registrationdate': memberdata.getProperty('registrationdate')
             }
 
     def unindex(self, member):
