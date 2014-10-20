@@ -10,6 +10,13 @@
       <metal:block fill-slot="top_slot">
         <tal:insert tal:replace="nothing"
               tal:define="dummy python:request.set('enable_border', 1)" />
+    <style type="text/css" media="all"
+            tal:content="string:@import url(${context/portal_url}/jscalendar/calendar-system.css);"></style>
+    <script type="text/javascript"
+            tal:attributes="src string:${context/portal_url}/jscalendar/calendar_stripped.js"></script>
+    <script type="text/javascript" charset="iso-8859-1"
+            tal:condition="exists: context/jscalendar/calendar-en.js"
+            tal:attributes="src string:${context/portal_url}/jscalendar/calendar-en.js"></script>
       </metal:block>
   </head>
 
@@ -44,23 +51,185 @@
       </metal:content-description>
 
       <metal:content-core fill-slot="content-core">
-          <a href=""
-             class="link-parent"
-             tal:define="parent_url view/parent_url"
-             tal:condition="parent_url"
-             tal:attributes="href string:${parent_url}/folder_contents"
-             i18n:translate="go_to_parent_url">
-              Up one level
-          </a>
+      <div id="search-form"
+	tal:define="filter_criteria python:request.get('filter_criteria', {})">
+          <form action="." method="POST" name="order-filter">
+              <table id="search-form-table" class="listing">
+                  <tr>
+                      <td>
+                          <label for="review_state">
+                              State
+                          </label>
+                      </td>
+                      <td>
+                          <select id="select-review-state" name="filter_criteria.review_state:record:ignore_empty" class="select-widget choice-field">
+                              <option></option>
+                              <option tal:repeat="details view/review_states" value="state"
+                                  tal:attributes="value python:details[0];
+						  selected python:details[0] == filter_criteria.get('review_state');">
+                                <span tal:replace="python:details[1]">Ordered</span>
+                              </option>
+                          </select>
+                      </td>
+                      <td>
+                          <label for="payment_method">
+                              Payment method
+                          </label>
+                      </td>
+                      <td>
+                          <select id="select-payment-method" name="filter_criteria.payment_method:record:ignore_empty" class="select-widget choice-field">
+                              <option></option>
+                              <option tal:repeat="details view/payment_methods" value="payment_method"
+                                  tal:attributes="value details/token;
+						  selected python:details.token == filter_criteria.get('payment_method');">
+                                <span tal:replace="details/title">EFT</span>
+                              </option>
+                          </select>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <label for="userid">
+                              User id 
+                          </label>
+                      </td>
+                      <td>
+                          <input id="userid" name="filter_criteria.userid:record:ignore_empty" value=""
+                              tal:attributes="value python:filter_criteria.get('userid', '')"/> <br/>
+                      </td>
+                      <td>
+                          <label for="related_item_uuids">
+                              Related services
+                          </label>
+                      </td>
+                      <td>
+                          <select id="select-related-services" name="filter_criteria.related_item_uuids:record:ignore_empty">
+                              <option></option>
+                              <option tal:repeat="details view/services" value="service"
+                                tal:attributes="value python:details[0];
+				                selected python:details[0] == filter_criteria.get('related_item_uuids');">
+                                  <span tal:replace="python:details[1]">service title</span>
+                              </option>
+                          </select>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <label for="start_date">
+                              Start date
+                          </label>
+                      </td>
+                      <td>
+                          <tal:define define="id string:start_date;
+                                              show_hm show_hm | python:0;
+                                              inputname string:order_date_start;
+                                              formname string:list_orders;
+	                        	      inputvalue request/order_date_start|string:">
+                            <metal:box use-macro="context/calendar_macros/macros/calendarDatePickerBox">
+                              <!-- a calendar, hopefully -->
+                            </metal:box>                                                        
+                          </tal:define> 
 
-          <form name="folderContentsForm"
-                method="post"
-                action="folder_object"
-                tal:attributes="action context/absolute_url"
-                class="kssattr-serveraction-foldercontents_update_table">
-            <div tal:replace="structure view/contents_table"></div>
-            <input tal:replace="structure context/@@authenticator/authenticator" />
+
+                      </td>
+                      <td>
+                          <label for="end_date">
+                              End date
+                          </label>
+                      </td>
+                      <td>
+                          <tal:define define="id string:end_date;
+                                              show_hm show_hm | python:0;
+                                              inputname string:order_date_end;
+                                              formname string:list_orders;
+	                        	      inputvalue request/order_date_end|string:">
+                            <metal:box use-macro="context/calendar_macros/macros/calendarDatePickerBox">
+                              <!-- a calendar, hopefully -->
+                            </metal:box>                                                        
+                          </tal:define> 
+                      </td>
+                  </tr>
+                  <tr colspan="2">
+                      <td>
+                          <label for="verification_code">
+                              Verification code
+                          </label>
+                      </td>
+                      <td>
+                          <input id="verification_code" name="filter_criteria.verification_code:record:ignore_empty" value=""
+                              tal:attributes="value python:filter_criteria.get('verification_code', '')"/> <br/>
+                      </td>
+                      <td>
+                          <label for="id">
+                              Order number
+                          </label>
+                      </td>
+                      <td>
+                          <input id="id" name="filter_criteria.id:record:ignore_empty" value=""
+                              tal:attributes="value python:filter_criteria.get('id', '')"/> <br/>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <input type="submit" name="list_orders.form.submitted"
+                            class="standalone multiSubmit" value="Search" />
+                      </td>
+                  </tr>
+              </table>
           </form>
+      </div>
+      <tal:defines define="batch view/orders">
+
+      <tal:orders condition="batch">
+      <div metal:use-macro="context/batch_macros/macros/navigation"></div>
+      <table class="listing"
+          tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;">
+          <thead>
+              <tr>
+                  <th>State</th>
+                  <th>Payment method</th>
+                  <th>User id</th>
+                  <th>Related services</th>
+                  <th>Order date</th>
+                  <th>Order number</th>
+                  <th>Verification code</th>
+              </tr>
+          </thead>
+          <tbody>
+          <tal:display-orders repeat="brain batch">
+              <tr tal:define="order python:brain.getObject()">
+                  <td tal:content="python:view.get_review_state_for(order)">
+                      State
+                  </td>
+                  <td tal:content="order/payment_method">
+                      CC|EFT|PRSMS
+                  </td>
+                  <td tal:content="order/userid">
+                      User007
+                  </td>
+                  <td tal:define="services python:view.get_related_services_for(order)">
+                      <tal:services repeat="service services">
+                      <span tal:content="service">Related services</span><br/>
+                      </tal:services>
+                  </td>
+                  <td tal:content="python:toLocalizedTime(order.creation_date)">
+                      01 Jan 1970
+                  </td>
+                  <td>
+                     <a href="#" tal:content="order/Title"
+                         tal:attributes="href order/absolute_url">Order nnn</a>
+                  </td>
+                  <td tal:content="order/verification_code">
+                      44444
+                  </td>
+              </tr>
+          </tal:display-orders>
+          </tbody>
+      </table>
+      <div metal:use-macro="context/batch_macros/macros/navigation"></div>
+      </tal:orders>
+
+      </tal:defines>
       </metal:content-core>
       
   </body>

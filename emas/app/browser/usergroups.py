@@ -7,7 +7,10 @@ from plone.app.controlpanel.usergroups import UsersOverviewControlPanel as Base
 
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import normalizeString
+from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 
+from emas.app.usercatalog import IUserCatalog
 
 class UsersOverviewControlPanel(Base):
     """ Patch to not delete local roles, but delete member services
@@ -53,3 +56,58 @@ class UsersOverviewControlPanel(Base):
         for brain in pc(query):
             obj = brain.getObject()
             obj.aq_parent.manage_delObjects(ids=obj.getId())
+
+    def doSearch(self, searchString):
+        acl = getToolByName(self, 'acl_users')
+        mtool = getToolByName(self.context, 'portal_membership')
+        rolemakers = acl.plugins.listPlugins(IRolesPlugin)
+        usercatalog = getUtility(IUserCatalog)
+
+        users = usercatalog.search(searchstring=searchString)
+        
+        # Tack on some extra data, including whether each role is explicitly
+        # assigned ('explicit'), inherited ('inherited'), or not
+        # assigned at all (None).
+        results = []
+        for usermd in users:
+            user = mtool.getMemberById(usermd['username'])
+            userId = user.getMemberId()
+            explicitlyAssignedRoles = []
+            for rolemaker_id, rolemaker in rolemakers:
+                explicitlyAssignedRoles.extend(
+                    rolemaker.getRolesForPrincipal(user)
+                    )
+
+            roleList = {}
+            for role in self.portal_roles:
+                canAssign = user.canAssignRole(role)
+                if role == 'Manager' and not self.is_zope_manager:
+                    canAssign = False
+                roleList[role]={'canAssign': canAssign,
+                                'explicit': role in explicitlyAssignedRoles,
+                                'inherited': False}
+
+            canDelete = user.canDelete()
+            canPasswordSet = user.canPasswordSet()
+            if roleList['Manager']['explicit'] or roleList['Manager']['inherited']:
+                if not self.is_zope_manager:
+                    canDelete = False
+                    canPasswordSet = False
+
+            user_info = {}
+            user_info['userid'] = userId
+            user_info['principal_type'] = 'user'
+            user_info['title'] = userId
+            user_info['roles'] = roleList
+            user_info['fullname'] = user.getProperty('fullname', '')
+            user_info['email'] = user.getProperty('email', '')
+            user_info['can_delete'] = canDelete
+            user_info['can_set_email'] = user.canWriteProperty('email')
+            user_info['can_set_password'] = canPasswordSet
+            results.append(user_info)
+
+        # Sort the users by fullname
+        results.sort(key=lambda x: x is not None and x['fullname'] is not None and normalizeString(x['fullname']) or '')
+
+        return results
+

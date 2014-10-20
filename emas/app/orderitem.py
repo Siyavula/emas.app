@@ -50,9 +50,7 @@ class IOrderItem(form.Schema):
 class OrderItem(dexterity.Item):
     grok.implements(IOrderItem)
 
-
-class SampleView(grok.View):
-    grok.context(IOrderItem)
-    grok.require('zope2.View')
-    
-    # grok.name('view')
+    def _getCatalogTool(self):
+        """ We don't want orderitems cataloged at all.
+        """
+        return None

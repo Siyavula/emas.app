@@ -12,7 +12,6 @@ from AccessControl.SecurityManagement import newSecurityManager
 from Products.CMFCore.utils import getToolByName
 
 from emas.app.browser.utils import get_display_items_from_order
-from emas.app.browser.utils import member_services
 from emas.app.browser.utils import service_url as get_service_url
 
 LOGGER = logging.getLogger(__name__)
@@ -29,6 +28,18 @@ def getOrder(context, request):
     orders = portal._getOb('orders')
     return orders._getOb(oid)
 
+def logDetails(request):
+    keys = [
+     'ACTUAL_URL', 'AUTHENTICATED_USER' 'CardHolderIpAddr',
+     'HTTP_X_FORWARDED_FOR', 'HTTP_X_VARNISH', 'Hash', 'MaskedCardNumber',
+     'REMOTE_ADDR', 'REQUEST_METHOD', 'TransactionType', 'm_1' 'm_10',
+     'm_2', 'm_3', 'm_4', 'm_5', 'm_6', 'm_7', 'm_8', 'm_9', 'method',
+     'p1', 'p10', 'p11', 'p12', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8',
+     'p9', 'pam'
+    ]
+    
+    for key in keys:
+        LOGGER.info('%s=%s' % (key, request.get(key)))
 
 class PaymentApproved(grok.View):
     """
@@ -40,7 +51,7 @@ class PaymentApproved(grok.View):
     
     def update(self):
         try:
-            self.logDetails()
+            logDetails(self.request)
             self.pps = self.context.restrictedTraverse('@@plone_portal_state')
             pms = getToolByName(self.context, 'portal_membership')
 
@@ -66,29 +77,17 @@ class PaymentApproved(grok.View):
                 url = original_url + '/@@paymentapproved?p2=%s' % oid
                 self.request.response.redirect(url)
         except Exception, ex:
-            LOGGER.warn(ex)
+            LOGGER.error(ex)
             self.request['errors'] = self.request.get('errors', []).append(ex)
-            return self.request.response.redirect('@@warning')
+            url = self.request.get('m_1', None)
+            return self.request.response.redirect(url + '/@@warning')
     
     def memberservices(self):
         return get_display_items_from_order(self.order)
     
     def service_url(self, service):
-        return get_service_url(service)
+        return get_service_url(service, self.context)
     
-    def logDetails(self):
-        keys = [
-         'ACTUAL_URL', 'AUTHENTICATED_USER' 'CardHolderIpAddr',
-         'HTTP_X_FORWARDED_FOR', 'HTTP_X_VARNISH', 'Hash', 'MaskedCardNumber',
-         'REMOTE_ADDR', 'REQUEST_METHOD', 'TransactionType', 'm_1' 'm_10',
-         'm_2', 'm_3', 'm_4', 'm_5', 'm_6', 'm_7', 'm_8', 'm_9', 'method',
-         'p1', 'p10', 'p11', 'p12', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8',
-         'p9', 'pam'
-        ]
-        
-        for key in keys:
-            LOGGER.info('%s=%s' % (key, self.request.get(key)))
-
 
 class PaymentDeclined(grok.View):
     """
@@ -99,6 +98,7 @@ class PaymentDeclined(grok.View):
 
     
     def update(self):
+        logDetails(self.request)
         original_url = self.request.get('m_1', None)
         if original_url is not None and len(original_url) > 0:
             url = original_url + '/@@paymentdeclined'

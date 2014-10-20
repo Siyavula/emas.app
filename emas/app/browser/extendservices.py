@@ -20,7 +20,6 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.statusmessages.interfaces import IStatusMessage
 
 from emas.app.service import IService
-from emas.app.browser.utils import all_member_services_for
 from emas.app import MessageFactory as _
 
 LOGGER = logging.getLogger('exendservices:')
@@ -61,9 +60,7 @@ class ExtendMemberServicesForm(form.SchemaForm):
             return
 
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        memberservices = portal['memberservices']
-        ms_path = '/'.join(memberservices.getPhysicalPath())
-        
+        dao = MemberServicesDataAccess(portal) 
         new_services = 0
         file = StringIO(data['csvfile'].data)
         services = data['services']
@@ -71,44 +68,26 @@ class ExtendMemberServicesForm(form.SchemaForm):
             LOGGER.debug('Processing row:%s' %row)
             if len(row) == 0:
                 continue
-            userid = row[0]
+            memberid = row[0]
             for service in services:
                 LOGGER.debug('Checking service:%s' % service.title)
-                uuid = IUUID(service)
-                tmpservices = all_member_services_for(portal,
-                                                      ms_path,
-                                                      [uuid],
-                                                      userid)
+                intid = intids.getId(service)
+                tempservices = dao.get_memberservices(memberid, [intid,])
 
                 # we did not find a memberservice for this combination of:
-                # service uuid: userid, we create a new memberservice
+                # service intid: memberid, we create a new memberservice
                 if len(tmpservices) == 0:
                     new_services += 1
-                    mstitle = '%s for %s' % (service.title, userid)
+                    mstitle = '%s for %s' % (service.title, memberid)
                     LOGGER.debug('Creating member service:%s' % mstitle)
 
-                    related_service = create_relation(service.getPhysicalPath())
-                    props = {'title': mstitle,
-                             'userid': userid,
-                             'related_service': related_service,
-                             'service_type': service.service_type
-                             }
-
-                    ms = createContentInContainer(
-                        memberservices,
-                        'emas.app.memberservice',
-                        False,
-                        **props
-                    )
-
-                    # give the order owner permissions on the new memberservice, or
-                    # we wont' be able to find the memberservices for this user
-                    ms.manage_setLocalRoles(userid, ('Owner',))
+                    props = {'memberid': memberid,
+                             'title': mstitle,
+                             'related_service_id': intids.getId(related_service),
+                             'expiry_date' : data['expiry_date'],
+                             'service_type': service.service_type,
+                            }
+                    ms = dao.add_memberservice(**props)
                     tmpservices.append(ms)
-
-                for memberservice in tmpservices:
-                    LOGGER.debug('Updating member service:%s' % memberservice.title)
-                    memberservice.expiry_date = data['expiry_date']
-                    memberservice.reindexObject()
                 
         self.status = "Member services extended successfully"

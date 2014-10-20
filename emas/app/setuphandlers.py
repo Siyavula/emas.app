@@ -408,6 +408,15 @@ ITEMS = {
         'subscription_period': 0,
         'amount_of_credits': 0,
         },
+
+    'maths-and-science-discount' : {
+        'title': 'Discount when both Maths and Science are purchased',
+        'type': 'emas.app.service',
+        'price': -200.00,
+        'service_type': 'subscription',
+        'subscription_period': 0,
+        'amount_of_credits': 0,
+        },
 }
 
 
@@ -501,12 +510,47 @@ def setupProductsAndServices(portal):
             item.reindexObject()
 
 
+def setupGroups(portal):
+    groups_tool = getToolByName(portal, 'portal_groups')
+    groupids = ['newsletter_subscribers',]
+    for groupid in groupids:
+        if not groupid in groups_tool.getGroupIds():
+            groups_tool.addGroup(groupid)
+
+
+def setupCustomCatalog(portal):
+    if not portal.hasObject('order_catalog'):
+        addTool = portal.manage_addProduct['emas.app'].manage_addTool
+        # Add the tool by its meta_type
+        addTool('EMAS Catalog Tool')
+
+    catalog = portal.order_catalog
+    
+    new_indexes = {'portal_type'         : 'FieldIndex',
+                   'review_state'        : 'FieldIndex',
+                   'payment_method'      : 'FieldIndex',
+                   'userid'              : 'FieldIndex',
+                   'related_item_uuids'  : 'KeywordIndex',
+                   'allowedRolesAndUsers': 'KeywordIndex',
+                   'getId'               : 'FieldIndex',
+                   'id'                  : 'FieldIndex',
+                   'order_date'          : 'DateIndex',
+                   'order_number'        : 'FieldIndex',
+                   'verification_code'   : 'FieldIndex',}
+
+    current_indexes = catalog.indexes()
+    for index_name, index_type in new_indexes.items():
+        if not index_name in current_indexes:
+            catalog.addIndex(index_name, index_type, extra=None)
+
+
 def install(context):
     if context.readDataFile('emas.app-marker.txt') is None:
         return
+
     site = context.getSite()
+    setupCustomCatalog(site)
+    setupGroups(site)
     setupPortalContent(site)
     setupCatalogIndexes(site)
     setupProductsAndServices(site)
-
-

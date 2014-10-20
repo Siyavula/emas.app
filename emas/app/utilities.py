@@ -5,8 +5,8 @@ from BTrees.IIBTree import IIBTree
 from zope.interface import implements, Interface
 
 RETRIES = 1000
-LOWER = 9999
-UPPER = 100000
+LOWER = 100001
+UPPER = 999999
 
 
 class IVerificationCodeUtility(Interface):

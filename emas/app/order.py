@@ -1,5 +1,12 @@
+from Acquisition import aq_base
+
+from AccessControl.SecurityInfo import ClassSecurityInfo
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import ModifyPortalContent
 from five import grok
+from plone.uuid.interfaces import IUUID
 from plone.directives import dexterity, form
+from plone.indexer import indexer
 
 from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -83,9 +90,26 @@ class IOrder(form.Schema):
         required=True,
     )
 
+@indexer(IOrder)
+def related_item_uuids(obj):
+    uuids = []
+    for item in obj.order_items():
+        uuid = IUUID(item.related_item.to_object)
+        uuids.append(uuid)
+    return uuids
+grok.global_adapter(related_item_uuids, name="related_item_uuids")
+
+@indexer(IOrder)
+def order_date(obj):
+    return obj.created
+grok.global_adapter(order_date, name="order_date")
+
+
 class Order(dexterity.Container):
     grok.implements(IOrder)
     
+    security = ClassSecurityInfo()
+
     def subtotal(self):
         subtotal = 0
         items = self.objectValues()
@@ -141,6 +165,32 @@ class Order(dexterity.Container):
         elif self.payment_method == MOOLA:
             returned_code = self.REQUEST.get('verification_code')
             return self.verification_code == returned_code
+    
+    def _getCatalogTool(self):
+        """ We override this method from Products.CMFCore.CMFCatalogAware,
+            because we want to put orders in a separate catalog.
+        """
+        catalog = getToolByName(self, 'order_catalog', None)
+        return catalog
+
+    _cmf_security_indexes = ('allowedRolesAndUsers',)
+
+    security.declareProtected(ModifyPortalContent, 'reindexObjectSecurity')
+    def reindexObjectSecurity(self, skip_self=False):
+        """ Reindex security-related indexes on the object.
+        """
+        catalog = self._getCatalogTool()
+        if catalog is None:
+            return
+
+        # Recatalog with the same catalog uid.
+        s = getattr(self, '_p_changed', 0)
+        catalog.reindexObject(self, idxs=self._cmf_security_indexes,
+                              update_metadata=0,
+                              uid='/'.join(self.getPhysicalPath()))
+
+        if s is None: self._p_deactivate()
+
 
 class SampleView(grok.View):
     grok.context(IOrder)

@@ -1,32 +1,24 @@
 import hashlib
+
+
 from urlparse import urlparse
 from datetime import date, datetime, timedelta
 from Products.CMFCore.utils import getToolByName
 from plone.uuid.interfaces import IUUID
 from zope.component import getUtility
 from zope.annotation.interfaces import IAnnotations
+from zope.component import queryUtility
+from zope.intid.interfaces import IIntIds
+
+
 
 from emas.app.utilities import IVerificationCodeUtility
+from emas.app.memberservice import IMemberService, MemberServicesDataAccess
 
 KEY_BASE = 'emas.app'
 
 
 service_mapping = {
-    'qaservices' : {
-        'general': [],
-        'maths/grade-10'  :['products_and_services/maths-grade10-questions',
-                           ],
-        'maths/grade-11'  :['products_and_services/maths-grade11-questions',
-                           ],
-        'maths/grade-12'  :['products_and_services/maths-grade12-questions',
-                           ],
-        'science/grade-10':['products_and_services/science-grade10-questions',
-                           ],
-        'science/grade-11':['products_and_services/science-grade11-questions',
-                           ],
-        'science/grade-12':['products_and_services/science-grade12-questions',
-                           ]
-    },
     'practice_services' : {
         'general' : ['products_and_services/maths-grade10-practice',
                      'products_and_services/maths-grade11-practice',
@@ -110,10 +102,6 @@ def get_grade_from_path(path):
     return grade
 
 
-def qaservice_paths():
-    return service_mapping.get('qaservices')
-
-
 def subject_and_grade(context):
     """
         We trust in the structure of the content. Currently, this is
@@ -130,171 +118,30 @@ def subject_and_grade(context):
     return context.getPhysicalPath()[2:4]
 
 
-def paths_to_uuids(paths, context):
-    uids = []
-    for path in paths:
-        obj = context.restrictedTraverse(path)
-        if obj:
-            uids.append(IUUID(obj))
-    return uids
-
-
-def qaservice_uuids(context):
-    mapping = service_mapping.get('qaservices')
-    # better get a copy or we will modify this in-place and break the mapping
-    service_paths = mapping.get('general')[:]
-    subject, grade = subject_and_grade(context)
-    service_paths.extend(
-        mapping.get('%s/%s' %(subject, grade), [])
-    )
-    return paths_to_uuids(service_paths, context)
-
-
-def practice_service_uuids(context):
-    mapping = service_mapping.get('practice_services')
-    # at this stage we use only the general mappings since we don't have
-    # practice services that are context specific in EMAS yet.
-    service_paths = mapping.get('general')
-    return paths_to_uuids(service_paths, context)
-
-
-def practice_service_uuids_for_subject(context, subject):
-    mapping = service_mapping.get('practice_services')
-    paths = mapping.get('general')
-    uuids = []
-    for path in paths:
-        obj = context.restrictedTraverse(path)
-        if obj and obj.subject == subject:
-            uuids.append(IUUID(obj))
-
-    return uuids
-
-
-def member_services(context, service_uids):
-    pmt = getToolByName(context, 'portal_membership')
-    member = pmt.getAuthenticatedMember()
-    today = datetime.today().date()
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': member.getId(),
-             'serviceuid': service_uids,
-             'expiry_date': {'query':today, 'range':'min'}
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
-
-
-def member_services_for_subject(context, service_uids, subject):
-    pmt = getToolByName(context, 'portal_membership')
-    member = pmt.getAuthenticatedMember()
-    today = datetime.today().date()
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': member.getId(),
-             'serviceuid': service_uids,
-             'expiry_date': {'query':today, 'range':'min'},
-             'subject': subject.lower(),
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
-
-
-def member_services_for(context, service_uids, userid):
-    today = datetime.today().date()
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': userid,
-             'serviceuid': service_uids,
-             'expiry_date': {'query':today, 'range':'min'}
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
-
-
-def all_member_services_for(context, path, service_uids, userid):
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': userid,
-             'path': path,
-             'serviceuid': service_uids,
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
-
-
-def member_services_for_subject(context, service_uids, userid, subject):
-    today = datetime.today().date()
-    query = {'portal_type': 'emas.app.memberservice',
-             'userid': userid,
-             'serviceuid': service_uids,
-             'subject': subject,
-             'expiry_date': {'query':today, 'range':'min'}
-            }
-    pc = getToolByName(context, 'portal_catalog')
-    memberservices = [b.getObject() for b in pc(query)]
-    return memberservices
-
-
-def service_url(service):
+def service_url(service, context):
     # XXX: fix urls to point to appropriate site hosting the service
-    portal_url = service.restrictedTraverse('@@plone_portal_state').portal_url()
-    grade = service.related_service.to_object.grade
+    portal_url = context.restrictedTraverse('@@plone_portal_state').portal_url()
+    grade = service.related_service(context).grade
     return '%s/@@practice/%s' %(portal_url, grade)
 
 
 def member_credits(context):
-    credits = 0
+    """ NOTE: remove this completely when we finally remove siyavula.what
+    """
+    return 0
 
-    service_uids = qaservice_uuids(context)
-    if service_uids is None or len(service_uids) < 1:
-        return 0
-
-    memberservices = member_services(context, service_uids)
-    if len(memberservices) < 1:
-        return 0 
-
-    for ms in memberservices:
-        credits += ms.credits
-    return credits
-
-
-def memberservice_expiry_date(context):
-    expiry_date = None
-
-    service_uids = qaservice_uuids(context)
-    if service_uids is None or len(service_uids) < 1:
-        return None 
-    
-    memberservices = member_services(context, service_uids)
-    if len(memberservices) < 1:
-        return  None
-
-    for ms in memberservices:
-        expiry_date = ms.expiry_date
-
-    return expiry_date
-
-def practice_service_expirydate(context):
-    service_uids = practice_service_uuids(context)
-
-    if service_uids is None or len(service_uids) < 1:
-        return None
-    
-    memberservices = member_services(context, service_uids)
-    if len(memberservices) < 1:
-        return  None
-    
-    return memberservices[0].expiry_date
 
 def annotate(obj, key, value):
     annotations = IAnnotations(obj)
     key = '%s.%s' %(KEY_BASE, key)
     annotations[key] = value
 
+
 def get_annotation(obj, key):
     annotations = IAnnotations(obj)
     key = '%s.%s' %(KEY_BASE, key)
     return annotations.get(key, '')
+
 
 def compute_vcs_response_hash(props, md5key):
     keys = ("p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11",
@@ -373,38 +220,61 @@ def get_display_items_from_request(context):
 
 
 def get_display_items_from_order(order):
-    display_items = []
-    # it is a LazyMap, we slice it to get the full objects
-    orderitems = order.order_items()
+    memberid = order.userid
     orderitems = dict(
         (item.related_item.to_object, item.quantity)
-        for item in orderitems
+        for item in order.order_items()
     )
-    discount_items = get_discount_items(order, orderitems)
 
-    discount_items = set(discount_items.keys())
-    orderitems = set(orderitems.keys())
-    
-    items = orderitems.difference(discount_items)
-    uuids = [IUUID(item) for item in items]
-    items = member_services(order, uuids)
-    display_items = [i for i in items \
-                     if i.related_service.to_object.getId() in SERVICE_IDS]
+    dao = MemberServicesDataAccess(order)
+    ids = [dao.intids.getId(service) for service in orderitems.keys()]
+    display_items = dao.get_memberservices(ids, memberid)
     return display_items 
+
 
 def get_paid_orders_for_member(context, memberid):
     query = {'portal_type': 'emas.app.order',
              'userid': memberid,
              'review_state': 'paid'
             }
-    pc = getToolByName(context, 'portal_catalog')
+    pc = getToolByName(context, 'order_catalog')
     brains = pc(query)
     return [b.getObject() for b in brains]
+
 
 def generate_verification_code(order):
     vcu = getUtility(IVerificationCodeUtility, context=order)
     return vcu.generate(order)
 
+
 def is_unique_verification_code(context, verification_code):
     vcu = getUtility(IVerificationCodeUtility, context=order)
     return vcu.is_unique(verification_code)
+
+def paths_to_intids(paths, context):
+    ids = []
+    intids = queryUtility(IIntIds, context=context)
+    for path in paths:
+        obj = context.restrictedTraverse(path)
+        if obj:
+            ids.append(intids.getId(obj))
+    return ids
+
+
+def practice_service_intids(context):
+    mapping = service_mapping.get('practice_services')
+    service_paths = mapping.get('general')
+    return paths_to_intids(service_paths, context)
+
+
+def practice_service_intids_for_subject(context, subject):
+    intids = queryUtility(IIntIds, context=context)
+    mapping = service_mapping.get('practice_services')
+    paths = mapping.get('general')
+    ids = []
+    for path in paths:
+        obj = context.restrictedTraverse(path)
+        if obj and obj.subject == subject:
+            ids.append(intids.getId(obj))
+
+    return ids

@@ -13,6 +13,7 @@ from plone.dexterity.utils import createContentInContainer
 
 from emas.app import eventhandlers
 from emas.app.tests.base import INTEGRATION_TESTING
+from emas.app.memberservice import MemberServicesDataAccess 
 
 
 class FauxEvent(object):
@@ -35,7 +36,7 @@ class TestEventhandlers(unittest.TestCase):
     def tearDown(self):
         self.orders.manage_delObjects(self.ordernumbers)
 
-    def test_eventhandler(self):
+    def test_eventhandler_no_memberservices(self):
         service1 = self.services['science-grade12-monthly-practice']
         service1.access_group = ''
         ordernumber = '%04d' % 1
@@ -53,6 +54,18 @@ class TestEventhandlers(unittest.TestCase):
 
         event2 = FauxEvent()
         eventhandlers.onOrderPaid(order2, event2)
+    
+    def test_eventhandler_one_memberservice(self):
+        service1 = self.services['science-grade12-monthly-practice']
+        ms = self.add_memberservice(service1, TEST_USER_ID)
+
+        service1.access_group = ''
+        ordernumber = '%04d' % 1
+        self.ordernumbers.append(ordernumber)
+        order = self.add_order(ordernumber, TEST_USER_ID, service1)
+
+        event = FauxEvent()
+        eventhandlers.onOrderPaid(order, event)
     
     def add_order(self, ordernumber, memberid, service):
         props = {'id'     :ordernumber,
@@ -84,6 +97,18 @@ class TestEventhandlers(unittest.TestCase):
             **props
         )
         return order
+
+    def add_memberservice(self, related_service, memberid):
+        now = datetime.now().date()
+        dao = MemberServicesDataAccess(self.portal)
+        mstitle = '%s for %s' % (related_service.title, memberid)
+        props = {'memberid': memberid,
+                 'title': mstitle,
+                 'related_service_id': dao.intids.getId(related_service),
+                 'expiry_date': now,
+                 'service_type': related_service.service_type}
+        ms = dao.add_memberservice(**props)
+        return ms
 
 
 def test_suite():

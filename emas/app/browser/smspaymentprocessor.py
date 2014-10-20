@@ -16,6 +16,7 @@ from emas.theme.interfaces import IEmasSettings
 
 LOGGER = getLogger('emas.app:smspaymentprocessor')
 
+
 class SMSPaymentApproved(grok.View):
     """ Reverse tunnel from siyavula:
         ssh -nNT -R 9999:localhost:8080 siyavula
@@ -82,22 +83,26 @@ class SMSPaymentApproved(grok.View):
         verification_code = request.get('message')
         if not verification_code:
             return None
-        
-        pc = getToolByName(self.context, 'portal_catalog')
-        query = {'portal_type':       'emas.app.order',
+      
+        pc = getToolByName(self.context, 'order_catalog')
+        query = {'portal_type': 'emas.app.order',
+		 'review_state': 'ordered',
                  'verification_code': verification_code}
-        brains = pc.unrestrictedSearchResults(query)
+	try:
+	    brains = pc.unrestrictedSearchResults(query)
+	except UnicodeDecodeError:
+	    return None
         if not brains or len(brains) < 1:
             LOGGER.debug(
                 'Could not find order with verification code:'
                 '%s' % verification_code)
             return None
-        
         brain = brains[0]
+        order = brain._unrestrictedGetObject()
         pmt = getToolByName(self.context, 'portal_membership')
-        user = pmt.getMemberById(brain.Creator)
+	user = pmt.getMemberById(order.userid)
         newSecurityManager(request, user)
-        return brain.getObject()
+        return order
 
     def validateSender(self, request, settings):
         password = request.get('password')

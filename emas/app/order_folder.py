@@ -14,10 +14,3 @@ class IOrderFolder(form.Schema):
 
 class OrderFolder(dexterity.Container):
     grok.implements(IOrderFolder)
-    
-
-class SampleView(grok.View):
-    grok.context(IOrderFolder)
-    grok.require('zope2.View')
-    
-    # grok.name('view')

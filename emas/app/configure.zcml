@@ -7,6 +7,9 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="emas.app">
 
+
+  <five:registerPackage package="." initialize=".initialize" />
+
   <!-- Include configuration for dependencies listed in setup.py -->
   <includeDependencies package="." />
   <include package=".browser" />
@@ -49,18 +52,6 @@
         />
 
     <subscriber
-        for="siyavula.what.question.IQuestion
-             zope.lifecycleevent.IObjectAddedEvent"
-        handler=".eventhandlers.questionAsked"
-        />
-
-    <subscriber
-        for="siyavula.what.question.IQuestion
-             zope.app.container.interfaces.IObjectRemovedEvent"
-        handler=".eventhandlers.questionDeleted"
-        />
-
-    <subscriber
         for="emas.app.member_service.IMemberService
              zope.lifecycleevent.IObjectAddedEvent"
         handler=".eventhandlers.memberServiceAdded"
@@ -75,6 +66,12 @@
         for="Products.PluggableAuthService.interfaces.authservice.IPropertiedUser
             Products.PluggableAuthService.interfaces.events.IPrincipalCreatedEvent"
         handler=".eventhandlers.onMemberJoined"
+        />
+
+    <subscriber
+        for="Products.CMFCore.interfaces.IMemberData
+            Products.Archetypes.interfaces.IObjectEditedEvent"
+        handler=".eventhandlers.onMemberPropsUpdated"
         />
 
     <adapter

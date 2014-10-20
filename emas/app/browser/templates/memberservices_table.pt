@@ -1,0 +1,112 @@
+<div id="folderlisting-main-table"
+     i18n:domain="plone">
+  <input type="hidden" name="sort_on"
+         tal:attributes="value request/sort_on|string:getObjPositionInParent"
+         />
+  <input type="hidden" name="pagenumber" tal:attributes="value view/batch/pagenumber"/>
+  <input type="hidden" name="show_all" tal:attributes="value view/show_all"/>
+  <input type="hidden" name="orig_template" tal:attributes="value view/viewname"/>
+  <tal:block condition="view/selectall">
+    <input type="hidden" name="db_primary_keys:list"
+           tal:repeat="item view/batch/items_not_on_page"
+           tal:attributes="value item/db_primary_key"/>
+  </tal:block>
+
+  <p class="discreet"
+     tal:condition="not: view/batch"
+     i18n:translate="description_no_visible_items_add_paste">
+  </p>
+
+    <metal:listing define-macro="folder_listing"
+      tal:define="nosortclass view/get_nosort_class;">
+    
+    <div class="visualClear" id="clear-space-before-navigation"><!-- --></div>
+
+    <div tal:replace="structure view/batching" tal:condition="not:view/show_all"/>
+    <table class="listing"
+           id="listing-table"
+           summary="Content listing"
+           i18n:attributes="summary summary_content_listing;"
+           tal:condition="view/items">
+      <thead>
+        <tr>
+          <th class="nosort"
+              id="foldercontents-select-column"
+              tal:condition="view/show_select_column">&nbsp;</th>
+          <th class="nosort column" id="foldercontents-memberservice-id-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-id">Id</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-memberid-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-memberid">Member</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-title-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-title">Title</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-expirydate-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-expirydate">Expires</tal:name>&nbsp;
+          </th>
+          <th class="nosort column" id="foldercontents-memberservice-relatedservice-column">
+              &nbsp;<tal:name i18n:translate="listingheader_memberservice-relatedservice">Related service</tal:name>&nbsp;
+          </th>
+      </thead>
+
+      <metal:block tal:condition="view/batch">
+        <tbody class="nowrap">
+          <tal:items tal:repeat="item view/batch">
+            <tr tal:attributes="class item/table_row_class;
+                                id string:folder-contents-item-${item/id};"
+                tal:define="memberservice item/memberservice;">
+                
+                <td tal:condition="view/show_select_column" class="notDraggable">
+                    <input type="checkbox"
+                        class="noborder"
+                        name="ids:list" id="#"
+                        value="#"
+                        tal:attributes="value   item/id;
+                                        id      string:cb_${item/id};
+                                        checked item/checked;
+                                        alt     python:view.msg_select_item(item);
+                                        title   python:view.msg_select_item(item)" />
+                    <input type="hidden" name="selected_ids:list" value="#"
+                        tal:attributes="value item/id" />
+                    <label tal:content="item/id"
+                        tal:attributes="for string:cb_${item/id}" 
+                        class="hiddenStructure">
+                        Item Title
+                    </label>
+                  </td>
+
+              <td>
+                  <span tal:replace="memberservice/id">id</span>
+              </td>
+              <td>
+                  <span tal:replace="memberservice/memberid">member</span>
+              </td>
+              <td>
+                  <a href="#" tal:attributes="href string:${item/view_url}?id=${memberservice/id};">
+                      <strong tal:content="memberservice/title">title</strong>
+                  </a>
+              </td>
+              <td>
+                  <span tal:replace="memberservice/expiry_date">12 Jun 2013</span>
+              </td>
+              <td tal:define="rs_id memberservice/related_service_id;
+                              related_service python:view.related_service(rs_id);">
+                  <a href="#" tal:attributes="href related_service/absolute_url|string:#"> 
+                      <span tal:replace="related_service/Title|string:Not found!">related service title</span>
+                  </a> 
+              </td>
+            </tr>
+          </tal:items>
+        </tbody>
+      </metal:block>
+    </table>
+    <div tal:replace="structure view/batching">batching controls</div>
+
+    <input class="context" type="submit"
+           name="delete"
+           value="Delete"
+           i18n:attributes="value" />
+    
+    </metal:listing>
+</div>

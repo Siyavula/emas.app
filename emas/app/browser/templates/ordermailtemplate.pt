@@ -1,27 +1,64 @@
 Dear <span tal:replace="options/fullname">John</span>
 
-Thank you for your order!
+<tal:eft condition="python:options.get('payment', '') == 'eft'">You're almost done! You still need to make an EFT payment and send us proof of payment before we can activate your subscription.
+
+STEP 1: CHECK YOUR ORDER
 
 You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
 - <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
-<tal:eft condition="python:options.get('payment', '') == 'eft'">
+STEP 2: MAKE A PAYMENT
+
 Payment for this order can be made using an electronic funds transfer
 (EFT) to the bank account below. Please ensure that you use the correct
-reference as specified below.
+reference as specified below. Your subscription will only be activated
+once we have received payment which may take up to 3 days to process,
+depending on your bank.
 
 Account name: Siyavula Education
 Bank: Nedbank
 Account number: 1018177434
 Branch code:198765
-Reference: <tal:username tal:replace="options/ordernumber"/>
+Reference: <tal:ordernumber tal:replace="options/ordernumber"/>
 
-Please email proof of payment to <tal:email tal:replace="options/email"/>
-</tal:eft>
+STEP 3: SEND US PROOF OF PAYMENT
 
+Don't forget to email your proof of payment to <tal:email tal:replace="options/email"/>
+</tal:eft><tal:creditcard condition="python:options.get('payment', '') == 'creditcard'">You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
+- <tal:item tal:replace="options/service_ordered"/>
+
+The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
+
+Order number: <tal:ordernumber tal:replace="options/ordernumber"/>
+
+If you have already paid online using a credit card, you should receive
+an invoice from Virtual Card Services shortly, and your subscription
+will be activated immediately.
+
+If you've paid but did not receive an invoice, please contact us at
+accounts@siyavula.com with your order number, as above.
+
+If you have not yet paid, please return to www.everythingmaths.co.za or
+www.everythingscience.co.za to complete your order.
+</tal:creditcard><tal:sms condition="python:options.get('payment', '') == 'sms'">You're almost done! You still need to SMS '<span tal:replace="options/verification_code">verification code</span>' to <span tal:replace="options/premium_number"> premium number</span> to pay via premium SMS, before we can activate your subscription.
+
+STEP 1: YOUR ORDER INFORMATION
+
+You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
+- <tal:item tal:replace="options/service_ordered"/>
+The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
+
+STEP 2: MAKE A PAYMENT
+
+In order to complete this transaction and pay, please SMS '<span tal:replace="options/verification_code">verification code</span>' to
+<span tal:replace="options/premium_number"> premium number</span> to
+make a mobile payment. You will receive an SMS confirming your payment
+was successful, after which your subscription will be activated.
+</tal:sms>
 Should you have any queries, please contact us by email at <tal:email tal:replace="options/email"/>, by phone at <tal:email tal:replace="options/phone"/> or simply reply to this email.
 
 Regards,
 Siyavula Education
+http://www.everythingmaths.co.za and http://www.everythingscience.co.za

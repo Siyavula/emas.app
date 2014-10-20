@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
 <componentregistry>
- <utilities>
-  <utility
-     interface="emas.app.utilities.IVerificationCodeUtility"
-     factory="emas.app.utilities.VerificationCodeUtility"/>
- </utilities>
+    <utilities>
+        <utility
+            interface="emas.app.utilities.IVerificationCodeUtility"
+            factory="emas.app.utilities.VerificationCodeUtility"/>
+        <utility
+            interface="emas.app.usercatalog.IUserCatalog"
+            factory="emas.app.usercatalog.UserCatalog"
+            />
+    </utilities>
 </componentregistry>
