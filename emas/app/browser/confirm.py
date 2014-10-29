@@ -282,11 +282,12 @@ class Confirm(grok.View):
             substr = "1 month subscription to %s Grade %s"
             return substr % (self.subjects, grade)
         else:
-            substr = "1 year subscription to %s Grade 10, 11 and 12"
-            if self.subjects in ('Maths', 'Science'):
-                return substr % self.subjects
+            if self.subjects in ('Maths'):
+                return "1 year subscription to Maths Grades 8 - 12"
+            if self.subjects in ('Science'):
+                return "1 year subscription to Science Grades 10 - 12"
             elif self.subjects == 'Maths,Science':
-                return substr % "Maths and Science" 
+                return "1 year subscription to Maths Grades 8 - 12 and Science Grades 10 - 12"
 
     def ordersubmitted(self):
         return (self.request.has_key('order.form.submitted') or
