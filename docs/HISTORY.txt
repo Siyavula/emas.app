@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.15
+----
+
+Merge performance-tuning branch
+
+Update copy on order confirmation page
+
 1.14
 ----
 
