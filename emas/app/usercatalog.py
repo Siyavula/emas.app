@@ -22,7 +22,7 @@ class UserCatalog(Persistent):
     def __init__(self):
         self._index = TextIndex()
         self._regdate = FieldIndex()
-        self._metadata = IOBtree()
+        self._metadata = IOBTree()
 
     def index(self, user):
         ints = getUtility(IIntIds)  
