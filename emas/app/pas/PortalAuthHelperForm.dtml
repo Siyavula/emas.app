@@ -1,0 +1,35 @@
+<dtml-var manage_page_header>
+
+<h2>Add a Siyavula Portal Auth Helper for PAS</h2>
+
+<p class="form-help">
+    install a pas plugin that delegates authentication to the siyavula auth and
+    profile services.
+</p>
+
+<form action="manage_addPortalAuthHelper" method="POST"
+      enctype="multipart/form-data">
+<table>
+
+<tr>
+    <td class="form-label">Id</td>
+    <td><input type="text" name="id" /></td>
+</tr>
+
+<tr>
+    <td class="form-label">Title</td>
+    <td><input type="text" name="title" /></td>
+</tr>
+
+<tr>
+    <td colspan="2">
+        <div class="form-element">
+            <input type="submit" value="add auth helper"/>
+        </div>
+    </td>
+</tr>
+
+
+
+</table>
+</form>
