@@ -84,7 +84,7 @@ class PortalAuthHelper(BasePlugin):
         proxy = request.get_header('x-siyavula-portal-proxy')
         if proxy is not None:
             came_from = request.get('ACTUAL_URL', '')
-            redir = proxy + '/_/login'
+            redir = proxy + '/sign-in'
             if came_from:
                 redir += '?came_from=' + quote(came_from)
             response.redirect(redir, lock=1)
@@ -116,10 +116,11 @@ class PortalAuthHelper(BasePlugin):
                 data = json.loads(result.read())
             except ValueError:
                 return {}
+            general = data.get('general', {})
             properties = {
-                'fullname': data['general']['name'] + ' ' + \
-                    data['general']['surname'],
-                'email': data['general']['email']
+                'fullname': general.get('name', '') + ' ' + \
+                    general.get('surname', ''),
+                'email': general.get('email', '')
             }
             emasdata = data.get('emas', {})
             for p in ('school', 'province'):
