@@ -20,7 +20,7 @@
                     <p><strong>The total cost of your order is: <tal:cost tal:replace="view/totalcost"/></strong></p>
             </tal:sms>
             <tal:eft tal:condition="view/eft_selected">
-                <p><strong>You need to do an EFT and send us proof of payment before your subscription can be activated.</strong></p>
+                <p><strong>You still need to do an Electronic Funds Transfer (EFT) and send us proof of payment before your subscription can be activated.</strong></p>
             </tal:eft>
 
             <h3 tal:condition="not:view/sms_selected">Step 1: Check your order</h3>
@@ -38,7 +38,7 @@
                 </div>
                 </tal:warnings>
 
-                <p>You have ordered the following:</p>
+                <p>You are about to pay for the following:</p>
                 <ul class="nodots">
                     <li tal:content="view/service_ordered">
                         6 month subscription to Maths Grade 10, 11 and 12
@@ -74,15 +74,7 @@
                         Change order
                     </button>
                 </form>
-
-                <p tal:condition="view/eft_selected">You will receive a
-confirmation email containing payment instructions as described below.
-Your subscription will only be activated once we have received payment.
-Payment may take up to 3 days to process, depending on your bank.</p>
-
             </div>
-
-
             <div id="make-payment">
 
                 <h3 tal:condition="not:view/sms_selected">Step 2: Make a payment</h3>
@@ -104,6 +96,11 @@ Payment may take up to 3 days to process, depending on your bank.</p>
     Reference:      <tal:username tal:replace="view/ordernumber"/>
                     </pre>
 
+                    <p>You will receive a confirmation email containing payment
+                    instructions as described below.  Your subscription will
+                    only be activated once we have received payment.  Payment
+                    may take up to 3 days to process, depending on your
+                    bank.</p>
                 </tal:eft>
 
                 <tal:sms tal:condition="view/sms_selected">
@@ -163,6 +160,11 @@ Payment may take up to 3 days to process, depending on your bank.</p>
                     </div>
                             
                 </form>
+
+                <p>You will receive an email containing the same payment
+                instructions described above. Your subscription will only be
+                activated once your credit card payment is successful and you
+                have received an email invoice from Virtual Card Services.</p>
 
                 <p>Should you have any queries, please contact us by email at <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a>, by phone at +27 (021) 469 4771</p>
 

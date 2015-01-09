@@ -1,10 +1,10 @@
 Dear <span tal:replace="options/fullname">John</span>
 
-<tal:eft condition="python:options.get('payment', '') == 'eft'">You're almost done! You still need to make an EFT payment and send us proof of payment before we can activate your subscription.
+<tal:eft condition="python:options.get('payment', '') == 'eft'">You're almost done! You need to make an EFT payment and email us proof of payment before we can activate your subscription.
 
 STEP 1: CHECK YOUR ORDER
 
-You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
+You are about to pay for the following from the Everything Maths & Science website:
 - <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
@@ -26,7 +26,7 @@ Reference: <tal:ordernumber tal:replace="options/ordernumber"/>
 STEP 3: SEND US PROOF OF PAYMENT
 
 Don't forget to email your proof of payment to <tal:email tal:replace="options/email"/>
-</tal:eft><tal:creditcard condition="python:options.get('payment', '') == 'creditcard'">You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
+</tal:eft><tal:creditcard condition="python:options.get('payment', '') == 'creditcard'">You are about to pay for the following from the Everything Maths & Science website:
 - <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
@@ -46,7 +46,7 @@ www.everythingscience.co.za to complete your order.
 
 STEP 1: YOUR ORDER INFORMATION
 
-You have ordered the following from the <span tal:replace="options/sitename">Everything Maths</span> website:
+You are about to pay for the following from the Everything Maths & Science website:
 - <tal:item tal:replace="options/service_ordered"/>
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
@@ -54,7 +54,7 @@ STEP 2: MAKE A PAYMENT
 
 In order to complete this transaction and pay, please SMS '<span tal:replace="options/verification_code">verification code</span>' to
 <span tal:replace="options/premium_number"> premium number</span> to
-make a mobile payment. You will receive an SMS confirming your payment
+make payment. You will receive an SMS confirming your payment
 was successful, after which your subscription will be activated.
 </tal:sms>
 Should you have any queries, please contact us by email at <tal:email tal:replace="options/email"/>, by phone at <tal:email tal:replace="options/phone"/> or simply reply to this email.
