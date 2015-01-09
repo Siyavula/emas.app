@@ -51,15 +51,6 @@ function update_action() {
 $(function($) {
     ordertotal();
 
-    $("#redeem-voucher button[name='submit']").click(function() {
-        isAnon = $('input[name="isAnon"]').val();
-        if (isAnon == "True") {
-            alert('You have to login before you continue.');
-            return false;
-        }
-        return true;
-    });
-
     $("#selectpackage input[type='radio']").change(ordertotal);
     $("#selectpackage button[name='submitorder']").click(validate);
 

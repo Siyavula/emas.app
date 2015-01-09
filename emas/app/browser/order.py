@@ -32,6 +32,14 @@ class Order(grok.View):
 
         elif self.request.has_key('mobileorder.form.submitted'):
             form_submitted = True
+
+            # The mobile form submits the subject/grade as one compound value
+            # place them on the request so everything else continues to work
+            if 'item' in self.request:
+                subjects, grade = self.request.get('item').split('-')
+                self.request['subjects'] = subjects
+                self.request['grade'] = 'grade' + grade
+
             required_fields = ['subjects', 'grade', 'service', 'prod_payment']
             pps = self.context.restrictedTraverse('@@plone_portal_state')
             for fieldname in required_fields:

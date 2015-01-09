@@ -15,6 +15,7 @@ from plone.dexterity.utils import createContentInContainer
 from Products.CMFCore.utils import getToolByName
 from plone.registry.interfaces import IRegistry
 
+# Yuck, app should ideally not depend on theme
 from emas.theme.interfaces import IEmasSettings
 from emas.app.order import CREDITCARD, SMS, EFT
 from emas.app.service import IService

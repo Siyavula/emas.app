@@ -12,28 +12,12 @@
             tal:define="isAnon context/@@plone_portal_state/anonymous;
                         action python:view.action(isAnon);">
 
-            <h3 class="center spacing">Buy</h3>
-
             <div class="login-links" tal:condition="isAnon"
                 tal:define="login_url string:${context/absolute_url}/login;
                             register_url string:${context/absolute_url}/@@register-from-orderform">
                 You are <strong>not logged in</strong>. You need an account on the site before you can buy a subscription.<br/> Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
             </div>
 
-
-            <div id="redeem-voucher">
-                <h3>Activate a school subscription</h3>
-                <p>If you have been given a voucher by your teacher you
-                can redeem it by clicking here.
-
-                <form name="redeem-voucher-form" method="POST"
-                    tal:attributes="action string:$portal_url/@@practice/enter-voucher">
-                    <button type="submit" class="btn btn-large allowMultiSubmit" name="submit" value="1">Redeem a voucher
-                    </button>
-                </form>
-            </div>
-
-            <div id="or-line"><h3><span>OR</span></h3></div>
 
             <div id="individual-order-form">
 
@@ -59,23 +43,23 @@
                                     tal:attributes="checked python:view.subject_selected('Maths', selected)"
                                     value="Maths"
                                     type="radio"
-                                    price="350"> Maths: R350
+                                    price="400"> Maths: R400
                             </li>
                             <li>
                                 <input name="subjects"
                                     checked=""
                                     tal:attributes="checked python:view.subject_selected('Science', selected)"
                                     value="Science"
-                                    price="350"
-                                    type="radio"> Science: R350
+                                    price="400"
+                                    type="radio"> Science: R400
                             </li>
                             <li>
                                 <input name="subjects"
                                     checked=""
                                     tal:attributes="checked python:view.subject_selected('Maths,Science', selected)"
-                                    price="500"
+                                    price="600"
                                     value="Maths,Science"
-                                    type="radio"> Maths and Science: R500
+                                    type="radio"> Maths and Science: R600
                             </li>
                         </ul>
 
