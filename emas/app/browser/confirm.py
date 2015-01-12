@@ -108,6 +108,8 @@ class Confirm(grok.View):
             # web order
             else:
                 maths_service_ids = [
+                    'maths-grade8-practice',
+                    'maths-grade9-practice',
                     'maths-grade10-practice',
                     'maths-grade11-practice',
                     'maths-grade12-practice',
