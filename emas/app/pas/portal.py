@@ -116,17 +116,18 @@ class PortalAuthHelper(BasePlugin):
                 data = json.loads(result.read())
             except ValueError:
                 return {}
-            general = data.get('general', {})
-            properties = {
-                'fullname': general.get('name', '') + ' ' + \
-                    general.get('surname', ''),
-                'email': general.get('email', '')
-            }
-            emasdata = data.get('emas', {})
-            for p in ('school', 'province'):
-                if p in emasdata:
-                    properties[p] = emasdata[p]
-            return properties
+            if data:
+                general = data.get('general', {})
+                properties = {
+                    'fullname': general.get('name', '') + ' ' + \
+                        general.get('surname', ''),
+                    'email': general.get('email', '')
+                }
+                emasdata = data.get('emas', {})
+                for p in ('school', 'province'):
+                    if p in emasdata:
+                        properties[p] = emasdata[p]
+                return properties
 
         return {}
 
