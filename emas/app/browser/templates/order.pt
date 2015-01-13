@@ -15,13 +15,13 @@
             <div class="login-links" tal:condition="isAnon"
                 tal:define="login_url string:${context/absolute_url}/login;
                             register_url string:${context/absolute_url}/@@register-from-orderform">
-                You are <strong>not logged in</strong>. You need an account on the site before you can buy a subscription.<br/> Please <a href="#" tal:attributes="href login_url">login</a> or <a href="#" tal:attributes="href register_url">register</a>. 
+                You are <strong>not signed in</strong>. You need an account on the site before you can buy a subscription.<br/> Please <a href="#" tal:attributes="href login_url">sign in</a> or <a href="#" tal:attributes="href register_url">sign up</a>.
             </div>
 
 
             <div id="individual-order-form">
 
-                <h3>Buy an individual subscription</h3>
+                <h2>Buy an individual subscription</h2>
 
                 <form id="individual-orderform" name="orderform" 
                       class="update-action" method="POST"
