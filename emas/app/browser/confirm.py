@@ -150,7 +150,7 @@ class Confirm(grok.View):
             self.prepPaymentDetails(self.order, self.request)
 
             # We can only send an invoice if we have somewhere to send it to.
-            if member.getProperty('email'):
+            if self.member.getProperty('email'):
                 self.send_invoice(self.order)
 
     def prepPaymentDetails(self, order, request):
