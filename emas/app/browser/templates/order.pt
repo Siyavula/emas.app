@@ -13,8 +13,8 @@
                         action python:view.action(isAnon);">
 
             <div class="login-links" tal:condition="isAnon"
-                tal:define="login_url string:${context/absolute_url}/login;
-                            register_url string:${context/absolute_url}/@@register-from-orderform">
+                tal:define="login_url string:${context/absolute_url}/sign-in;
+                            register_url string:${context/absolute_url}/registration">
                 You are <strong>not signed in</strong>. You need an account on the site before you can buy a subscription.<br/> Please <a href="#" tal:attributes="href login_url">sign in</a> or <a href="#" tal:attributes="href register_url">sign up</a>.
             </div>
 
