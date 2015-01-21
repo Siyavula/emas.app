@@ -6,17 +6,23 @@ import json
 import socket
 from httplib import HTTPConnection
 from urllib import quote
+
+from sqlalchemy.orm import scoped_session, sessionmaker, relationship
+from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Table, Column, Integer, String
+
 from zope.interface import Interface, alsoProvides
 from App.special_dtml import DTMLFile
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import default__class_init__ as InitializeClass
 from Products.PluggableAuthService.interfaces.plugins import \
     IExtractionPlugin, IAuthenticationPlugin, IChallengePlugin,\
-    IPropertiesPlugin, IRolesPlugin
+    IPropertiesPlugin, IRolesPlugin, IUserEnumerationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
 
-PROFILESERVER = 'localhost:6543'
+PROFILESERVER = 'postgresql:///siyavula'
 
 class IAuthToken(Interface):
     """ Marker interface for request. """
@@ -32,6 +38,68 @@ def manage_addPortalAuthHelper(self, id, title='',
 manage_addPortalAuthHelperForm = DTMLFile(
     "PortalAuthHelperForm", globals())
 
+class reify(object):
+    """
+    Put the result of a method which uses this (non-data)
+    descriptor decorator in the instance dict after the first call,
+    effectively replacing the decorator with an instance variable.
+    
+    Shamelessly stolen from pyramid.
+    """
+
+    def __init__(self, wrapped):
+        self.wrapped = wrapped
+        try:
+            self.__doc__ = wrapped.__doc__
+        except:
+            pass
+
+    def __get__(self, inst, objtype=None):
+        if inst is None:
+            return self
+        val = self.wrapped(inst)
+        setattr(inst, self.wrapped.__name__, val)
+        return val
+
+Base = declarative_base()
+
+class UserIdentifier(Base):
+    """ This is a subset of the real user_identifiers table, just enough to
+        do what we need to do. """
+    __tablename__ = "user_identifiers"
+
+    internal_user_id = Column(
+        Integer, ForeignKey(
+            'users.internal_user_id', ondelete='CASCADE'), index=True)
+    field_name = Column(String, nullable=False)
+    field_value = Column(String, primary_key=True)
+
+class User(Base):
+    """ This is a subset of the real User table, just enough to do what
+        we need to do. """
+    __tablename__ = "users"
+
+    internal_user_id = Column(Integer, primary_key=True)
+    user_id = Column(String, unique=True, index=True, nullable=False)
+    identifiers = relationship(UserIdentifier,
+        backref='users')
+
+class UserProfileGeneral(Base):
+    """ General profile table. """
+    __tablename__ = 'user_profile_general'
+    uuid = Column(String, primary_key=True)
+    name = Column(String, index=True)
+    surname = Column(String, index=True)
+    username = Column(String, index=True, unique=True, nullable=True)
+    email = Column(String, index=True, unique=True, nullable=True)
+    telephone = Column(String, index=True, unique=True, nullable=True)
+
+class UserProfile(Base):
+    """ Extra profile information. """
+    __tablename__ = 'user_profile'
+    uuid = Column(String, primary_key=True)
+    user_profile = Column(String)
+
 class PortalAuthHelper(BasePlugin):
     """ Multi-plugin for managing plone running behind siyavula proxy. """
     meta_type = 'Portal Auth Helper'
@@ -42,6 +110,13 @@ class PortalAuthHelper(BasePlugin):
         'mode': 'w',
         'label': 'A server/port in the format hostname:port'},)
     profile_service = PROFILESERVER
+
+    @reify
+    def _v_Session(self):
+        engine = create_engine(self.profile_service)
+        factory = scoped_session(sessionmaker())
+        factory.configure(bind=engine)
+        return factory
 
     def __init__(self, id, title=None):
         self._setId(id)
@@ -104,33 +179,30 @@ class PortalAuthHelper(BasePlugin):
         if not re.compile('^[0-9a-f-]+$').match(userid):
             return {}
 
-        conn = HTTPConnection(self.profile_service)
-        try:
-            conn.request("GET", "/profile/read/%s" % userid)
-        except socket.error:
-            return {}
-            
-        result = conn.getresponse()
-        if result.status == 200:
+        general = self._v_Session().query(UserProfileGeneral).filter(
+            UserProfileGeneral.uuid == userid).first()
+        extra = self._v_Session().query(UserProfile).filter(
+            UserProfile.uuid == userid).first()
+
+        if general:
+            name = general.name or ''
+            surname = general.surname or ''
+            properties = {
+                'fullname': (name + ' ' + surname).strip(),
+                'email': general.email or ''
+            }
+
+            # Parse the extra data and add it on
             try:
-                data = json.loads(result.read())
+                extra = json.loads(extra.user_profile)
             except ValueError:
-                return {}
-            if data:
-                general = data.get('general', {})
-                name = general.get('name', None) or ''
-                surname = general.get('surname', None) or ''
-                fullname = (name + ' ' + surname).strip()
-                email = general.get('email', None) or ''
-                properties = {
-                    'fullname': fullname,
-                    'email': email
-                }
-                emasdata = data.get('emas', {})
-                for p in ('school', 'province'):
-                    if p in emasdata:
-                        properties[p] = emasdata[p] or ''
-                return properties
+                extra = {}
+            emasdata = extra.get('emas', {})
+            for p in ('school', 'province'):
+                if p in emasdata:
+                    properties[p] = emasdata[p] or ''
+
+            return properties
 
         return {}
 
@@ -141,11 +213,46 @@ class PortalAuthHelper(BasePlugin):
             return ('Member',)
         return ()
 
+    # IUserEnumerationPlugin plugin
+    def enumerateUsers(self, id=None, login=None, exact_match=False,
+            sort_by=None, max_results=None, **kw):
+        if exact_match:
+            # This is here only so getMemberById can work, so we don't care
+            # about other searches. At least until further notice.
+            if id:
+                users = self._v_Session().query(User).filter(
+                    User.user_id == id).all()
+
+                matched = []
+                for user in users:
+                    identifiers = user.identifiers
+                    matched.append({
+                        'id': user.user_id,
+                        'login': len(identifiers) and \
+                            identifiers[0].field_value or \
+                            user.user_id,
+                        'plugin_id': self.getId(),
+                        'editurl': ''})
+            elif login:
+                identifiers = self._v_Session().query(UserIdentifier).filter(
+                    UserIdentifier.field_value == login).all()
+                matched = [{
+                    'id': identifier.users.user_id,
+                    'login': identifier.field_value,
+                    'plugin_id': self.getId(),
+                    'editurl': ''} for identifier in identifiers]
+                    
+            return tuple(matched)
+            
+        return ()
+        
+
 classImplements(PortalAuthHelper,
     IExtractionPlugin,
     IAuthenticationPlugin,
     IChallengePlugin,
     IPropertiesPlugin,
-    IRolesPlugin)
+    IRolesPlugin,
+    IUserEnumerationPlugin)
 
 InitializeClass(PortalAuthHelper)
