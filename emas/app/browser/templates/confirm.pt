@@ -177,10 +177,6 @@
 <p>Don't forget to email your proof of payment to <a href="mailto:accouts@siyavula.com">accounts@siyavula.com</a> so we can activate your subscription.</p>
 <p>Should you have any queries, please
 contact us by email at <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a>, by phone at +27&nbsp;(021)&nbsp;469&nbsp;4771</p>
-
-                <div class="center">
-                    <a class="btn btn-large" tal:attributes="href string:$portal_url">Back to home page</a>
-                </div>
             </div>
 
         </div>
