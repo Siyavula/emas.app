@@ -38,6 +38,11 @@ def manage_addPortalAuthHelper(self, id, title='',
 manage_addPortalAuthHelperForm = DTMLFile(
     "PortalAuthHelperForm", globals())
 
+uuidre = re.compile(
+    '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}')
+def is_uuid4(s):
+    return uuidre.match(s) is not None
+
 class reify(object):
     """
     Put the result of a method which uses this (non-data)
@@ -176,7 +181,7 @@ class PortalAuthHelper(BasePlugin):
         # Before going to the expensive step of talking to the profile
         # server, check that the userid at least looks like a uuid
         userid = user.getUserId()
-        if not re.compile('^[0-9a-f-]+$').match(userid):
+        if not is_uuid4(userid):
             return {}
 
         general = self._v_Session().query(UserProfileGeneral).filter(
@@ -219,7 +224,7 @@ class PortalAuthHelper(BasePlugin):
         if exact_match:
             # This is here only so getMemberById can work, so we don't care
             # about other searches. At least until further notice.
-            if id:
+            if id and is_uuid4(id):
                 users = self._v_Session().query(User).filter(
                     User.user_id == id).all()
 
@@ -241,6 +246,8 @@ class PortalAuthHelper(BasePlugin):
                     'login': identifier.field_value,
                     'plugin_id': self.getId(),
                     'editurl': ''} for identifier in identifiers]
+            else:
+                return ()
                     
             return tuple(matched)
             
