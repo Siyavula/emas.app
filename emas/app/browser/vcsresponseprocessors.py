@@ -80,7 +80,9 @@ class PaymentApproved(grok.View):
             LOGGER.error(ex)
             self.request['errors'] = self.request.get('errors', []).append(ex)
             url = self.request.get('m_1', None)
-            return self.request.response.redirect(url + '/@@warning')
+            if url is not None:
+                return self.request.response.redirect(url + '/@@warning')
+            return None
     
     def memberservices(self):
         return get_display_items_from_order(self.order)
