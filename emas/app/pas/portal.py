@@ -118,15 +118,18 @@ class PortalAuthHelper(BasePlugin):
                 return {}
             if data:
                 general = data.get('general', {})
+                name = general.get('name', None) or ''
+                surname = general.get('surname', None) or ''
+                fullname = (name + ' ' + surname).strip()
+                email = general.get('email', None) or ''
                 properties = {
-                    'fullname': general.get('name', '') + ' ' + \
-                        general.get('surname', ''),
-                    'email': general.get('email', '')
+                    'fullname': fullname,
+                    'email': email
                 }
                 emasdata = data.get('emas', {})
                 for p in ('school', 'province'):
                     if p in emasdata:
-                        properties[p] = emasdata[p]
+                        properties[p] = emasdata[p] or ''
                 return properties
 
         return {}
