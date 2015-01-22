@@ -17,7 +17,8 @@
             <tal:sms tal:condition="view/sms_selected">
                 <p><strong>You need to SMS '<span tal:replace="view/verification_code">verification code</span>' to <span tal:replace="view/premium_number"> premium number</span> to pay, before your subscription can be activated.</strong></p>
 
-                    <p><strong>The total cost of your order is: <tal:cost tal:replace="view/totalcost"/></strong></p>
+                    <p><strong>The total cost of your order is: <tal:cost tal:replace="view/totalcost"/>.</strong></p>
+                    <p>Make sure you have enough airtime to make the payment.</p>
             </tal:sms>
             <tal:eft tal:condition="view/eft_selected">
                 <p><strong>You still need to do an Electronic Funds Transfer (EFT) and send us proof of payment before your subscription can be activated.</strong></p>
