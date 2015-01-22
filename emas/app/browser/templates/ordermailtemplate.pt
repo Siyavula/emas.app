@@ -54,8 +54,9 @@ STEP 2: MAKE A PAYMENT
 
 In order to complete this transaction and pay, please SMS '<span tal:replace="options/verification_code">verification code</span>' to
 <span tal:replace="options/premium_number"> premium number</span> to
-make payment. You will receive an SMS confirming your payment
-was successful, after which your subscription will be activated.
+make payment. The cost will be deducted from your airtime. You will receive an
+SMS confirming your payment was successful, after which your subscription will
+be activated.
 </tal:sms>
 Should you have any queries, please contact us by email at <tal:email tal:replace="options/email"/>, by phone at <tal:email tal:replace="options/phone"/> or simply reply to this email.
 
