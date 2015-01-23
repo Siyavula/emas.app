@@ -283,7 +283,9 @@ class Confirm(grok.View):
 
     def _service_ordered(self):
         if self.request.get('service') == 'monthly-practice':
-            grade = self.request.get('grade')[-2:]
+            grade = self.request.get('grade', '')
+            assert grade.startswith('grade'), "Malformed value for grade"
+            grade = grade[5:]
             substr = "1 month subscription to %s Grade %s"
             return substr % (self.subjects, grade)
         else:
