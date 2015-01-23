@@ -52,6 +52,10 @@
                     Order Number: <span tal:replace="view/ordernumber">1000</span>
                 </div>
 
+                <p tal:condition="warnings" class="warning">
+                    <strong>Are you sure you want to continue with your
+                    payment?</strong></p>
+
                 <form class="backbutton" action="." method="POST"
                     tal:attributes="action string:${context/absolute_url}/@@order">
 
@@ -74,6 +78,12 @@
                         value="back">
                         Change order
                     </button>
+
+                    <a href="#"
+                       class="button"
+                       tal:condition="python: not view.sms_selected() and warnings"
+                       tal:attributes="href context/absolute_url"
+                       >Cancel Order</a>
                 </form>
             </div>
             <div id="make-payment">
