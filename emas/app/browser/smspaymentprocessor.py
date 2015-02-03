@@ -26,6 +26,7 @@ class SMSPaymentApproved(grok.View):
     grok.require('zope2.View')
     
     def update(self):
+        # Ugliness warning... getOrder also changes the security manager. FIXME
         self.order = self.getOrder(self.context, self.request)
 
         registry = queryUtility(IRegistry)
@@ -101,8 +102,10 @@ class SMSPaymentApproved(grok.View):
         order = brain._unrestrictedGetObject()
         pmt = getToolByName(self.context, 'portal_membership')
         user = pmt.getMemberById(order.userid)
-        newSecurityManager(request, user)
-        return order
+        if user is not None:
+            newSecurityManager(request, user)
+            return order
+        return None
 
     def validateSender(self, request, settings):
         password = request.get('password')
