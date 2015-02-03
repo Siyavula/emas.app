@@ -38,8 +38,10 @@ def manage_addPortalAuthHelper(self, id, title='',
 manage_addPortalAuthHelperForm = DTMLFile(
     "PortalAuthHelperForm", globals())
 
+# Our regex also accepts a 5 at the start of the third group. That's not valid
+# uuid4, but for some reason I have 131133 users with such a uuid right now.
 uuidre = re.compile(
-    '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}')
+    '[0-9a-f]{8}-[0-9a-f]{4}-[45][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}')
 def is_uuid4(s):
     return uuidre.match(s) is not None
 
