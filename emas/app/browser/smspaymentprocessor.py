@@ -86,12 +86,12 @@ class SMSPaymentApproved(grok.View):
       
         pc = getToolByName(self.context, 'order_catalog')
         query = {'portal_type': 'emas.app.order',
-		 'review_state': 'ordered',
+         'review_state': 'ordered',
                  'verification_code': verification_code}
-	try:
-	    brains = pc.unrestrictedSearchResults(query)
-	except UnicodeDecodeError:
-	    return None
+    try:
+        brains = pc.unrestrictedSearchResults(query)
+    except UnicodeDecodeError:
+        return None
         if not brains or len(brains) < 1:
             LOGGER.debug(
                 'Could not find order with verification code:'
@@ -100,7 +100,7 @@ class SMSPaymentApproved(grok.View):
         brain = brains[0]
         order = brain._unrestrictedGetObject()
         pmt = getToolByName(self.context, 'portal_membership')
-	user = pmt.getMemberById(order.userid)
+        user = pmt.getMemberById(order.userid)
         newSecurityManager(request, user)
         return order
 
