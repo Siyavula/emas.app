@@ -8,6 +8,7 @@ from zope.component import queryUtility
 
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.WorkflowCore import WorkflowException
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
@@ -118,8 +119,14 @@ class SMSPaymentApproved(grok.View):
         wf = getToolByName(context, 'portal_workflow')
         status = wf.getStatusOf('order_workflow', order)
         if status['review_state'] != 'paid':
-            wf.doActionFor(order, 'pay')
-            order.reindexObject()
+            try:
+                wf.doActionFor(order, 'pay')
+            except WorkflowException:
+                LOGGER.warn(
+                    'could not transition order %s with state %s to paid' % (
+                        order.absolute_url(), status['review_state']))
+            else:
+                order.reindexObject()
 
     def sendNotification(self, request, context, order, settings):
         """ Sender msisdn must be in international dialing format.
