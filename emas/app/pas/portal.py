@@ -11,6 +11,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker, relationship
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String
+from sqlalchemy.exc import SQLAlchemyError
 
 from zope.interface import Interface, alsoProvides
 from App.special_dtml import DTMLFile
@@ -67,6 +68,15 @@ class reify(object):
         val = self.wrapped(inst)
         setattr(inst, self.wrapped.__name__, val)
         return val
+
+def graceful_recovery(wrapped):
+    def wrapper(self, *args, **kwargs):
+        try:
+            return wrapped(self, *args, **kwargs)
+        except SQLAlchemyError, e:
+            self._v_Session().rollback()
+            raise e
+    return wrapper
 
 Base = declarative_base()
 
@@ -178,6 +188,7 @@ class PortalAuthHelper(BasePlugin):
     # IPropertiesPlugin
     #     Fetch properties from profile service.
     security.declarePrivate('getPropertiesForUser')
+    @graceful_recovery
     def getPropertiesForUser(self, user, request=None):
         """ Fetch user's properties from the profile service. """
         # Before going to the expensive step of talking to the profile
@@ -221,6 +232,7 @@ class PortalAuthHelper(BasePlugin):
         return ()
 
     # IUserEnumerationPlugin plugin
+    @graceful_recovery
     def enumerateUsers(self, id=None, login=None, exact_match=False,
             sort_by=None, max_results=None, **kw):
         if exact_match:
