@@ -86,6 +86,7 @@ class SMSPaymentApproved(grok.View):
         if not verification_code:
             return None
       
+        verification_code = verification_code.strip()
         pc = getToolByName(self.context, 'order_catalog')
         query = {'portal_type': 'emas.app.order',
          'review_state': 'ordered',
