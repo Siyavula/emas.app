@@ -123,7 +123,7 @@ class SMSPaymentApproved(grok.View):
             try:
                 wf.doActionFor(order, 'pay')
             except WorkflowException:
-                LOGGER.warn(
+                LOGGER.error(
                     'could not transition order %s with state %s to paid' % (
                         order.absolute_url(), status['review_state']))
             else:
