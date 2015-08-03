@@ -74,7 +74,10 @@ def graceful_recovery(wrapped):
         try:
             return wrapped(self, *args, **kwargs)
         except SQLAlchemyError, e:
-            self._v_Session().rollback()
+            try:
+                self._v_Session().rollback()
+            except:
+                pass
             raise e
     return wrapper
 
