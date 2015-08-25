@@ -185,7 +185,7 @@
 
             <div id="send-proof-of-payment" tal:condition="view/eft_selected">
                 <h3>Step 3: Send us proof of payment</h3>
-<p>Don't forget to email your proof of payment to <a href="mailto:accouts@siyavula.com">accounts@siyavula.com</a> so we can activate your subscription.</p>
+<p>Don't forget to email your proof of payment to <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a> so we can activate your subscription.</p>
 <p>Should you have any queries, please
 contact us by email at <a href="mailto:accounts@siyavula.com">accounts@siyavula.com</a>, by phone at +27&nbsp;(021)&nbsp;469&nbsp;4771</p>
             </div>
