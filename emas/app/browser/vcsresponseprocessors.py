@@ -74,7 +74,11 @@ class PaymentApproved(grok.View):
             if original_url is not None and len(original_url) > 0:
                 # add p2 as url parameter since we are redirecting back to
                 # the same view and need to look up the order again
-                url = original_url + '/@@paymentapproved?p2=%s' % oid
+                token = \
+                    self.context.restrictedTraverse('@@authenticator').token()
+                url = original_url + (
+                    '/@@paymentapproved?p2=%s&_authenticator=%s' % (oid, token)
+                    )
                 self.request.response.redirect(url)
         except Exception, ex:
             LOGGER.error(ex)
