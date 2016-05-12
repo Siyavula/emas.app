@@ -13,6 +13,7 @@ from Products.CMFCore.utils import getToolByName
 
 from emas.app.browser.utils import get_display_items_from_order
 from emas.app.browser.utils import service_url as get_service_url
+from plone.protect.utils import addTokenToUrl
 
 LOGGER = logging.getLogger(__name__)
 
@@ -74,11 +75,8 @@ class PaymentApproved(grok.View):
             if original_url is not None and len(original_url) > 0:
                 # add p2 as url parameter since we are redirecting back to
                 # the same view and need to look up the order again
-                token = \
-                    self.context.restrictedTraverse('@@authenticator').token()
-                url = original_url + (
-                    '/@@paymentapproved?p2=%s&_authenticator=%s' % (oid, token)
-                    )
+                url = original_url + '/@@paymentapproved?p2=%s' % oid
+                url = addTokenToUrl(url)
                 self.request.response.redirect(url)
         except Exception, ex:
             LOGGER.error(ex)
