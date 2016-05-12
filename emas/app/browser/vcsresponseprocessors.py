@@ -13,6 +13,8 @@ from Products.CMFCore.utils import getToolByName
 
 from emas.app.browser.utils import get_display_items_from_order
 from emas.app.browser.utils import service_url as get_service_url
+from plone.protect.interfaces import IDisableCSRFProtection
+from zope.interface import alsoProvides
 
 LOGGER = logging.getLogger(__name__)
 
@@ -75,6 +77,8 @@ class PaymentApproved(grok.View):
                 # add p2 as url parameter since we are redirecting back to
                 # the same view and need to look up the order again
                 url = original_url + '/@@paymentapproved?p2=%s' % oid
+
+                alsoProvides(self.request, IDisableCSRFProtection)
                 self.request.response.redirect(url)
         except Exception, ex:
             LOGGER.error(ex)

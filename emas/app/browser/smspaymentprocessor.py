@@ -14,6 +14,8 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 
 from emas.theme.interfaces import IEmasSettings
+from plone.protect.interfaces import IDisableCSRFProtection
+from zope.interface import alsoProvides
 
 LOGGER = getLogger('emas.app:smspaymentprocessor')
 
@@ -36,6 +38,7 @@ class SMSPaymentApproved(grok.View):
         self.validated = self.validateSender(self.request, self.settings)
 
         if self.order and self.validated:
+            alsoProvides(self.request, IDisableCSRFProtection)
             # do the transition
             self.transitionToPaid(self.context, self.request, self.order)
             LOGGER.info('Order:%s transitioned to paid' % self.order.getId())
