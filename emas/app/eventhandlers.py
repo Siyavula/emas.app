@@ -31,6 +31,26 @@ def _setOrderItemPriceAndTotal(item):
     item.price = price
     item.total = item.quantity * item.price
 
+# list of services from siyavula.memberservices
+service_from_id = {
+    790567271: ('maths', 10),    # Maths Grade 10 Intelligent Practice
+    790567279: ('maths', 11),    # Maths Grade 11 Intelligent Practice
+    790567258: ('maths', 12),    # Maths Grade 12 Intelligent Practice
+    790567266: ('science', 10),  # Science Grade 10 Intelligent Practice
+    790567269: ('science', 11),  # Science Grade 11 Intelligent Practice
+    790567257: ('science', 12),  # Science Grade 12 Intelligent Practice
+    838326968: ('maths', 10),    # Maths Grade 10 Monthly Intelligent Practice
+    838326969: ('maths', 11),    # Maths Grade 11 Monthly Intelligent Practice
+    838326967: ('maths', 12),    # Maths Grade 12 Monthly Intelligent Practice
+    838326965: ('science', 10),  # Science Grade 10 Monthly Intelligent Practice
+    838326966: ('science', 11),  # Science Grade 11 Monthly Intelligent Practice
+    838326964: ('science', 12),  # Science Grade 12 Monthly Intelligent Practice
+}
+
+service_subject_ids = dict(
+    [(subject, [key for (key, value) in service_from_id.iteritems()
+                if value[0] == subject]) for subject in ['maths', 'science']])
+
 
 def onOrderPaid(order, event):
     """ Once the order is paid we create the memberservices.
@@ -48,9 +68,16 @@ def onOrderPaid(order, event):
         for item in order.order_items():
             # try to find the memberservices based on the orderitem
             # related services.
-            related_service = item.related_item.to_object
-            related_service_id = intids.getId(related_service)
-            memberservices = dao.get_memberservices([related_service_id], memberid)
+            order_related_service = item.related_item.to_object
+            related_service_ids = [intids.getId(order_related_service)]
+
+            # add the service siyavula.memberservices uses for trial access
+            related_service_ids.append(
+                service_subject_ids[order_related_service.subject][0]
+            )
+            memberservices = dao.get_memberservices(
+                related_service_ids, memberid
+            )
 
             tmpservices = []
             service_purchased = item.related_item.to_object
@@ -63,13 +90,17 @@ def onOrderPaid(order, event):
             for ms in memberservices:
                 related_service = ms.related_service(order)
                 if (related_service.subject == service_purchased.subject and
-                    related_service.grade == service_purchased.grade and
                     related_service.access_path == \
                         service_purchased.access_path):
                     tmpservices.append(ms)
 
+            # XXX: this should not happen any more since
+            # siyavula.userregistration creates memberservices when a user
+            # registers
             # create a new memberservice if it doesn't exist
             if len(memberservices) == 0:
+                raise RuntimeError("User %s registered without "
+                                   "memberservices" % memberid)
                 mstitle = '%s for %s' % (related_service.title, memberid)
                 props = {'memberid': memberid,
                          'title': mstitle,
@@ -82,11 +113,11 @@ def onOrderPaid(order, event):
             # update the memberservices with info from the orderitem
             for ms in tmpservices:
                 # NOTE: remove this when we remove siyavula.what
-                if related_service.service_type == 'credit':
+                if order_related_service.service_type == 'credit':
                     credits = ms.credits
-                    credits += related_service.amount_of_credits
+                    credits += order_related_service.amount_of_credits
                     ms.credits = credits
-                elif related_service.service_type == 'subscription':
+                elif order_related_service.service_type == 'subscription':
                     # Always use the current expiry date if it is greater than
                     # 'now', since that gives the user everything he paid for.
                     # Only use 'now' if the related_service has already expired, so we
@@ -94,7 +125,7 @@ def onOrderPaid(order, event):
                     if now > ms.expiry_date:
                         ms.expiry_date = now
                     expiry_date = ms.expiry_date + datetime.timedelta(
-                        related_service.subscription_period
+                        order_related_service.subscription_period
                     )
                     ms.expiry_date = expiry_date
                 dao.update_memberservice(ms)
