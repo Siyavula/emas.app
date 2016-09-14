@@ -8,15 +8,20 @@
 <body>
 
     <metal:core fill-slot="main">
-        <div id="content-core"
+        <div class="sv" id="content-core"
             tal:define="isAnon context/@@plone_portal_state/anonymous;
                         action python:view.action(isAnon);">
 
-            <div class="login-links" tal:condition="isAnon"
+            <span class="sv-alert sv-alert--warning" tal:condition="isAnon"
                 tal:define="login_url string:${context/absolute_url}/sign-in;
                             register_url string:${context/absolute_url}/registration">
-                You are <strong>not signed in</strong>. You need an account on the site before you can buy a subscription.<br/> Please <a href="#" tal:attributes="href login_url">sign in</a> or <a href="#" tal:attributes="href register_url">sign up</a>.
-            </div>
+              <span class="icon icon-warning-circled" aria-hidden="true"></span> 
+                You are <strong>not signed in</strong>. You need an account on the site before you can buy a subscription. Please <a href="#" tal:attributes="href login_url">sign in</a> or <a href="#" tal:attributes="href register_url">sign up</a>.
+            </span>
+
+            <span class="sv-alert sv-alert--danger" tal:condition="view/errors">
+                <span class="icon icon-danger-circled" aria-hidden="true"></span> <span tal:replace="view/errors">Error!</span>
+            </span>
 
             <style>
             .order-form .sv-panel>.sv-panel__header {
@@ -77,7 +82,7 @@
             <div class="order-form">
                 <div class="row">
                     <h2 class="title">Pick the payment option that suits your pocket</h2>
-                    <div class="sv order-col">
+                    <div class="order-col">
                         <span class="sv-panel sv-panel--large">
                             <span class="sv-panel__header">
                                 One <strong>month</strong> at a time<br/>
@@ -100,12 +105,13 @@
                                         <p>Just what you need, when you need it. No need for a bank account or credit card to pay</p>
 
                                         <p>Ways you can pay for this option:</p>
-                                        <ul class="sv-list">
+                                        <ul class="sv-list" tal:define="selected view/prod_payment">
                                             <li class="sv-list-item">
                                                 <span class="sv-radio-button">
                                                     <span class="sv-radio-button__input-faux">
                                                         <input name="prod_payment"
                                                             class="sv-radio-button__input"
+                                                            tal:attributes="checked python:view.prod_payment_selected('sms', selected)"
                                                             id="sms"
                                                             value="sms"
                                                             type="radio"

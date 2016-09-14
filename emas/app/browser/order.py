@@ -29,10 +29,6 @@ class Order(grok.View):
         if self.request.has_key('order.form.submitted'):
             form_submitted = True
 
-            pmt = getToolByName(self.context, 'portal_membership')
-            if pmt.isAnonymousUser():
-                self.context.restrictedTraverse('logged_in')()
-
             required_fields = ['subjects', 'prod_payment']
             pps = self.context.restrictedTraverse('@@plone_portal_state')
             for fieldname in required_fields:
@@ -44,7 +40,8 @@ class Order(grok.View):
                                u'a payment method and subject before '
                                u'submitting the form')
 
-        if form_submitted and not missing_input:
+        pmt = getToolByName(self.context, 'portal_membership')
+        if form_submitted and not missing_input and not pmt.isAnonymousUser():
             # traverse to confirm if form has required fields
             view = self.context.restrictedTraverse('@@confirm')
             return view()
