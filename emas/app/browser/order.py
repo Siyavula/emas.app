@@ -27,20 +27,12 @@ class Order(grok.View):
 
         if self.request.has_key('order.form.submitted'):
             form_submitted = True
-            if not self.subjects:
-                missing_input = True
 
-        elif self.request.has_key('mobileorder.form.submitted'):
-            form_submitted = True
+            pmt = getToolByName(self.context, 'portal_membership')
+            if pmt.isAnonymousUser():
+                self.context.restrictedTraverse('logged_in')()
 
-            # The mobile form submits the subject/grade as one compound value
-            # place them on the request so everything else continues to work
-            if 'item' in self.request:
-                subjects, grade = self.request.get('item').split('-')
-                self.request['subjects'] = subjects
-                self.request['grade'] = 'grade' + grade
-
-            required_fields = ['subjects', 'grade', 'service', 'prod_payment']
+            required_fields = ['subjects', 'prod_payment']
             pps = self.context.restrictedTraverse('@@plone_portal_state')
             for fieldname in required_fields:
                 if self.request.get(fieldname, None) is None:
