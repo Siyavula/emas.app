@@ -99,24 +99,15 @@ class Confirm(grok.View):
 
             # mobile order
             if self.request.get('service') == 'monthly-practice':
-                sid = '%s-%s-monthly-practice' % (
-                    self.subjects.lower(),
-                    self.request.get('grade')
-                    )
+                sid = '%s-grade12-monthly-practice' % self.subjects.lower()
                 ordered_service_ids.append(sid)
 
             # web order
             else:
                 maths_service_ids = [
-                    'maths-grade8-practice',
-                    'maths-grade9-practice',
-                    'maths-grade10-practice',
-                    'maths-grade11-practice',
                     'maths-grade12-practice',
                 ]
                 science_service_ids = [
-                    'science-grade10-practice',
-                    'science-grade11-practice',
                     'science-grade12-practice',
                 ]
                 if self.subjects in ('Maths', 'Maths,Science'):
@@ -124,8 +115,8 @@ class Confirm(grok.View):
                 if self.subjects in ('Science', 'Maths,Science'):
                     ordered_service_ids.extend(science_service_ids)
                 # add discount if both subjects were ordered
-                if self.subjects == 'Maths,Science':
-                    ordered_service_ids.append('maths-and-science-discount')
+                # if self.subjects == 'Maths,Science':
+                #     ordered_service_ids.append('maths-and-science-discount')
 
             for sid in ordered_service_ids:
                 service = self.products_and_services[sid]
@@ -199,6 +190,8 @@ class Confirm(grok.View):
         for order in orders:
             for item in order.order_items():
                 r_item = item.related_item.to_object
+                if r_item is None:
+                    continue
                 if 'discount' in r_item.title.lower():
                     continue
 
@@ -283,18 +276,15 @@ class Confirm(grok.View):
 
     def _service_ordered(self):
         if self.request.get('service') == 'monthly-practice':
-            grade = self.request.get('grade', '')
-            assert grade.startswith('grade'), "Malformed value for grade"
-            grade = grade[5:]
-            substr = "1 month subscription to %s Grade %s"
-            return substr % (self.subjects, grade)
+            substr = "1 month subscription to %s"
+            return substr % self.subjects
         else:
             if self.subjects in ('Maths'):
-                return "1 year subscription to Maths Grades 8 - 12"
+                return "1 year subscription to Maths"
             if self.subjects in ('Science'):
-                return "1 year subscription to Science Grades 10 - 12"
+                return "1 year subscription to Science"
             elif self.subjects == 'Maths,Science':
-                return "1 year subscription to Maths Grades 8 - 12 and Science Grades 10 - 12"
+                return "1 year subscription to Maths and Science"
 
     def ordersubmitted(self):
         return (self.request.has_key('order.form.submitted') or
