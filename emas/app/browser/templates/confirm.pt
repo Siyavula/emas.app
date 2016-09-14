@@ -80,7 +80,7 @@
                     </button>
 
                     <a href="#"
-                       class="button"
+                       class="btn btn-large"
                        tal:condition="python: not view.sms_selected() and warnings"
                        tal:attributes="href context/absolute_url"
                        >Cancel Order</a>
@@ -130,7 +130,7 @@
                 <p>You can pay for your subscription online using our
                 secure online credit card facility. 
                 </p>
-                <a href="#" onClick="window.open('http://www.vcs.co.za','','')"><img src=http://website.vcs.co.za/wp-content/uploads/VCSLogoSites.jpg alt="Virtual Card Services"></a>
+                <a href="http://www.vcs.co.za" target="_blank"><img src=http://website.vcs.co.za/wp-content/uploads/VCSLogoSites.jpg alt="Virtual Card Services"></a>
 
                 <form id="payment-form" method="POST" action="."
                     tal:attributes="action view/action">
