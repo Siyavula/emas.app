@@ -20,6 +20,7 @@ class Order(grok.View):
         missing_input = False
         form_submitted = False
         self.subjects = self.request.get('subjects', None)
+        self.errors = ''
 
         if self.request.has_key('login.form.submitted'):
             membership_tool = getToolByName(self.context, 'portal_membership')
@@ -27,31 +28,20 @@ class Order(grok.View):
 
         if self.request.has_key('order.form.submitted'):
             form_submitted = True
-            if not self.subjects:
-                missing_input = True
 
-        elif self.request.has_key('mobileorder.form.submitted'):
-            form_submitted = True
-
-            # The mobile form submits the subject/grade as one compound value
-            # place them on the request so everything else continues to work
-            if 'item' in self.request:
-                subjects, grade = self.request.get('item').split('-')
-                self.request['subjects'] = subjects
-                self.request['grade'] = 'grade' + grade
-
-            required_fields = ['subjects', 'grade', 'service', 'prod_payment']
+            required_fields = ['subjects', 'prod_payment']
             pps = self.context.restrictedTraverse('@@plone_portal_state')
             for fieldname in required_fields:
                 if self.request.get(fieldname, None) is None:
                     missing_input = True
 
             if missing_input:
-                ptool = pps.portal().plone_utils
-                ptool.addPortalMessage('All fields are required.',
-                                        'warning')
+                self.errors = (u'All fields are required. Please select '
+                               u'a payment method and subject before '
+                               u'submitting the form')
 
-        if form_submitted and not missing_input:
+        pmt = getToolByName(self.context, 'portal_membership')
+        if form_submitted and not missing_input and not pmt.isAnonymousUser():
             # traverse to confirm if form has required fields
             view = self.context.restrictedTraverse('@@confirm')
             return view()
