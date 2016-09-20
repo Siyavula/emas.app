@@ -126,7 +126,7 @@ def onOrderPaid(order, event):
                 dao.update_memberservice(ms)
             
             # if we have specific access groups add the user to those here.
-            access_group = related_service.access_group
+            access_group = order_related_service.access_group
             if access_group:
                 gt = getToolByName(order, 'portal_groups')
                 # now add the member to the correct group
