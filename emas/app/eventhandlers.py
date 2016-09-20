@@ -94,19 +94,14 @@ def onOrderPaid(order, event):
                         service_purchased.access_path):
                     tmpservices.append(ms)
 
-            # XXX: this should not happen any more since
-            # siyavula.userregistration creates memberservices when a user
-            # registers
             # create a new memberservice if it doesn't exist
             if len(memberservices) == 0:
-                raise RuntimeError("User %s registered without "
-                                   "memberservices" % memberid)
-                mstitle = '%s for %s' % (related_service.title, memberid)
+                mstitle = '%s for %s' % (order_related_service.title, memberid)
                 props = {'memberid': memberid,
                          'title': mstitle,
-                         'related_service_id': intids.getId(related_service),
+                         'related_service_id': intids.getId(order_related_service),
                          'expiry_date': now,
-                         'service_type': related_service.service_type}
+                         'service_type': order_related_service.service_type}
                 ms = dao.add_memberservice(**props)
                 tmpservices.append(ms)
 
