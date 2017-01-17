@@ -62,4 +62,6 @@ Should you have any queries, please contact us by email at <tal:email tal:replac
 
 Regards,
 Siyavula Education
+<tal:item tal:replace="options/service_ordered"/>
+<tal:address tal:replace="options/site_url"/>
 http://www.everythingmaths.co.za and http://www.everythingscience.co.za
