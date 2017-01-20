@@ -363,7 +363,6 @@ class Confirm(grok.View):
             payment=self.prod_payment(),
             verification_code=self.verification_code,
             premium_number=self.premium_number(),
-            subject=email_subject,
             site_url=site_url,
         )
 
