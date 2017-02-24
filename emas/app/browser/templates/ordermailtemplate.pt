@@ -40,8 +40,7 @@ will be activated immediately.
 If you've paid but did not receive an invoice, please contact us at
 accounts@siyavula.com with your order number, as above.
 
-If you have not yet paid, please return to www.everythingmaths.co.za or
-www.everythingscience.co.za to complete your order.
+If you have not yet paid, please return to <tal:address tal:replace="options/site_url"/> to complete your order.
 </tal:creditcard><tal:sms condition="python:options.get('payment', '') == 'sms'">You're almost done! You still need to SMS '<span tal:replace="options/verification_code">verification code</span>' to <span tal:replace="options/premium_number"> premium number</span> to pay via premium SMS, before we can activate your subscription.
 
 STEP 1: YOUR ORDER INFORMATION
