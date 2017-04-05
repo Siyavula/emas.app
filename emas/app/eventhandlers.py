@@ -71,6 +71,12 @@ def onOrderPaid(order, event):
             order_related_service = item.related_item.to_object
             related_service_ids = [intids.getId(order_related_service)]
 
+            # filter out services that don't have subject or grade set,
+            # eg. discounts
+            service_purchased = item.related_item.to_object
+            if not (service_purchased.grade and service_purchased.subject):
+                continue
+
             # add the service siyavula.memberservices uses for trial access
             related_service_ids.append(
                 service_subject_ids[order_related_service.subject][0]
@@ -80,12 +86,6 @@ def onOrderPaid(order, event):
             )
 
             tmpservices = []
-            service_purchased = item.related_item.to_object
-
-            # filter out services that don't have subject or grade set,
-            # eg. discounts
-            if not (service_purchased.grade and service_purchased.subject):
-                continue
 
             for ms in memberservices:
                 related_service = ms.related_service(order)
