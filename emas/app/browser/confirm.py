@@ -115,8 +115,8 @@ class Confirm(grok.View):
                 if self.subjects in ('Science', 'Maths,Science'):
                     ordered_service_ids.extend(science_service_ids)
                 # add discount if both subjects were ordered
-                # if self.subjects == 'Maths,Science':
-                #     ordered_service_ids.append('maths-and-science-discount')
+                if self.subjects == 'Maths,Science':
+                    ordered_service_ids.append('maths-and-science-discount')
 
             for sid in ordered_service_ids:
                 service = self.products_and_services[sid]
