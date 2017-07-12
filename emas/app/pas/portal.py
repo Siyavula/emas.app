@@ -12,6 +12,7 @@ from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.dialects.postgresql import UUID
 
 from zope.interface import Interface, alsoProvides
 from App.special_dtml import DTMLFile
@@ -83,42 +84,22 @@ def graceful_recovery(wrapped):
 
 Base = declarative_base()
 
-class UserIdentifier(Base):
-    """ This is a subset of the real user_identifiers table, just enough to
-        do what we need to do. """
-    __tablename__ = "user_identifiers"
-
-    internal_user_id = Column(
-        Integer, ForeignKey(
-            'users.internal_user_id', ondelete='CASCADE'), index=True)
-    field_name = Column(String, nullable=False)
-    field_value = Column(String, primary_key=True)
-
 class User(Base):
     """ This is a subset of the real User table, just enough to do what
         we need to do. """
     __tablename__ = "users"
 
-    internal_user_id = Column(Integer, primary_key=True)
-    user_id = Column(String, unique=True, index=True, nullable=False)
-    identifiers = relationship(UserIdentifier,
-        backref='users')
+    uuid = Column(UUID(as_uuid=True), primary_key=True, unique=True)
 
 class UserProfileGeneral(Base):
     """ General profile table. """
     __tablename__ = 'user_profile_general'
-    uuid = Column(String, primary_key=True)
+    user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), primary_key=True)
     name = Column(String, index=True)
     surname = Column(String, index=True)
     username = Column(String, index=True, unique=True, nullable=True)
     email = Column(String, index=True, unique=True, nullable=True)
     telephone = Column(String, index=True, unique=True, nullable=True)
-
-class UserProfile(Base):
-    """ Extra profile information. """
-    __tablename__ = 'user_profile'
-    uuid = Column(String, primary_key=True)
-    user_profile = Column(String)
 
 class PortalAuthHelper(BasePlugin):
     """ Multi-plugin for managing plone running behind siyavula proxy. """
@@ -201,9 +182,7 @@ class PortalAuthHelper(BasePlugin):
             return {}
 
         general = self._v_Session().query(UserProfileGeneral).filter(
-            UserProfileGeneral.uuid == userid).first()
-        extra = self._v_Session().query(UserProfile).filter(
-            UserProfile.uuid == userid).first()
+            UserProfileGeneral.user_uuid == userid).first()
 
         if general:
             name = general.name or ''
@@ -212,16 +191,6 @@ class PortalAuthHelper(BasePlugin):
                 'fullname': (name + ' ' + surname).strip(),
                 'email': general.email or ''
             }
-
-            # Parse the extra data and add it on
-            try:
-                extra = json.loads(extra.user_profile)
-            except ValueError:
-                extra = {}
-            emasdata = extra.get('emas', {})
-            for p in ('school', 'province'):
-                if p in emasdata:
-                    properties[p] = emasdata[p] or ''
 
             return properties
 
@@ -243,26 +212,19 @@ class PortalAuthHelper(BasePlugin):
             # about other searches. At least until further notice.
             if id and is_uuid4(id):
                 users = self._v_Session().query(User).filter(
-                    User.user_id == id).all()
-
-                matched = []
-                for user in users:
-                    identifiers = user.identifiers
-                    matched.append({
-                        'id': user.user_id,
-                        'login': len(identifiers) and \
-                            identifiers[0].field_value or \
-                            user.user_id,
-                        'plugin_id': self.getId(),
-                        'editurl': ''})
+                    User.uuid == id).all()
             elif login:
-                identifiers = self._v_Session().query(UserIdentifier).filter(
-                    UserIdentifier.field_value == login).all()
-                matched = [{
-                    'id': identifier.users.user_id,
-                    'login': identifier.field_value,
+                users = self._v_Session().query(User).filter(
+                    User.uuid == login).all()
+
+            matched = []
+            for user in users:
+                matched.append({
+                    'id': user.uuid,
+                    'login': user.uuid,
                     'plugin_id': self.getId(),
-                    'editurl': ''} for identifier in identifiers]
+                    'editurl': ''})
+
             else:
                 return ()
                     
