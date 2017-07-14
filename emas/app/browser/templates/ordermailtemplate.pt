@@ -4,7 +4,7 @@ Dear <span tal:replace="options/fullname">John</span>
 
 STEP 1: CHECK YOUR ORDER
 
-You are about to pay for the following on the Everything Maths & Science website:
+You are about to pay for the following order on <tal:address tal:replace="options/site_url"/>:
 - <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
@@ -26,7 +26,7 @@ Reference: <tal:ordernumber tal:replace="options/ordernumber"/>
 STEP 3: SEND US PROOF OF PAYMENT
 
 Don't forget to email your proof of payment to <tal:email tal:replace="options/email"/>
-</tal:eft><tal:creditcard condition="python:options.get('payment', '') == 'creditcard'">You are about to pay for the following on the Everything Maths & Science website:
+</tal:eft><tal:creditcard condition="python:options.get('payment', '') == 'creditcard'">You are about to pay for the following order on <tal:address tal:replace="options/site_url"/>:
 - <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
@@ -40,13 +40,12 @@ will be activated immediately.
 If you've paid but did not receive an invoice, please contact us at
 accounts@siyavula.com with your order number, as above.
 
-If you have not yet paid, please return to www.everythingmaths.co.za or
-www.everythingscience.co.za to complete your order.
+If you have not yet paid, please return to <tal:address tal:replace="options/site_url"/> to complete your order.
 </tal:creditcard><tal:sms condition="python:options.get('payment', '') == 'sms'">You're almost done! You still need to SMS '<span tal:replace="options/verification_code">verification code</span>' to <span tal:replace="options/premium_number"> premium number</span> to pay via premium SMS, before we can activate your subscription.
 
 STEP 1: YOUR ORDER INFORMATION
 
-You are about to pay for the following on the Everything Maths & Science website:
+You are about to pay for the following order on <tal:address tal:replace="options/site_url"/>:
 - <tal:item tal:replace="options/service_ordered"/>
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>
 
@@ -62,4 +61,5 @@ Should you have any queries, please contact us by email at <tal:email tal:replac
 
 Regards,
 Siyavula Education
-http://www.everythingmaths.co.za and http://www.everythingscience.co.za
+<tal:item tal:replace="options/service_ordered"/>
+<tal:address tal:replace="options/site_url"/>

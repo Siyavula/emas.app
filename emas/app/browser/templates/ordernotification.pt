@@ -3,7 +3,7 @@ A new order was just placed by <span tal:replace="options/fullname">John</span>
 Order Number:  <tal:ordernumber tal:replace="options/ordernumber"/>
 Username: <tal:username tal:replace="options/username"/>
 
-The following service was ordered from the <span tal:replace="options/sitename">Everything Maths</span> website:
+The following service was ordered from <span tal:replace="options/site_url"/>:
 - <tal:item tal:replace="options/service_ordered"/>
 
 The total cost of your order is: R<tal:cost tal:replace="python:'%.2f' % options['totalcost']"/>

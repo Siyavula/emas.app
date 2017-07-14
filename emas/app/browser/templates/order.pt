@@ -49,6 +49,9 @@
                 max-width: 800px;
                 margin: auto;
             }
+            .order-form .spacer {
+                height: 60px;
+            }
             .row:before, 
             .row:after {
                 content: "";
@@ -81,9 +84,148 @@
 
             <div class="order-form">
                 <div class="row">
-                    <h2 class="title">Pick the payment option that suits your pocket</h2>
-                    <div class="order-col">
+                    <h2 class="title">Want to be ready for your future? All you need is practice.</h2>
+                    <div class="sv order-col">
                         <span class="sv-panel sv-panel--large">
+                            <span class="sv-panel__header">
+                                Buy a <br/> subscription
+                            </span>
+                            <span class="sv-panel__body">
+                                <form id="individual-orderform" name="orderform" 
+                                      class="update-action" method="POST"
+                                    tal:attributes="action action;
+                                                    base_action action;">
+
+                                    <input type="hidden" name="order.form.submitted" value="true"/>
+                                    <input type="hidden" name="isAnon" value="True"
+                                        tal:attributes="value isAnon"/>
+                                    <input type="hidden" name="ordernumber" value=""
+                                        tal:attributes="value view/ordernumber"/>
+                                    <div class="form-body">
+                                        <p>Get access to all of the practice you need for a year, whenever and wherever you need it!</p>
+                                        <p>Ways you can pay for this option:</p>
+
+                                        <ul class="sv-list" tal:define="selected view/prod_payment">
+                                            <li class="sv-list-item">
+                                                <span class="sv-radio-button">
+                                                    <span class="sv-radio-button__input-faux">
+                                                        <input name="prod_payment"
+                                                            id="creditcard"
+                                                            class="sv-radio-button__input"
+                                                            checked=""
+                                                            tal:attributes="checked python:view.prod_payment_selected('creditcard', selected)"
+                                                            value="creditcard"
+                                                            type="radio"
+                                                            /><span class="sv-radio-button__box"></span>
+                                                    </span><label class="sv-radio-button__label" for="creditcard">Credit Card</label>
+                                                </span>
+                                            </li>
+                                            <li class="sv-list-item">
+                                                <span class="sv-radio-button">
+                                                    <span class="sv-radio-button__input-faux">
+                                                        <input name="prod_payment"
+                                                            id="eft"
+                                                            class="sv-radio-button__input"
+                                                            checked=""
+                                                            tal:attributes="checked python:view.prod_payment_selected('eft', selected)"
+                                                            value="eft"
+                                                            type="radio"
+                                                            /><span class="sv-radio-button__box"></span>
+                                                    </span><label class="sv-radio-button__label" for="eft">Electronic Funds Transfer (EFT)</label>
+                                                </span>
+                                            </li>
+                                        </ul>
+
+                                        <p>Get access to:</p>
+
+                                        <ul class="sv-list" tal:define="selected view/subjects">
+                                            <li class="sv-list-item">
+                                                <span class="sv-radio-button">
+                                                    <span class="sv-radio-button__input-faux">
+                                                        <input name="subjects"
+                                                            id="year_maths"
+                                                            checked=""
+                                                            class="sv-radio-button__input"
+                                                            tal:attributes="checked python:view.subject_selected('Maths', selected)"
+                                                            value="Maths"
+                                                            type="radio"
+                                                            price="599"
+                                                            /><span class="sv-radio-button__box"></span>
+                                                    </span><label class="sv-radio-button__label" for="year_maths">Maths (Gr. 8-12 / <strong>R599</strong>)</label>
+                                                </span>
+                                            </li>
+                                            <li class="sv-list-item">
+                                                <span class="sv-radio-button">
+                                                    <span class="sv-radio-button__input-faux">
+                                                        <input name="subjects"
+                                                            id="year_science"
+                                                            checked=""
+                                                            class="sv-radio-button__input"
+                                                            tal:attributes="checked python:view.subject_selected('Science', selected)"
+                                                            value="Science"
+                                                            price="599"
+                                                            type="radio"
+                                                            /><span class="sv-radio-button__box"></span>
+                                                    </span><label class="sv-radio-button__label" for="year_science">Science (Gr. 10-12 / <strong>R599</strong>)</label>
+                                                </span>
+                                            </li>
+                                            <li class="sv-list-item">
+                                                <span class="sv-radio-button">
+                                                    <span class="sv-radio-button__input-faux">
+                                                        <input name="subjects"
+                                                            id="year_both"
+                                                            checked=""
+                                                            class="sv-radio-button__input"
+                                                            tal:attributes="checked python:view.subject_selected('Maths,Science', selected)"
+                                                            price="999"
+                                                            value="Maths,Science"
+                                                            type="radio"
+                                                            /><span class="sv-radio-button__box"></span>
+                                                    </span><label class="sv-radio-button__label" for="year_both">Both subjects (<strong>R999 total</strong>)</label>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div> 
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-large allowMultiSubmit" name="submitorder" value="1">Buy now!
+                                        </button>
+                                    </div>
+                                </form>
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="sv order-col">
+                        <span class="sv-panel sv-panel--large">
+                            <span class="sv-panel__header">
+                                Earn free access with a sponsorship
+                            </span>
+                            <span class="sv-panel__body">
+                                <form id="individual-orderform" name="sponsor" 
+                                      class="update-action" method="GET"
+                                    tal:attributes="action string:${context/absolute_url}/registration;
+                                                    base_action action;">
+                                    <div class="form-body">
+                                        <p>We have a limited number of sponsored subscriptions for learners who can’t afford to buy. Show us you're serious and a sponsor will pay for your subscription.</p>
+                                        <p>To earn a subscription, all you need to do is:</p>
+                                        <ul>
+                                            <li>Sign up for trial access</li>
+                                            <li>Complete the trial weekly goals</li>
+                                            <li>Complete 100 exercises every month to keep your sponsorship</li>
+                                        </ul>
+                                        <p>You can earn free access to one or both subjects as long as you meet the goals for each subject.</p>
+                                    </div> 
+                                    <div class="form-actions">
+                                        <div class="spacer"></div>
+                                    </div>
+                                </form>
+                            </span>
+                        </span>
+                    </div>
+
+                    <!--
+                    <div class="sv order-col">
+                        <span class="sv-panel sv-panel \-\ -large">
                             <span class="sv-panel__header">
                                 One <strong>month</strong> at a time<br/>
                                 at <strong>R15</strong>.
@@ -164,117 +306,8 @@
                             </span>
                         </span>
                     </div>
+                    -->
 
-                    <div class="sv order-col">
-                        <span class="sv-panel sv-panel--large">
-                            <span class="sv-panel__header">
-                                A whole <strong>year</strong> upfront<br/>
-                                at <strong>R150</strong>.
-                            </span>
-                            <span class="sv-panel__body">
-                                <form id="individual-orderform" name="orderform" 
-                                      class="update-action" method="POST"
-                                    tal:attributes="action action;
-                                                    base_action action;">
-
-                                    <input type="hidden" name="order.form.submitted" value="true"/>
-                                    <input type="hidden" name="isAnon" value="True"
-                                        tal:attributes="value isAnon"/>
-                                    <input type="hidden" name="ordernumber" value=""
-                                        tal:attributes="value view/ordernumber"/>
-                                    <div class="form-body">
-                                        <p>All the practise you need without having to hassle with renewing your subscription each month</p>
-                                        <p>Ways you can pay for this option:</p>
-
-                                        <ul class="sv-list" tal:define="selected view/prod_payment">
-                                            <li class="sv-list-item">
-                                                <span class="sv-radio-button">
-                                                    <span class="sv-radio-button__input-faux">
-                                                        <input name="prod_payment"
-                                                            id="creditcard"
-                                                            class="sv-radio-button__input"
-                                                            checked=""
-                                                            tal:attributes="checked python:view.prod_payment_selected('creditcard', selected)"
-                                                            value="creditcard"
-                                                            type="radio"
-                                                            /><span class="sv-radio-button__box"></span>
-                                                    </span><label class="sv-radio-button__label" for="creditcard">Credit Card</label>
-                                                </span>
-                                            </li>
-                                            <li class="sv-list-item">
-                                                <span class="sv-radio-button">
-                                                    <span class="sv-radio-button__input-faux">
-                                                        <input name="prod_payment"
-                                                            id="eft"
-                                                            class="sv-radio-button__input"
-                                                            checked=""
-                                                            tal:attributes="checked python:view.prod_payment_selected('eft', selected)"
-                                                            value="eft"
-                                                            type="radio"
-                                                            /><span class="sv-radio-button__box"></span>
-                                                    </span><label class="sv-radio-button__label" for="eft">Electronic Funds Transfer (EFT)</label>
-                                                </span>
-                                            </li>
-                                        </ul>
-
-                                        <p>Get access to:</p>
-
-                                        <ul class="sv-list" tal:define="selected view/subjects">
-                                            <li class="sv-list-item">
-                                                <span class="sv-radio-button">
-                                                    <span class="sv-radio-button__input-faux">
-                                                        <input name="subjects"
-                                                            id="year_maths"
-                                                            checked=""
-                                                            class="sv-radio-button__input"
-                                                            tal:attributes="checked python:view.subject_selected('Maths', selected)"
-                                                            value="Maths"
-                                                            type="radio"
-                                                            price="150"
-                                                            /><span class="sv-radio-button__box"></span>
-                                                    </span><label class="sv-radio-button__label" for="year_maths">Maths</label>
-                                                </span>
-                                            </li>
-                                            <li class="sv-list-item">
-                                                <span class="sv-radio-button">
-                                                    <span class="sv-radio-button__input-faux">
-                                                        <input name="subjects"
-                                                            id="year_science"
-                                                            checked=""
-                                                            class="sv-radio-button__input"
-                                                            tal:attributes="checked python:view.subject_selected('Science', selected)"
-                                                            value="Science"
-                                                            price="150"
-                                                            type="radio"
-                                                            /><span class="sv-radio-button__box"></span>
-                                                    </span><label class="sv-radio-button__label" for="year_science">Science</label>
-                                                </span>
-                                            </li>
-                                            <li class="sv-list-item">
-                                                <span class="sv-radio-button">
-                                                    <span class="sv-radio-button__input-faux">
-                                                        <input name="subjects"
-                                                            id="year_both"
-                                                            checked=""
-                                                            class="sv-radio-button__input"
-                                                            tal:attributes="checked python:view.subject_selected('Maths,Science', selected)"
-                                                            price="300"
-                                                            value="Maths,Science"
-                                                            type="radio"
-                                                            /><span class="sv-radio-button__box"></span>
-                                                    </span><label class="sv-radio-button__label" for="year_both">Both (R300 total)</label>
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </div> 
-                                    <div class="form-actions">
-                                        <button type="submit" class="btn btn-large allowMultiSubmit" name="submitorder" value="1">Buy now for a whole year
-                                        </button>
-                                    </div>
-                                </form>
-                            </span>
-                        </span>
-                    </div>
                 </div>
             </div>
 

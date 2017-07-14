@@ -115,8 +115,8 @@ class Confirm(grok.View):
                 if self.subjects in ('Science', 'Maths,Science'):
                     ordered_service_ids.extend(science_service_ids)
                 # add discount if both subjects were ordered
-                # if self.subjects == 'Maths,Science':
-                #     ordered_service_ids.append('maths-and-science-discount')
+                if self.subjects == 'Maths,Science':
+                    ordered_service_ids.append('maths-and-science-discount')
 
             for sid in ordered_service_ids:
                 service = self.products_and_services[sid]
@@ -339,7 +339,7 @@ class Confirm(grok.View):
         send_to_address = formataddr((member.getProperty('fullname'),
                                       member.getProperty('email')))
 
-        subject = 'Order from %s Website' % state.navigation_root_title()
+        subject = 'Your order for maths and science practice'
 
         fullname=member.getProperty('fullname')
         sitename=state.navigation_root_title()
@@ -348,6 +348,7 @@ class Confirm(grok.View):
         username=member.getId()
         email=self.settings.order_email_address
         phone=self.settings.order_phone_number
+        site_url = state.portal_url()
 
         # Generate message and attach to mail message
         message = self.ordertemplate(
@@ -362,13 +363,13 @@ class Confirm(grok.View):
             payment=self.prod_payment(),
             verification_code=self.verification_code,
             premium_number=self.premium_number(),
+            site_url=site_url,
         )
 
         portal.MailHost.send(message, send_to_address, send_from_address,
                              subject, charset=encoding)
 
-        subject = 'New Order placed on %s Website' % \
-            state.navigation_root_title()
+        subject = 'New Order placed on %s' % site_url
 
         # Generate order notification
         message = self.ordernotification(
@@ -382,6 +383,7 @@ class Confirm(grok.View):
             email=email,
             phone=phone,
             payment=self.prod_payment(),
+            site_url=site_url,
         )
 
         # Siyavula's copy
