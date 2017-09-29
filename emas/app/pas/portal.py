@@ -45,6 +45,7 @@ manage_addPortalAuthHelperForm = DTMLFile(
 uuidre = re.compile(
     '[0-9a-f]{8}-[0-9a-f]{4}-[45][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}')
 def is_uuid4(s):
+    s = str(s)
     return uuidre.match(s) is not None
 
 class reify(object):
@@ -216,6 +217,8 @@ class PortalAuthHelper(BasePlugin):
             elif login:
                 users = self._v_Session().query(User).filter(
                     User.uuid == login).all()
+            else:
+                users = []
 
             matched = []
             for user in users:
@@ -225,10 +228,10 @@ class PortalAuthHelper(BasePlugin):
                     'plugin_id': self.getId(),
                     'editurl': ''})
 
+            if matched:
+                return tuple(matched)
             else:
                 return ()
-                    
-            return tuple(matched)
             
         return ()
         
