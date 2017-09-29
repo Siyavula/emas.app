@@ -223,8 +223,8 @@ class PortalAuthHelper(BasePlugin):
             matched = []
             for user in users:
                 matched.append({
-                    'id': user.uuid,
-                    'login': user.uuid,
+                    'id': str(user.uuid),
+                    'login': str(user.uuid),
                     'plugin_id': self.getId(),
                     'editurl': ''})
 
