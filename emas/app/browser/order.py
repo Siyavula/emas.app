@@ -71,7 +71,7 @@ class Order(grok.View):
         """ Post to the current view in order to validate the form.
             We need enough info on the form for the confirm view to work.
         """
-        return '%s/@@order' %self.context.absolute_url()
+        return '/@@order'
         
     def subject_selected(self, subject, selected):
         return subject == selected and 'checked' or ''
